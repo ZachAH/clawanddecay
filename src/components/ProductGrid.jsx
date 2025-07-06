@@ -34,8 +34,8 @@ function ProductGrid() {
         const data = await response.json();
         // Printify's API returns products nested under a 'products' array
         // Make sure you access the correct key: `data.products`
-        setProducts(data.products || []); // Set the actual product data from Printify
-
+        setProducts(data.data || []);
+        
       } catch (err) {
         console.error("Failed to fetch products:", err);
         setError(err.message || "Failed to load products from Printify.");

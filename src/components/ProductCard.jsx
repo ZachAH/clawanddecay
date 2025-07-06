@@ -28,8 +28,8 @@ const titleStyle = {
   fontSize: '1.2em',
   fontWeight: 'bold',
   marginBottom: '8px',
-  height: '3em', // Ensure consistent height for titles
-  overflow: 'hidden',
+  height: '3em', // Ensure consistent height for titles (adjust as needed if titles are very long)
+  overflow: 'hidden', // Hide overflow if title is too long for the fixed height
 };
 
 const priceStyle = {
@@ -39,6 +39,14 @@ const priceStyle = {
   marginTop: 'auto', // Push price to the bottom if content above is shorter
 };
 
+// --- Start of updates ---
+
+// Define a fallback image URL in case a product has no images from Printify
+// You can change this to any image URL you prefer, or even a local image path if imported
+const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image"; 
+// Or, if your "via.placeholder.com" links don't work, try:
+// "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/None.png/600px-None.png"
+
 
 function ProductCard({ product }) {
   // Get the price of the first variant, converting cents to dollars
@@ -46,14 +54,29 @@ function ProductCard({ product }) {
     ? (product.variants[0].price / 100).toFixed(2) // Format to 2 decimal places
     : 'N/A';
 
-  // Use the mockupImage or the first image from the images array
-  const imageUrl = product.mockupImage || (product.images && product.images[0]?.src);
+  // Get the primary image URL from the Printify product data
+  // Printify typically provides an 'images' array. We'll use the first one.
+  const primaryImageUrl = product.images && product.images.length > 0
+    ? product.images[0].src
+    : null; // If no images are available, set to null
 
   return (
     <div style={cardStyle}>
-      {imageUrl && (
-        <img src={imageUrl} alt={product.title} style={imageStyle} />
-      )}
+      {/*
+        Use the primaryImageUrl if available, otherwise fall back to FALLBACK_IMAGE_URL.
+        The onError handler provides a last line of defense if the image URL is valid but fails to load (e.g., broken link).
+      */}
+      <img
+        src={primaryImageUrl || FALLBACK_IMAGE_URL}
+        alt={product.title}
+        style={imageStyle}
+        onError={(e) => {
+          // Prevent infinite loops if the fallback image also fails
+          e.target.onerror = null;
+          // Set the source to the fallback image if the primary image fails to load
+          e.target.src = FALLBACK_IMAGE_URL;
+        }}
+      />
       <h3 style={titleStyle}>{product.title}</h3>
       <p style={priceStyle}>${displayPrice}</p>
       {/* You can add a "View Details" or "Add to Cart" button here later */}
