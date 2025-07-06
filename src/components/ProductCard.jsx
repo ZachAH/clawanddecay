@@ -39,41 +39,36 @@ const priceStyle = {
   marginTop: 'auto', // Push price to the bottom if content above is shorter
 };
 
-// --- Start of updates ---
-
-// Define a fallback image URL in case a product has no images from Printify
-// You can change this to any image URL you prefer, or even a local image path if imported
-const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image"; 
-// Or, if your "via.placeholder.com" links don't work, try:
-// "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/None.png/600px-None.png"
+const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image";
 
 
 function ProductCard({ product }) {
-  // Get the price of the first variant, converting cents to dollars
-  const displayPrice = product.variants && product.variants.length > 0
-    ? (product.variants[0].price / 100).toFixed(2) // Format to 2 decimal places
-    : 'N/A';
+  // --- UPDATED PRICE LOGIC ---
+  let displayPrice = 'N/A';
+  // Filter for only enabled variants
+  const enabledVariants = product.variants ? product.filter(variant => variant.is_enabled) : [];
+
+  if (enabledVariants.length > 0) {
+    // Find the minimum price among the enabled variants
+    const minPrice = Math.min(...enabledVariants.map(variant => variant.price));
+    displayPrice = (minPrice / 100).toFixed(2);
+  }
+  // --- END UPDATED PRICE LOGIC ---
+
 
   // Get the primary image URL from the Printify product data
-  // Printify typically provides an 'images' array. We'll use the first one.
   const primaryImageUrl = product.images && product.images.length > 0
     ? product.images[0].src
-    : null; // If no images are available, set to null
+    : null;
 
   return (
     <div style={cardStyle}>
-      {/*
-        Use the primaryImageUrl if available, otherwise fall back to FALLBACK_IMAGE_URL.
-        The onError handler provides a last line of defense if the image URL is valid but fails to load (e.g., broken link).
-      */}
       <img
         src={primaryImageUrl || FALLBACK_IMAGE_URL}
         alt={product.title}
         style={imageStyle}
         onError={(e) => {
-          // Prevent infinite loops if the fallback image also fails
           e.target.onerror = null;
-          // Set the source to the fallback image if the primary image fails to load
           e.target.src = FALLBACK_IMAGE_URL;
         }}
       />
