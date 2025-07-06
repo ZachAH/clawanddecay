@@ -1,25 +1,34 @@
-/* src/App.css (or your main global CSS file) */
+/* src/App.css */
 
+/* Your existing :root and body styles go here */
+
+/* --- Custom Fonts --- */
+
+@font-face {
+  font-family: 'Grindcore Display'; /* Give your new font a unique and memorable name */
+  src: url('./assets/fonts/GrindcoreDisplay.woff2') format('woff2'), /* Adjust filename to your actual .woff2 */
+       url('./assets/fonts/GrindcoreDisplay.woff') format('woff');   /* Adjust filename to your actual .woff */
+  font-weight: normal; /* Check your font's documentation for its actual weight */
+  font-style: normal;  /* Check your font's documentation for its actual style */
+  font-display: swap;  /* Keep this for performance */
+}
+
+/* ... If you have other fonts like a body font, define them too ... */
+
+/* --- Existing CSS Variables --- */
 :root {
-  /* Colors */
-  --color-dark-bg: #1A1A1A;     /* Deep almost black background */
-  --color-light-text: #FFFFFF;  /* Pure white text */
-  --color-accent-red: #E50000;  /* Vibrant red for highlights, buttons */
-  --color-detail-grey: #C0C0C0; /* Muted silver/light grey for subtle elements */
-  /* If you decide to go with gold instead of silver: */
-  /* --color-accent-gold: #B8860B; */ 
+  /* ... colors ... */
+
+  /* Update font variables to use your new custom font name */
+  --font-heading: 'Grindcore Display', sans-serif; /* Fallback to generic sans-serif */
+  --font-body: 'Roboto', sans-serif; /* Or your preferred body font */
 }
 
-body {
-  font-family: Arial, sans-serif; /* We'll update this next */
-  background-color: var(--color-dark-bg);
-  color: var(--color-light-text);
-  margin: 0;
-  padding: 0;
-}
+/* ... rest of App.css ... */
 
-/* Example usage in your components (you'll replace inline styles later) */
-/* .my-button {
-  background-color: var(--color-accent-red);
+/* Apply to your headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); /* This will now use 'Grindcore Display' */
   color: var(--color-light-text);
-} */
+  /* You might need to adjust font-size, line-height, letter-spacing here to make it look good */
+}
