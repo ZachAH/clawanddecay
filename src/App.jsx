@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from 'react';
-import ProductGrid from './components/ProductGrid'; // Import your new ProductGrid component
+import ProductGrid from 'ß/components/ProductGrid'; // Import your new ProductGrid component
 import './App.css'; // Keep or modify your main app CSS for general styles
 
 function App() {
