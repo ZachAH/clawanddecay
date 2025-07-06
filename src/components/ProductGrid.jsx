@@ -1,16 +1,18 @@
 // src/components/ProductGrid.jsx
 import React, { useState, useEffect } from 'react';
-import ProductCard from './ProductCard'; // Import the ProductCard component
-import { mockProducts } from '../data/mockProducts'; // Import your mock data
+import ProductCard from './ProductCard';
+
+// !!! IMPORTANT: Make sure this line is commented out or deleted !!!
+// import { mockProducts } from '../data/mockProducts';
 
 const gridContainerStyle = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', // Responsive grid
+  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
   gap: '20px',
   padding: '20px',
-  justifyItems: 'center', // Center items horizontally in the grid cells
-  maxWidth: '1200px', // Max width for the grid
-  margin: '0 auto', // Center the grid container itself
+  justifyItems: 'center',
+  maxWidth: '1200px',
+  margin: '0 auto',
 };
 
 function ProductGrid() {
@@ -19,18 +21,30 @@ function ProductGrid() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching data, e.g., from an API
-    // In a real scenario, this would be your fetch('/.netlify/functions/get-products') call
-    try {
-      // Simulate a network delay
-      setTimeout(() => {
-        setProducts(mockProducts); // Set the mock data
+    const fetchProductsFromBackend = async () => {
+      try {
+        // This is the call to your Netlify Function!
+        const response = await fetch('/.netlify/functions/get-products');
+
+        if (!response.ok) {
+          const errorDetails = await response.json();
+          throw new Error(errorDetails.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // Printify's API returns products nested under a 'products' array
+        // Make sure you access the correct key: `data.products`
+        setProducts(data.products || []); // Set the actual product data from Printify
+
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+        setError(err.message || "Failed to load products from Printify.");
+      } finally {
         setLoading(false);
-      }, 500); // 500ms delay to simulate loading
-    } catch (err) {
-      setError("Failed to load products.");
-      setLoading(false);
-    }
+      }
+    };
+
+    fetchProductsFromBackend();
   }, []); // Empty dependency array means this effect runs only once after initial render
 
   if (loading) {
