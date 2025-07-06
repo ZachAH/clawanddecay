@@ -46,8 +46,8 @@ function ProductCard({ product }) {
   // --- UPDATED PRICE LOGIC ---
   let displayPrice = 'N/A';
   // Filter for only enabled variants
-  const enabledVariants = product.variants ? product.filter(variant => variant.is_enabled) : [];
-
+  const enabledVariants = product.variants ? product.variants.filter(variant => variant.is_enabled) : [];
+  
   if (enabledVariants.length > 0) {
     // Find the minimum price among the enabled variants
     const minPrice = Math.min(...enabledVariants.map(variant => variant.price));
