@@ -17,7 +17,7 @@ const gridContainerStyle = {
 
 // --- NEW CONSTANTS FOR BLOOD STREAM LOADER ---
 // Number of blood streams/drips to show simultaneously
-const NUM_BLOOD_STREAMS = 5; // Adjust this number for more or fewer streams
+const NUM_BLOOD_STREAMS = 10; // Adjust this number for more or fewer streams
 // Total duration of one full cycle for all streams (must match CSS animation-duration)
 const STREAM_ANIMATION_CYCLE_MS = 4000; // 4 seconds for one full cycle
 
