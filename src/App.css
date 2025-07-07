@@ -1,34 +1,63 @@
 /* src/App.css */
 
-/* Your existing :root and body styles go here */
-
-/* --- Custom Fonts --- */
-
-@font-face {
-  font-family: 'Grindcore Display'; /* Give your new font a unique and memorable name */
-  src: url('./assets/fonts/GrindcoreDisplay.woff2') format('woff2'), /* Adjust filename to your actual .woff2 */
-       url('./assets/fonts/GrindcoreDisplay.woff') format('woff');   /* Adjust filename to your actual .woff */
-  font-weight: normal; /* Check your font's documentation for its actual weight */
-  font-style: normal;  /* Check your font's documentation for its actual style */
-  font-display: swap;  /* Keep this for performance */
-}
-
-/* ... If you have other fonts like a body font, define them too ... */
-
 /* --- Existing CSS Variables --- */
 :root {
-  /* ... colors ... */
+  /* Colors */
+  --color-dark-bg: #1A1A1A;
+  --color-light-text: #FFFFFF;
+  --color-accent-red: #E50000;
+  --color-detail-grey: #C0C0C0;
 
-  /* Update font variables to use your new custom font name */
-  --font-heading: 'Grindcore Display', sans-serif; /* Fallback to generic sans-serif */
-  --font-body: 'Roboto', sans-serif; /* Or your preferred body font */
+  /* Fonts */
+  --font-heading: 'Grindcore Display', sans-serif; /* Example custom font name */
+  --font-body: 'Roboto', sans-serif;
 }
 
-/* ... rest of App.css ... */
-
-/* Apply to your headings */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading); /* This will now use 'Grindcore Display' */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-dark-bg);
   color: var(--color-light-text);
-  /* You might need to adjust font-size, line-height, letter-spacing here to make it look good */
+  margin: 0;
+  padding: 0;
+  /* Ensure the body stretches to allow the footer to stick to bottom if content is short */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- New Header Styles --- */
+.app-header {
+  width: 100%; /* Make it take up the whole width */
+  background-color: #282c34; /* Dark background, you can use a more specific dark red here if desired, e.g., #4A0505 for a deep blood red */
+  padding: 30px 20px; /* Adjust top/bottom padding to control header height */
+  text-align: center; /* Center the logo horizontally */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Stronger shadow for presence */
+  /* Remove any min-height here initially, let padding control it */
+}
+
+.header-logo {
+  max-width: 400px; /* Max width for your logo, adjust as needed */
+  width: 100%;      /* Make it responsive within max-width */
+  height: auto;     /* Maintain aspect ratio */
+  display: block;   /* Remove extra space below image */
+  margin: 0 auto;   /* Center the image within the header */
+}
+
+/* Adjust your existing h2 margin if needed so it doesn't push the header down too much */
+main h2 {
+  margin-top: 40px; /* Keep existing margin or adjust */
+}
+
+/* Ensure main content grows to push footer down */
+main {
+  flex-grow: 1; /* Allows main content to expand and push footer to the bottom */
+}
+
+/* You can remove existing inline footer style if you moved it to App.css as well */
+footer {
+  background-color: var(--color-dark-bg); /* Use your defined dark background color */
+  color: var(--color-light-text);
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
 }
