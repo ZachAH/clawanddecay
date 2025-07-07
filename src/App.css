@@ -346,3 +346,42 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
   text-align: center; /* Center these messages */
   font-style: italic; /* Make them stand out slightly */
 }
+
+/* --- Blood Stream Loader Styles (Replacing the previous single drop) --- */
+
+/* A single blood drop */
+.blood-stream-drop {
+  position: absolute; /* Position drops absolutely within a relative container */
+  background-color: var(--color-accent-red); /* Your blood color */
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* Initial drop shape */
+  width: 10px; /* Small initial drop width */
+  height: 15px; /* Small initial drop height */
+  opacity: 1;
+  transform-origin: top center;
+  filter: drop-shadow(0 0 3px rgba(229, 0, 0, 0.5)); /* Subtle glow */
+  /* These will be animated by JS and inline styles for dynamic positioning */
+}
+
+/* Keyframes for how each drop falls, stretches, and fades */
+@keyframes fallAndDrip {
+  0% {
+    transform: translate(-50%, 0) scaleY(1);
+    opacity: 1;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  }
+  20% {
+    transform: translate(-50%, 30px) scaleY(1.5); /* Stretch downwards */
+  }
+  50% {
+    transform: translate(-50%, 80px) scaleY(0.7); /* Fall further, start squishing */
+    opacity: 0.8;
+  }
+  80% {
+    transform: translate(-50%, 150px) scaleY(0.1); /* Squish at bottom */
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(-50%, 200px) scaleY(0.01); /* Disappear below */
+    opacity: 0;
+  }
+}

@@ -2,7 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+// No longer needed here as styles are in App.css
+// const detailPageStyle = { ... };
+// ... (all other const style declarations were removed in previous steps) ...
+
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image";
+
+// Define how long each drop animation lasts (must match CSS @keyframes fallAndDrip)
+const DROP_DURATION_MS = 1500; // 1.5 seconds per drip
+// Define how frequently new drops appear
+const NEW_DROP_INTERVAL_MS = 200; // New drop every 200ms
 
 
 function ProductDetailPage() {
@@ -11,6 +20,11 @@ function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
+
+  // NEW STATE: To manage the individual blood drops for the animation
+  const [drops, setDrops] = useState([]);
+  const dropIdCounter = React.useRef(0); // To give unique IDs to drops
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -36,7 +50,7 @@ function ProductDetailPage() {
       } finally {
         setLoading(false);
       }
-    }; // <--- ENSURE THERE IS NO SEMICOLON HERE! THIS IS THE LIKELY CULPRIT!
+    }; // <--- Ensure there is NO SEMICOLON here!
 
     if (productId) {
       fetchProduct();
@@ -46,16 +60,59 @@ function ProductDetailPage() {
     }
   }, [productId]);
 
+
+  // NEW EFFECT: Manage the blood drip animation while loading is true
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setDrops(prevDrops => {
+          const now = Date.now();
+          const newDrops = [
+            ...prevDrops,
+            {
+              id: dropIdCounter.current++,
+              createdAt: now, // Store creation time to filter old drops
+              // Random X position to make it look like a stream
+              left: `${Math.random() * 80 + 10}%`, // 10% to 90% across container
+            }
+          ];
+          // Clean up old drops that have finished animating and are off-screen
+          return newDrops.filter(drop => {
+            return now - drop.createdAt < DROP_DURATION_MS * 2; // Keep for a bit longer than animation duration
+          });
+        });
+      }, NEW_DROP_INTERVAL_MS);
+
+      // Cleanup interval when component unmounts or loading stops
+      return () => clearInterval(interval);
+    } else {
+      // Clear drops once loading is complete
+      setDrops([]);
+    }
+  }, [loading]); // Run this effect when loading state changes
+
+
+  // Function to handle thumbnail clicks, updating the main image
   const handleThumbnailClick = (imageUrl) => {
     setCurrentImage(imageUrl);
   };
 
+
+  // --- Conditional Rendering for Loading, Error, and Not Found States ---
   if (loading) {
     return (
       <div className="product-detail-page-container">
-        <div className="spinner-container">
-          <div className="spinner"></div>
-          <span>Loading product details...</span>
+        <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}> {/* Apply relative positioning here for absolute drops */}
+          {/* Render the individual blood drops */}
+          {drops.map(drop => (
+            <div
+              key={drop.id}
+              className="blood-stream-drop"
+              style={{ left: drop.left, animationDuration: `${DROP_DURATION_MS / 1000}s` }} // Apply dynamic left and animation duration
+            ></div>
+          ))}
+          {/* Always display loading text or a fixed element on top of drops */}
+          <span style={{ position: 'relative', zIndex: 10 }}>Loading product details...</span>
         </div>
       </div>
     );
@@ -77,10 +134,13 @@ function ProductDetailPage() {
     );
   }
 
+
+  // --- Main Product Detail Page Content (when product data is loaded) ---
   return (
     <div className="product-detail-page-container">
       <h1 className="product-detail-title">{product.title}</h1>
 
+      {/* Main Product Image Display */}
       <div className="product-detail-image-container">
         <img
           src={currentImage || FALLBACK_IMAGE_URL}
@@ -93,6 +153,7 @@ function ProductDetailPage() {
         />
       </div>
 
+      {/* Thumbnail Gallery (only show if product has more than one image) */}
       {product.images && product.images.length > 1 && (
         <div className="thumbnail-container">
           {product.images.map((image, index) => (
@@ -108,10 +169,12 @@ function ProductDetailPage() {
         </div>
       )}
 
+      {/* Product Description */}
       {product.description && (
         <p className="product-detail-description" dangerouslySetInnerHTML={{ __html: product.description }}></p>
       )}
 
+      {/* Available Variants Section */}
       <div className="product-detail-variants-container">
         <h3>Available Variants:</h3>
         {product.variants && product.variants.length > 0 ? (
@@ -122,6 +185,7 @@ function ProductDetailPage() {
                 <div key={variant.id} className="product-detail-variant-item">
                   <span>{variant.title}</span>
                   <span className="product-detail-variant-price">${(variant.price / 100).toFixed(2)}</span>
+                  {/* Future: Add "Add to Cart" button here for each variant */}
                 </div>
               ))
           ) : (
@@ -131,6 +195,8 @@ function ProductDetailPage() {
           <p className="product-detail-message">No variants available for this product.</p>
         )}
       </div>
+
+      {/* Future: You can add an "Add to Cart" form, quantity selectors, etc. here */}
     </div>
   );
 }
