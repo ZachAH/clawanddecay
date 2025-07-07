@@ -35,7 +35,7 @@ function ProductGrid() {
         // Printify's API returns products nested under a 'products' array
         // Make sure you access the correct key: `data.products`
         setProducts(data.data || []);
-        
+
       } catch (err) {
         console.error("Failed to fetch products:", err);
         setError(err.message || "Failed to load products from Printify.");
@@ -48,7 +48,17 @@ function ProductGrid() {
   }, []); // Empty dependency array means this effect runs only once after initial render
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '20px' }}>Loading products...</div>;
+    //return <div style={{ textAlign: 'center', padding: '20px' }}>Loading products...</div>;
+    return (
+      <div style={{ /* Re-use the ProductGridPage's container if you define one, or just add some height */
+        display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px'
+      }}>
+        <div className="spinner-container"> {/* Apply the spinner container class */}
+          <div className="spinner"></div> {/* The actual spinner */}
+          <span>Loading products...</span> {/* Your loading text */}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
