@@ -1,63 +1,40 @@
 /* src/App.css */
 
-/* --- Existing CSS Variables --- */
-:root {
-  /* Colors */
-  --color-dark-bg: #1A1A1A;
-  --color-light-text: #FFFFFF;
-  --color-accent-red: #E50000;
-  --color-detail-grey: #C0C0C0;
+/* ... (Existing CSS variables and custom font definitions) ... */
 
-  /* Fonts */
-  --font-heading: 'Grindcore Display', sans-serif; /* Example custom font name */
-  --font-body: 'Roboto', sans-serif;
-}
+/* --- Base App Layout & General Styles --- */
+/* ... (Existing .App, body, h1, h2 styles) ... */
 
-body {
-  font-family: var(--font-body);
-  background-color: var(--color-dark-bg);
-  color: var(--color-light-text);
-  margin: 0;
-  padding: 0;
-  /* Ensure the body stretches to allow the footer to stick to bottom if content is short */
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
 
-/* --- New Header Styles --- */
+/* --- Header Styles --- */
 .app-header {
-  width: 100%; /* Make it take up the whole width */
-  background-color: #282c34; /* Dark background, you can use a more specific dark red here if desired, e.g., #4A0505 for a deep blood red */
-  padding: 30px 20px; /* Adjust top/bottom padding to control header height */
-  text-align: center; /* Center the logo horizontally */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Stronger shadow for presence */
-  /* Remove any min-height here initially, let padding control it */
+  width: 100%;
+  /* Using your suggested dark background color. If you have a background *image*
+     like metallic red bloodstained, you'd add background-image property here. */
+  background-color: var(--color-dark-bg); /* Or a specific dark red: #4A0505 */
+  /* background-image: url('./assets/your-metallic-red-background.jpg'); */ /* <-- Add if you have a background image */
+  /* background-size: cover; */
+  /* background-position: center; */
+
+
+  padding: 60px 20px; /* INCREASED PADDING: Adjust top/bottom padding to make header taller */
+                      /* Current: 30px 20px; Try 60px 20px or even more like 80px 20px */
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5); /* Stronger shadow for more presence */
+  display: flex; /* Enable flexbox for centering content vertically if needed */
+  align-items: center; /* Vertically center content */
+  justify-content: center; /* Horizontally center content */
 }
 
 .header-logo {
-  max-width: 400px; /* Max width for your logo, adjust as needed */
-  width: 100%;      /* Make it responsive within max-width */
+  /* INCREASED MAX-WIDTH: Allow the logo to take up much more horizontal space */
+  max-width: 80%; /* Try 80% of the header's width. Adjust as needed. */
+                  /* Or a fixed pixel value like: max-width: 1000px; */
+
+  width: 100%;      /* Always take full available width up to max-width */
   height: auto;     /* Maintain aspect ratio */
-  display: block;   /* Remove extra space below image */
+  display: block;   /* Ensure it behaves like a block element */
   margin: 0 auto;   /* Center the image within the header */
 }
 
-/* Adjust your existing h2 margin if needed so it doesn't push the header down too much */
-main h2 {
-  margin-top: 40px; /* Keep existing margin or adjust */
-}
-
-/* Ensure main content grows to push footer down */
-main {
-  flex-grow: 1; /* Allows main content to expand and push footer to the bottom */
-}
-
-/* You can remove existing inline footer style if you moved it to App.css as well */
-footer {
-  background-color: var(--color-dark-bg); /* Use your defined dark background color */
-  color: var(--color-light-text);
-  text-align: center;
-  padding: 20px;
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
-}
+/* ... (Existing .app-main, .app-footer, Product Grid/Card styles) ... */
