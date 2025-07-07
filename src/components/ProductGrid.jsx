@@ -2,13 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 
-// Define how long each drop animation lasts (must match CSS @keyframes fallAndDrip)
-const DROP_DURATION_MS = 1500; // 1.5 seconds per drip
-// Define how frequently new drops appear
-const NEW_DROP_INTERVAL_MS = 200; // New drop every 200ms
-
-// Styles for the product grid container (moved from inline styles in previous steps)
-// These styles should be in App.css and accessed via className="product-grid-container"
+// No longer needed here as styles are in App.css
 /*
 const gridContainerStyle = {
   display: 'grid',
@@ -21,15 +15,19 @@ const gridContainerStyle = {
 };
 */
 
+// --- NEW CONSTANTS FOR BLOOD STREAM LOADER ---
+// Number of blood streams/drips to show simultaneously
+const NUM_BLOOD_STREAMS = 5; // Adjust this number for more or fewer streams
+// Total duration of one full cycle for all streams (must match CSS animation-duration)
+const STREAM_ANIMATION_CYCLE_MS = 4000; // 4 seconds for one full cycle
+
 
 function ProductGrid() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // NEW STATE: To manage the individual blood drops for the animation
-  const [drops, setDrops] = useState([]);
-  const dropIdCounter = React.useRef(0); // To give unique IDs to drops
+  // Removed 'drops' state and 'dropIdCounter' ref as they are no longer needed for this stream effect
 
 
   useEffect(() => {
@@ -57,35 +55,8 @@ function ProductGrid() {
   }, []); // Empty dependency array means this effect runs only once after initial render
 
 
-  // NEW EFFECT: Manage the blood drip animation while loading is true
-  useEffect(() => {
-    if (loading) {
-      const interval = setInterval(() => {
-        setDrops(prevDrops => {
-          const now = Date.now();
-          const newDrops = [
-            ...prevDrops,
-            {
-              id: dropIdCounter.current++,
-              createdAt: now, // Store creation time to filter old drops
-              // Random X position to make it look like a stream
-              left: `${Math.random() * 80 + 10}%`, // 10% to 90% across container
-            }
-          ];
-          // Clean up old drops that have finished animating and are off-screen
-          return newDrops.filter(drop => {
-            return now - drop.createdAt < DROP_DURATION_MS * 2; // Keep for a bit longer than animation duration
-          });
-        });
-      }, NEW_DROP_INTERVAL_MS);
-
-      // Cleanup interval when component unmounts or loading stops
-      return () => clearInterval(interval);
-    } else {
-      // Clear drops once loading is complete
-      setDrops([]);
-    }
-  }, [loading]); // Run this effect when loading state changes
+  // Removed the useEffect that previously managed 'drops' via setInterval
+  // as the blood stream animation is now handled purely by CSS animation-delay and rendering fixed elements.
 
 
   // --- Conditional Rendering for Loading, Error, and No Products States ---
@@ -95,15 +66,21 @@ function ProductGrid() {
       // and add inline styles for positioning the drops
       <div className="product-grid-container" style={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
         <div className="spinner-container"> {/* Apply the spinner container class */}
-          {/* Render the individual blood drops */}
-          {drops.map(drop => (
-            <div
-              key={drop.id}
-              className="blood-stream-drop"
-              // Apply dynamic left and animation duration as inline styles
-              style={{ left: drop.left, animationDuration: `${DROP_DURATION_MS / 1000}s` }}
-            ></div>
-          ))}
+          <div className="blood-stream-animation-wrapper">
+            {/* Render a fixed number of blood stream drip elements */}
+            {Array.from({ length: NUM_BLOOD_STREAMS }).map((_, i) => (
+              <div
+                key={i} // Use index as key here, as these are static instances
+                className="blood-stream-drip"
+                // Apply dynamic left and animation duration as inline styles
+                style={{
+                  left: `${(i / NUM_BLOOD_STREAMS) * 90 + 5}%`, // Distribute horizontally
+                  animation: `bloodStreamDrip ${STREAM_ANIMATION_CYCLE_MS / 1000}s linear infinite`,
+                  animationDelay: `${(STREAM_ANIMATION_CYCLE_MS / NUM_BLOOD_STREAMS / 1000) * i}s`, // Stagger animation start
+                }}
+              ></div>
+            ))}
+          </div>
           {/* Always display loading text on top of drops */}
           <span style={{ position: 'relative', zIndex: 10 }}>Loading products...</span>
         </div>

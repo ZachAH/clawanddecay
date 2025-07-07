@@ -347,41 +347,63 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
   font-style: italic; /* Make them stand out slightly */
 }
 
-/* --- Blood Stream Loader Styles (Replacing the previous single drop) --- */
+/* --- Blood Stream Loader Styles (Replacing the previous individual drops) --- */
 
-/* A single blood drop */
-.blood-stream-drop {
-  position: absolute; /* Position drops absolutely within a relative container */
-  background-color: var(--color-accent-red); /* Your blood color */
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* Initial drop shape */
-  width: 10px; /* Small initial drop width */
-  height: 15px; /* Small initial drop height */
-  opacity: 1;
-  transform-origin: top center;
-  filter: drop-shadow(0 0 3px rgba(229, 0, 0, 0.5)); /* Subtle glow */
-  /* These will be animated by JS and inline styles for dynamic positioning */
+/* Wrapper for the blood stream animation */
+.blood-stream-animation-wrapper {
+  position: absolute; /* Position over the whole page or container */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Cover the full spinner-container area */
+  overflow: hidden; /* Hide drips once they go outside */
+  pointer-events: none; /* Allow clicks/interaction through the drips */
+  z-index: 5; /* Below the loading text */
 }
 
-/* Keyframes for how each drop falls, stretches, and fades */
-@keyframes fallAndDrip {
+/* Individual blood stream element */
+.blood-stream-drip {
+  position: absolute;
+  background-color: var(--color-accent-red); /* Blood color */
+  width: 8px; /* Width of the stream */
+  height: 0px; /* Start with no height, it will grow */
+  opacity: 0;
+  top: -50px; /* Start above the visible area */
+  border-radius: 4px; /* Soft edges */
+  transform-origin: top center;
+  filter: drop-shadow(0 0 5px rgba(229, 0, 0, 0.6)); /* Subtle glow */
+  /* Animation will be applied dynamically with delay */
+}
+
+/* Keyframes for the blood stream effect */
+@keyframes bloodStreamDrip {
   0% {
-    transform: translate(-50%, 0) scaleY(1);
-    opacity: 1;
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  }
-  20% {
-    transform: translate(-50%, 30px) scaleY(1.5); /* Stretch downwards */
-  }
-  50% {
-    transform: translate(-50%, 80px) scaleY(0.7); /* Fall further, start squishing */
-    opacity: 0.8;
-  }
-  80% {
-    transform: translate(-50%, 150px) scaleY(0.1); /* Squish at bottom */
-    opacity: 0.2;
-  }
-  100% {
-    transform: translate(-50%, 200px) scaleY(0.01); /* Disappear below */
+    height: 0px;
+    transform: translateY(0) scaleY(0.1);
     opacity: 0;
+    border-radius: 4px;
+  }
+  10% { /* Start forming */
+    height: 15px;
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+  }
+  50% { /* Drip downwards and stretch */
+    height: 150px; /* Max height of stream */
+    transform: translateY(calc(100vh - 200px)) scaleY(0.8); /* Drip down close to bottom of viewport */
+    opacity: 1;
+    border-radius: 4px;
+  }
+  80% { /* Squish at bottom */
+    height: 20px;
+    transform: translateY(calc(100vh - 100px)) scaleY(0.1); /* Squish down to bottom */
+    opacity: 0.5;
+    border-radius: 50%; /* Make it blob-like */
+  }
+  100% { /* Disappear and reset */
+    height: 0px;
+    transform: translateY(calc(100vh + 50px)) scaleY(0.1); /* Move off-screen bottom */
+    opacity: 0;
+    border-radius: 50%;
   }
 }

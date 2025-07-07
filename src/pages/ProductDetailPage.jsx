@@ -8,10 +8,11 @@ import { useParams } from 'react-router-dom';
 
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image";
 
-// Define how long each drop animation lasts (must match CSS @keyframes fallAndDrip)
-const DROP_DURATION_MS = 1500; // 1.5 seconds per drip
-// Define how frequently new drops appear
-const NEW_DROP_INTERVAL_MS = 200; // New drop every 200ms
+// --- NEW CONSTANTS FOR BLOOD STREAM LOADER ---
+// Number of blood streams/drips to show simultaneously
+const NUM_BLOOD_STREAMS = 5; // Adjust this number for more or fewer streams
+// Total duration of one full cycle for all streams (must match CSS animation-duration)
+const STREAM_ANIMATION_CYCLE_MS = 4000; // 4 seconds for one full cycle
 
 
 function ProductDetailPage() {
@@ -21,9 +22,7 @@ function ProductDetailPage() {
   const [error, setError] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
 
-  // NEW STATE: To manage the individual blood drops for the animation
-  const [drops, setDrops] = useState([]);
-  const dropIdCounter = React.useRef(0); // To give unique IDs to drops
+  // Removed 'drops' state and 'dropIdCounter' ref as they are no longer needed for this stream effect
 
 
   useEffect(() => {
@@ -60,37 +59,8 @@ function ProductDetailPage() {
     }
   }, [productId]);
 
-
-  // NEW EFFECT: Manage the blood drip animation while loading is true
-  useEffect(() => {
-    if (loading) {
-      const interval = setInterval(() => {
-        setDrops(prevDrops => {
-          const now = Date.now();
-          const newDrops = [
-            ...prevDrops,
-            {
-              id: dropIdCounter.current++,
-              createdAt: now, // Store creation time to filter old drops
-              // Random X position to make it look like a stream
-              left: `${Math.random() * 80 + 10}%`, // 10% to 90% across container
-            }
-          ];
-          // Clean up old drops that have finished animating and are off-screen
-          return newDrops.filter(drop => {
-            return now - drop.createdAt < DROP_DURATION_MS * 2; // Keep for a bit longer than animation duration
-          });
-        });
-      }, NEW_DROP_INTERVAL_MS);
-
-      // Cleanup interval when component unmounts or loading stops
-      return () => clearInterval(interval);
-    } else {
-      // Clear drops once loading is complete
-      setDrops([]);
-    }
-  }, [loading]); // Run this effect when loading state changes
-
+  // The useEffect that previously managed 'drops' via setInterval has been removed
+  // as the blood stream animation is now handled purely by CSS animation-delay and rendering fixed elements.
 
   // Function to handle thumbnail clicks, updating the main image
   const handleThumbnailClick = (imageUrl) => {
@@ -102,16 +72,25 @@ function ProductDetailPage() {
   if (loading) {
     return (
       <div className="product-detail-page-container">
-        <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}> {/* Apply relative positioning here for absolute drops */}
-          {/* Render the individual blood drops */}
-          {drops.map(drop => (
-            <div
-              key={drop.id}
-              className="blood-stream-drop"
-              style={{ left: drop.left, animationDuration: `${DROP_DURATION_MS / 1000}s` }} // Apply dynamic left and animation duration
-            ></div>
-          ))}
-          {/* Always display loading text or a fixed element on top of drops */}
+        {/* NEW: Blood stream animation wrapper */}
+        <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}>
+          <div className="blood-stream-animation-wrapper">
+            {/* Render a fixed number of blood stream drip elements */}
+            {Array.from({ length: NUM_BLOOD_STREAMS }).map((_, i) => (
+              <div
+                key={i} // Using index as key is okay here as these are static instances
+                className="blood-stream-drip"
+                style={{
+                  // Distribute streams horizontally across the container
+                  left: `${(i / NUM_BLOOD_STREAMS) * 90 + 5}%`, // 5% to 95%
+                  // Apply CSS animation and stagger their start times
+                  animation: `bloodStreamDrip ${STREAM_ANIMATION_CYCLE_MS / 1000}s linear infinite`,
+                  animationDelay: `${(STREAM_ANIMATION_CYCLE_MS / NUM_BLOOD_STREAMS / 1000) * i}s`,
+                }}
+              ></div>
+            ))}
+          </div>
+          {/* Loading text always on top of the drips */}
           <span style={{ position: 'relative', zIndex: 10 }}>Loading product details...</span>
         </div>
       </div>
@@ -195,8 +174,6 @@ function ProductDetailPage() {
           <p className="product-detail-message">No variants available for this product.</p>
         )}
       </div>
-
-      {/* Future: You can add an "Add to Cart" form, quantity selectors, etc. here */}
     </div>
   );
 }
