@@ -1,5 +1,44 @@
 /* src/App.css */
 
+
+/* --- Base App Layout & General Styles --- */
+body {
+  margin: 0;
+  padding: 0;
+  /* NEW: Full-page background image */
+  background-image: url('./assets/bloodstained-background.jpg'); /* Adjust path to your image! */
+  background-size: cover;      /* Cover the entire viewport */
+  background-position: center;   /* Center the image */
+  background-attachment: fixed;  /* Keep background fixed when scrolling */
+  background-color: #000;      /* Fallback if image doesn't load or for dark base */
+
+  font-family: var(--font-body);
+  color: var(--color-light-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App {
+  /* Ensure .App itself doesn't have a solid background hiding the body image */
+  background-color: transparent; /* Make sure the main app container is transparent */
+}
+
+/* ... (Existing h1, h2, h3... styles) ... */
+
+/* --- Header Styles (Update for Transparency) --- */
+.app-header {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: transparent; /* Make the header's background transparent */
+  box-shadow: none;             /* Optional: Remove shadow to keep it seamless */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* --- Header Styles --- */
 .app-header {
   width: 100%;                  /* Take up full width */
@@ -60,4 +99,23 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* --- Product Card Text Styles --- */
+.product-card-title {
+  font-family: var(--font-heading); /* Apply your custom font */
+  font-size: 1.2em; /* Keep font size */
+  font-weight: bold;
+  margin-bottom: 8px;
+  height: 3em;
+  overflow: hidden;
+  color: var(--color-light-text); /* Ensure good contrast on the card's background */
+}
+
+.product-card-price {
+  font-family: var(--font-heading); /* Apply your custom font to price too */
+  font-size: 1.1em;
+  color: var(--color-accent-red); /* Use your accent red */
+  font-weight: 600;
+  margin-top: auto;
 }
