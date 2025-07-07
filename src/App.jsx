@@ -21,9 +21,9 @@ function App() {
         <header className="app-header">
           <img
             src={headerImage}
-            alt="Claw and Decay Logo"
-            className="header-logo"
-          />
+            alt="Claw and Decay Banner" // Alt text updated to reflect it's a banner
+            className="header-banner-image" // New class for the banner image
+          />        
         </header>
 
         {/* Main content area */}

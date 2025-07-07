@@ -1,30 +1,28 @@
 /* src/App.css */
 
-/* ... (Existing CSS variables and custom font definitions) ... */
-
-/* --- Base App Layout & General Styles --- */
-/* ... (Existing .App, body, h1, h2 styles) ... */
-
-
 /* --- Header Styles --- */
 .app-header {
-  width: 100%;
-  /* Using your suggested dark background color. If you have a background *image*
-     like metallic red bloodstained, you'd add background-image property here. */
-  background-color: var(--color-dark-bg); /* Or a specific dark red: #4A0505 */
-  /* background-image: url('./assets/your-metallic-red-background.jpg'); */ /* <-- Add if you have a background image */
-  /* background-size: cover; */
-  /* background-position: center; */
-
-
-  padding: 60px 20px; /* INCREASED PADDING: Adjust top/bottom padding to make header taller */
-                      /* Current: 30px 20px; Try 60px 20px or even more like 80px 20px */
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5); /* Stronger shadow for more presence */
-  display: flex; /* Enable flexbox for centering content vertically if needed */
-  align-items: center; /* Vertically center content */
-  justify-content: center; /* Horizontally center content */
+  width: 100%;                  /* Take up full width */
+  padding: 0;                   /* REMOVE ALL PADDING around the image */
+  margin: 0;                    /* Ensure no margin pushing it away */
+  background-color: transparent; /* Ensure no background color around the image */
+  box-shadow: none;             /* Remove shadow if you want it to be seamless */
+  overflow: hidden;             /* Important: Hide any overflow if the image is too big/tall */
+  display: flex;                /* Use flexbox to correctly size and center the image */
+  align-items: center;          /* Vertically center the image */
+  justify-content: center;      /* Horizontally center the image */
 }
+
+.header-banner-image { /* New class for the image */
+  width: 100%;      /* Make the image fill 100% of the header's width */
+  height: auto;     /* Maintain aspect ratio based on width */
+                    /* If your image has a fixed height you designed it for (e.g., 300px)
+                       you can set `height: 300px;` here and `object-fit: cover;`
+                       if you want it to crop rather than stretch. */
+  display: block;   /* Remove any extra space below the image */
+  margin: 0;        /* Remove any default margins */
+}
+
 
 .header-logo {
   /* INCREASED MAX-WIDTH: Allow the logo to take up much more horizontal space */
