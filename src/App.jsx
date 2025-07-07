@@ -3,40 +3,42 @@ import React from 'react';
 // Import routing components
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Import your page components (we'll create ProductDetailPage soon)
-import ProductGridPage from './pages/ProductGridPage'; // We'll create this page component
-import ProductDetailPage from './pages/ProductDetailPage'; // We'll create this page component
+// Import your page components
+import ProductGridPage from './pages/ProductGridPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 
-import './App.css';
+import './App.css'; // Your main stylesheet
 
 // Import your header image
-import headerImage from './assets/clawanddecay-header.png';
+import headerImage from './assets/clawanddecay-header.png'; // <-- Adjust this path and filename to your actual image!
 
 
 function App() {
   return (
-    <Router> {/* Wrap your entire app with Router */}
-      {/* The main App div will now get its base styles from App.css via the "App" class */}
+    <Router> {/* Wrap your entire app with Router for client-side routing */}
+      {/* The main App div gets its base styles from App.css via the "App" class */}
       <div className="App">
+        {/* Header section with defined classes for styling in App.css */}
         <header className="app-header">
           <img
-            src={headerImage}
-            alt="Claw and Decay Banner" // Alt text updated to reflect it's a banner
-            className="header-banner-image" // New class for the banner image
+            src={headerImage} // Uses the imported image
+            alt="Claw and Decay Banner" // Important for accessibility
+            className="header-banner-image" // Class for styling the banner image
           />        
         </header>
 
-        {/* Main content area */}
+        {/* Main content area where different pages will render based on the route */}
         <main className="app-main">
-          <Routes> {/* Define your routes here */}
+          <Routes> {/* Defines your application's routes */}
             {/* Route for the homepage (your product grid) */}
             <Route path="/" element={<ProductGridPage />} />
-            {/* Route for individual product detail pages */}
+            {/* Route for individual product detail pages, with a dynamic productId parameter */}
             <Route path="/products/:productId" element={<ProductDetailPage />} />
-            {/* You can add more routes here for About, Contact, Cart, etc. */}
+            {/* Future: You can add more routes here for About, Contact, Cart, etc. */}
           </Routes>
         </main>
 
+        {/* Footer section with defined classes for styling in App.css */}
         <footer className="app-footer">
           <p>&copy; {new Date().getFullYear()} Claw and Decay. All rights reserved.</p>
         </footer>

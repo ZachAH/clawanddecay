@@ -1,80 +1,166 @@
 /* src/App.css */
 
+/* --- Custom Fonts --- */
+@font-face {
+  font-family: 'NIGHTCROW'; /* This name must match exactly what the font file declares */
+  src: url('./assets/fonts/NIGHTCROW.woff2') format('woff2'),
+       url('./assets/fonts/NIGHTCROW.woff') format('woff');
+  font-weight: normal; /* Adjust based on your font's specific weight */
+  font-style: normal;  /* Adjust based on your font's specific style */
+  font-display: swap;  /* Recommended for performance */
+}
+
+/* Fallback/Body Font - Import from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+
+/* --- Global CSS Variables (Colors & Fonts) --- */
+:root {
+  /* Colors */
+  --color-dark-bg: #1A1A1A;             /* Deep almost black background */
+  --color-light-text: #FFFFFF;          /* Pure white text */
+  --color-accent-red: #E50000;          /* Vibrant red for highlights, buttons */
+  --color-detail-grey: #C0C0C0;         /* Muted silver/light grey for subtle elements */
+  --color-card-bg: #3A3A3A;             /* Darker background for product cards */
+  --color-detail-page-bg: #282828;      /* Slightly lighter dark background for detail page container */
+  --color-variant-bg: #3A3A3A;          /* Background for individual variant items */
+}
 
 /* --- Base App Layout & General Styles --- */
-body {
+html, body {
   margin: 0;
   padding: 0;
-  /* NEW: Full-page background image */
-  background-image: url('./assets/bloodstained-background.jpg'); /* Adjust path to your image! */
-  background-size: cover;      /* Cover the entire viewport */
-  background-position: center;   /* Center the image */
-  background-attachment: fixed;  /* Keep background fixed when scrolling */
-  background-color: #000;      /* Fallback if image doesn't load or for dark base */
+  height: 100%; /* Ensures body takes full height for background */
+  overflow-x: hidden; /* Prevent horizontal scroll from minor layout shifts */
+}
 
+body {
   font-family: var(--font-body);
-  color: var(--color-light-text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background-image: url('./assets/bloodstained-background.jpg'); /* Adjust path to your image! */
+  background-size: cover;          /* Cover the entire viewport */
+  background-position: center;     /* Center the image */
+  background-attachment: fixed;    /* Keep background fixed when scrolling */
+  background-color: var(--color-dark-bg); /* Fallback/base if image doesn't load */
+  color: var(--color-light-text);  /* Main text color */
 }
 
 .App {
-  /* Ensure .App itself doesn't have a solid background hiding the body image */
-  background-color: transparent; /* Make sure the main app container is transparent */
+  min-height: 100vh;               /* Ensure app content stretches */
+  display: flex;                   /* Enable flexbox for vertical layout */
+  flex-direction: column;          /* Stack header, main, footer vertically */
+  background-color: transparent;   /* Ensure .App itself doesn't hide the body background */
 }
 
-/* ... (Existing h1, h2, h3... styles) ... */
+/* Ensure headings use your custom font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--color-light-text); /* Headings should be white */
+  text-align: center;             /* Default center alignment */
+}
+h1 { font-size: 2.5em; margin: 0; } /* Header title size */
+h2 { font-size: 2em; margin: 40px 0 20px; } /* "Our Products" heading */
+h3 { font-size: 1.5em; } /* Default for smaller headings */
 
-/* --- Header Styles (Update for Transparency) --- */
+
+/* --- Header Styles --- */
 .app-header {
   width: 100%;
   padding: 0;
   margin: 0;
-  background-color: transparent; /* Make the header's background transparent */
-  box-shadow: none;             /* Optional: Remove shadow to keep it seamless */
+  background-color: transparent; /* No background color, let body image show */
+  box-shadow: none;             /* No shadow for seamless look */
   overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;          /* Vertically center content */
+  justify-content: center;      /* Horizontally center content */
 }
 
-/* --- Header Styles --- */
-.app-header {
-  width: 100%;                  /* Take up full width */
-  padding: 0;                   /* REMOVE ALL PADDING around the image */
-  margin: 0;                    /* Ensure no margin pushing it away */
-  background-color: transparent; /* Ensure no background color around the image */
-  box-shadow: none;             /* Remove shadow if you want it to be seamless */
-  overflow: hidden;             /* Important: Hide any overflow if the image is too big/tall */
-  display: flex;                /* Use flexbox to correctly size and center the image */
-  align-items: center;          /* Vertically center the image */
-  justify-content: center;      /* Horizontally center the image */
-}
-
-.header-banner-image { /* New class for the image */
+.header-banner-image {
   width: 100%;      /* Make the image fill 100% of the header's width */
-  height: auto;     /* Maintain aspect ratio based on width */
-                    /* If your image has a fixed height you designed it for (e.g., 300px)
-                       you can set `height: 300px;` here and `object-fit: cover;`
-                       if you want it to crop rather than stretch. */
-  display: block;   /* Remove any extra space below the image */
+  height: auto;     /* Maintain aspect ratio */
+  display: block;   /* Remove extra space below image */
   margin: 0;        /* Remove any default margins */
 }
 
-
-.header-logo {
-  /* INCREASED MAX-WIDTH: Allow the logo to take up much more horizontal space */
-  max-width: 80%; /* Try 80% of the header's width. Adjust as needed. */
-                  /* Or a fixed pixel value like: max-width: 1000px; */
-
-  width: 100%;      /* Always take full available width up to max-width */
-  height: auto;     /* Maintain aspect ratio */
-  display: block;   /* Ensure it behaves like a block element */
-  margin: 0 auto;   /* Center the image within the header */
+/* --- Main Content Styles --- */
+.app-main {
+  flex-grow: 1; /* Allows main content to expand and push footer to the bottom */
+  padding: 20px;
 }
 
-/* --- Loading Spinner Styles (for Product Detail Page) --- */
+/* --- Footer Styles --- */
+.app-footer {
+  background-color: var(--color-dark-bg); /* Use your defined dark background color */
+  color: var(--color-light-text);
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.2); /* Subtle shadow above footer */
+}
+
+
+/* --- Product Grid Container Styles (Moved from ProductGrid.jsx) --- */
+.product-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+  gap: 20px;
+  padding: 20px;
+  justify-items: center; /* Center items horizontally in the grid cells */
+  max-width: 1200px;     /* Max width for the grid */
+  margin: 0 auto;        /* Center the grid container itself */
+}
+
+
+/* --- Product Card Styles (Moved from ProductCard.jsx) --- */
+.product-card-link { /* The <Link> wrapper */
+  text-decoration: none;
+  color: inherit; /* Inherit text color from parent */
+}
+
+.product-card {
+  border: 1px solid var(--color-detail-grey); /* Using CSS variable */
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px;
+  text-align: center;
+  max-width: 300px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--color-card-bg); /* Darker background for the card */
+  color: var(--color-light-text); /* Light text on dark card */
+  transition: transform 0.2s ease-in-out; /* Smooth transition */
+  cursor: pointer;
+}
+
+.product-card-image {
+  width: 100%;
+  height: 200px; /* Fixed height for consistency */
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.product-card-title {
+  font-family: var(--font-heading); /* Apply your custom font */
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 8px;
+  height: 3em;     /* Consistent height for titles */
+  overflow: hidden; /* Hide overflow if title is too long */
+  color: var(--color-light-text); /* Ensure good contrast on the card's background */
+}
+
+.product-card-price {
+  font-family: var(--font-heading); /* Apply your custom font to price too */
+  font-size: 1.1em;
+  color: var(--color-accent-red); /* Use your accent red */
+  font-weight: 600;
+  margin-top: auto;
+}
+
+
+/* --- Loading Spinner Styles (for Product Detail Page & Product Grid) --- */
 .spinner-container {
   display: flex;
   flex-direction: column; /* Stack spinner and text vertically */
@@ -84,6 +170,7 @@ body {
   color: var(--color-light-text); /* Use your light text color */
   font-size: 1.2em;
   text-align: center;
+  width: 100%; /* Ensure it takes available width in its container */
 }
 
 .spinner {
@@ -101,21 +188,101 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* --- Product Card Text Styles --- */
-.product-card-title {
-  font-family: var(--font-heading); /* Apply your custom font */
-  font-size: 1.2em; /* Keep font size */
-  font-weight: bold;
-  margin-bottom: 8px;
-  height: 3em;
-  overflow: hidden;
-  color: var(--color-light-text); /* Ensure good contrast on the card's background */
+
+/* --- Product Detail Page Styles (Moved from ProductDetailPage.jsx) --- */
+.product-detail-page-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 40px auto;
+  background-color: var(--color-detail-page-bg); /* Dark background for the detail card */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  color: var(--color-light-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.product-card-price {
-  font-family: var(--font-heading); /* Apply your custom font to price too */
+.product-detail-image-container {
+  width: 100%;
+  max-width: 550px; /* Main image max width */
+  margin-bottom: 15px;
+  background-color: var(--color-dark-bg); /* Background for image area */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.product-detail-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.product-detail-title { /* Added for h1 in ProductDetailPage */
+  font-size: 2.5em;
+  color: var(--color-accent-red);
+  margin-bottom: 10px;
+  font-family: var(--font-heading);
+  text-align: center;
+  word-break: break-word;
+}
+
+.product-detail-description {
   font-size: 1.1em;
-  color: var(--color-accent-red); /* Use your accent red */
-  font-weight: 600;
-  margin-top: auto;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: var(--color-detail-grey);
+  text-align: left;
+}
+
+.product-detail-variants-container {
+  width: 100%;
+  margin-top: 20px;
+  border-top: 1px solid var(--color-detail-grey);
+  padding-top: 20px;
+}
+
+.product-detail-variant-item {
+  background-color: var(--color-variant-bg); /* Use a variable for variant background */
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-detail-variant-price {
+  font-weight: bold;
+  color: var(--color-accent-red);
+  font-size: 1.1em;
+}
+
+.thumbnail-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.thumbnail-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.2s ease-in-out;
+}
+
+.thumbnail-image.active {
+  border-color: var(--color-accent-red);
+}
+
+/* Styles for "No enabled variants found" and "No variants available" messages */
+.product-detail-message {
+  color: var(--color-detail-grey);
+  text-align: center; /* Center these messages */
+  font-style: italic; /* Make them stand out slightly */
 }
