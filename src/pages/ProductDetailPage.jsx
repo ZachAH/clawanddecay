@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-// Basic inline styles (consider moving to CSS classes in App.css later)
+// Basic inline styles (consider moving these to CSS classes in App.css later for better maintainability)
 const detailPageStyle = {
   padding: '20px',
   maxWidth: '900px',
   margin: '40px auto',
-  backgroundColor: '#282828',
+  backgroundColor: '#282828', /* Dark background for the detail card */
   borderRadius: '8px',
   boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
   color: 'var(--color-light-text)',
@@ -101,11 +101,12 @@ function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentImage, setCurrentImage] = useState(null); // New state for current main image
+  const [currentImage, setCurrentImage] = useState(null); // State for the currently displayed main image
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        // Call your Netlify Function, passing the product ID as a query parameter
         const response = await fetch(`/.netlify/functions/get-product-by-id?id=${productId}`);
 
         if (!response.ok) {
@@ -130,21 +131,29 @@ function ProductDetailPage() {
       }
     };
 
-    if (productId) {
+    if (productId) { // Only fetch if we have a product ID from the URL
       fetchProduct();
     } else {
       setLoading(false);
       setError("No product ID provided.");
     }
-  }, [productId]); // Depend on productId to re-fetch if URL changes
+  }, [productId]); // Re-fetch if productId from URL changes
 
-  // Function to handle thumbnail clicks
+  // Function to handle thumbnail clicks, updating the main image
   const handleThumbnailClick = (imageUrl) => {
     setCurrentImage(imageUrl);
   };
 
+  // --- Conditional Rendering for Loading, Error, and Not Found States ---
   if (loading) {
-    return <div style={detailPageStyle}>Loading product details...</div>;
+    return (
+      <div style={detailPageStyle}> {/* Use the same container style */}
+        <div className="spinner-container"> {/* Apply the spinner container class (from App.css) */}
+          <div className="spinner"></div> {/* The actual spinner (from App.css) */}
+          <span>Loading product details...</span> {/* Your loading text */}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -155,47 +164,52 @@ function ProductDetailPage() {
     return <div style={detailPageStyle}>Product not found.</div>;
   }
 
+  // --- Main Product Detail Page Content (when product data is loaded) ---
   return (
     <div style={detailPageStyle}>
       <h1 style={titleStyle}>{product.title}</h1>
 
-      {/* Main Product Image */}
+      {/* Main Product Image Display */}
       <div style={productDetailImageContainerStyle}>
         <img
-          src={currentImage || FALLBACK_IMAGE_URL}
+          src={currentImage || FALLBACK_IMAGE_URL} // Display current image or fallback
           alt={product.title}
           style={productDetailImageStyle}
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = FALLBACK_IMAGE_URL;
+          onError={(e) => { // Handle cases where image fails to load (e.g., broken link)
+            e.target.onerror = null; // Prevent infinite loop on error
+            e.target.src = FALLBACK_IMAGE_URL; // Set fallback image on error
           }}
         />
       </div>
 
-      {/* Thumbnail Gallery */}
-      {product.images && product.images.length > 1 && ( // Only show if more than one image
+      {/* Thumbnail Gallery (only show if product has more than one image) */}
+      {product.images && product.images.length > 1 && (
         <div style={thumbnailContainerStyle}>
           {product.images.map((image, index) => (
             <img
-              key={index} // Using index as key is okay if images array doesn't change order/items
+              key={image.src || index} // Use image.src as key if unique, otherwise index
               src={image.src || FALLBACK_IMAGE_URL}
               alt={`${product.title} view ${index + 1}`}
               style={{
                 ...thumbnailStyle, // Apply base thumbnail style
-                ...(image.src === currentImage ? activeThumbnailStyle : {}), // Apply active style if current
+                ...(image.src === currentImage ? activeThumbnailStyle : {}), // Apply active style if this is the current image
               }}
-              onClick={() => handleThumbnailClick(image.src)}
+              onClick={() => handleThumbnailClick(image.src)} // Set main image on click
               onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE_URL; }}
             />
           ))}
         </div>
       )}
 
-      <p style={descriptionStyle} dangerouslySetInnerHTML={{ __html: product.description }}></p>
+      {/* Product Description */}
+      {/* dangerouslySetInnerHTML is used because Printify descriptions can contain HTML */}
+      {product.description && <p style={descriptionStyle} dangerouslySetInnerHTML={{ __html: product.description }}></p>}
 
+      {/* Available Variants Section */}
       <div style={variantsContainerStyle}>
         <h3>Available Variants:</h3>
         {product.variants && product.variants.length > 0 ? (
+          // Filter variants to show only enabled ones
           product.variants.filter(variant => variant.is_enabled).length > 0 ? (
             product.variants
               .filter(variant => variant.is_enabled)
@@ -203,18 +217,20 @@ function ProductDetailPage() {
                 <div key={variant.id} style={variantStyle}>
                   <span>{variant.title}</span>
                   <span style={variantPriceStyle}>${(variant.price / 100).toFixed(2)}</span>
-                  {/* You'd add an "Add to Cart" button here later */}
+                  {/* Future: Add "Add to Cart" button here for each variant */}
                 </div>
               ))
           ) : (
+            // Message if no enabled variants are found after filtering
             <p style={{ color: 'var(--color-detail-grey)' }}>No enabled variants found for this product.</p>
           )
         ) : (
+          // Message if no variants at all (or variants array is empty)
           <p style={{ color: 'var(--color-detail-grey)' }}>No variants available for this product.</p>
         )}
       </div>
 
-      {/* You can add a "Add to Cart" form here later */}
+      {/* Future: You can add an "Add to Cart" form, quantity selectors, etc. here */}
     </div>
   );
 }
