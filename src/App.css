@@ -96,6 +96,62 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
   margin: 0;        /* Remove any default margins */
 }
 
+/* --- Navbar Styles --- */
+.main-navbar {
+  width: 100%;
+  padding: 10px 0;
+  margin-top: 15px; /* Space between logo and navbar */
+}
+
+.navbar-list {
+  list-style: none; /* Remove bullet points */
+  margin: 0;
+  padding: 0;
+  display: flex; /* Use flexbox to align items horizontally */
+  justify-content: center; /* Center the navigation links */
+  gap: 30px; /* Space between links */
+}
+
+.navbar-item {
+  /* Individual list item styles if needed */
+}
+
+.navbar-link {
+  font-family: var(--font-heading); /* Use your death metal font */
+  font-size: 1.1em;
+  color: var(--color-light-text); /* White text */
+  text-decoration: none; /* Remove underline */
+  padding: 5px 10px;
+  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  display: block; /* Make the whole area clickable */
+}
+
+.navbar-link:hover {
+  color: var(--color-accent-red); /* Red on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* General style for main content pages (Contact Us, Our Story) */
+.app-main-content {
+  padding: 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: var(--color-detail-page-bg); /* Use the same dark background as product detail */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  color: var(--color-light-text);
+}
+.app-main-content h2 { /* Ensure headings inside these pages also use your custom font */
+  font-family: var(--font-heading);
+  color: var(--color-accent-red); /* A bit more vibrant for page titles */
+  text-align: center;
+  margin-top: 0; /* Adjust as needed */
+}
+.app-main-content p {
+    text-align: left;
+    color: var(--color-detail-grey);
+}
+
 
 /* --- Main Content Area Styles --- */
 .app-main {
