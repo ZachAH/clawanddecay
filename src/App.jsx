@@ -16,7 +16,7 @@ import desktopHeaderImage from './assets/clawanddecay-header.png'; // Your curre
 import mobileHeaderImage from './assets/clawanddecay-header-mobile.png'; // Your new mobile-optimized header image
 
 // Import Navbar component
-import Navbar from './components/Navbar'; // Corrected casing to 'Navbar' if your file is 'Navbar.jsx'
+import Navbar from './components/navbar'; // Corrected casing to 'Navbar' if your file is 'Navbar.jsx'
 
 
 function App() {
