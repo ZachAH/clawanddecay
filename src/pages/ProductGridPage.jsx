@@ -5,7 +5,7 @@ import ProductGrid from '../components/ProductGrid'; // Import your ProductGrid 
 function ProductGridPage() {
   return (
     <div>
-      <h2>Our Products</h2>
+      <h2>SICK MERCH</h2>
       <ProductGrid />
     </div>
   );
