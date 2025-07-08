@@ -1,7 +1,6 @@
 /* src/App.css */
 
 /* --- Custom Fonts --- */
-/* This is where your browser learns to find and load your NIGHTCROW font files */
 @font-face {
   font-family: 'NIGHTCROW'; /* This name MUST EXACTLY match what you use in --font-heading */
   src: url('./assets/fonts/NIGHTCROW.woff2') format('woff2'),
@@ -12,7 +11,6 @@
 }
 
 /* Fallback/Body Font - Import from Google Fonts */
-/* This ensures Roboto is available for your --font-body */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 
@@ -22,14 +20,11 @@
   --color-dark-bg: #1A1A1A;             /* Deep almost black background */
   --color-light-text: #FFFFFF;          /* Pure white text */
   --color-accent-red: #E50000;          /* Vibrant red for highlights, buttons, prices */
-  --color-detail-grey: #FCEFEF;     /* Muted silver/light grey for subtle elements, borders */
+  --color-detail-grey: #FCEFEF;     /* Muted silver/light grey for subtle elements, borders (YOUR CHOICE) */
   --color-card-bg: #3A3A3A;             /* Darker background for product cards */
   --color-detail-page-bg: #282828;      /* Slightly lighter dark background for detail page container */
   --color-variant-bg: #3A3A3A;          /* Background for individual variant items on detail page */
-}
 
-/* --- Global Font Variable Definition --- */
-:root {
   /* Fonts - Use these variables for all font applications */
   --font-heading: 'NIGHTCROW', sans-serif; /* Your custom death metal font for headings */
   --font-body: 'Roboto', sans-serif;     /* A clean, readable font for body text */
@@ -48,7 +43,7 @@ body {
   font-family: var(--font-body); /* Apply the body font globally */
   background-image: url('./assets/bloodstained-background.jpg'); /* Your awesome background image */
   background-size: cover;          /* Make the background image cover the entire viewport */
-  background-position: center;     /* Center the background image */
+  background-position: center;     /* Center the image */
   background-attachment: fixed;    /* Keep background fixed when scrolling */
   background-color: var(--color-dark-bg); /* Fallback background color if image doesn't load */
   color: var(--color-light-text);  /* Global text color for good contrast */
@@ -77,6 +72,7 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
 
 
 /* --- Header (Banner) Styles --- */
+/* CONSOLIDATED AND CORRECTED HEADER STYLES */
 .app-header {
   width: 100%;
   padding: 0; /* No padding around the banner image */
@@ -92,24 +88,29 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
 .header-banner-image {
   width: 100%;      /* Make the image fill 100% of the header's width */
   height: auto;     /* Maintain aspect ratio */
-  display: block;   /* Remove extra space below image */
+  display: block;   /* Remove any extra space below image */
   margin: 0;        /* Remove any default margins */
+  max-width: 1200px; /* IMPORTANT: Added back max-width to prevent stretching too wide on large screens */
 }
+
 
 /* --- Navbar Styles --- */
 .main-navbar {
   width: 100%;
   padding: 10px 0;
   margin-top: 15px; /* Space between logo and navbar */
+  /* background-color: transparent; Keeping transparent as per your choice */
+  /* box-shadow: none; Keeping no shadow as per your choice */
 }
 
 .navbar-list {
-  list-style: none; /* Remove bullet points */
+  list-style: none;
   margin: 0;
   padding: 0;
-  display: flex; /* Use flexbox to align items horizontally */
-  justify-content: center; /* Center the navigation links */
-  gap: 30px; /* Space between links */
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap; /* Allows links to wrap on smaller screens */
 }
 
 .navbar-item {
@@ -117,18 +118,18 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
 }
 
 .navbar-link {
-  font-family: var(--font-heading); /* Use your death metal font */
+  font-family: var(--font-heading);
   font-size: 1.1em;
-  color: var(--color-light-text); /* White text */
-  text-decoration: none; /* Remove underline */
+  color: var(--color-light-text);
+  text-decoration: none;
   padding: 5px 10px;
   transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
-  display: block; /* Make the whole area clickable */
+  display: block;
 }
 
 .navbar-link:hover {
-  color: var(--color-accent-red); /* Red on hover */
-  transform: translateY(-2px); /* Slight lift on hover */
+  color: var(--color-accent-red);
+  transform: translateY(-2px);
 }
 
 /* General style for main content pages (Contact Us, Our Story) */
@@ -136,16 +137,16 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
   padding: 20px;
   max-width: 800px;
   margin: 40px auto;
-  background-color: var(--color-detail-page-bg); /* Use the same dark background as product detail */
+  background-color: var(--color-detail-page-bg);
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.5);
   color: var(--color-light-text);
 }
-.app-main-content h2 { /* Ensure headings inside these pages also use your custom font */
+.app-main-content h2 {
   font-family: var(--font-heading);
-  color: var(--color-accent-red); /* A bit more vibrant for page titles */
+  color: var(--color-accent-red);
   text-align: center;
-  margin-top: 0; /* Adjust as needed */
+  margin-top: 0;
 }
 .app-main-content p {
     text-align: left;
@@ -155,18 +156,18 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
 
 /* --- Main Content Area Styles --- */
 .app-main {
-  flex-grow: 1; /* Allows main content to expand and push footer to the bottom */
+  flex-grow: 1;
   padding: 20px;
 }
 
 
 /* --- Footer Styles --- */
 .app-footer {
-  background-color: var(--color-dark-bg); /* Dark background for footer */
+  background-color: var(--color-dark-bg);
   color: var(--color-light-text);
   text-align: center;
   padding: 20px;
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.2); /* Subtle shadow above footer */
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
 }
 
 
@@ -183,13 +184,13 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
 
 
 /* --- Product Card Styles (Individual Cards on the Grid) --- */
-.product-card-link { /* The <Link> wrapper around each card */
-  text-decoration: none; /* Remove underline */
-  color: inherit;        /* Inherit text color from parent (product-card) */
+.product-card-link {
+  text-decoration: none;
+  color: inherit;
 }
 
 .product-card {
-  border-radius: 8px;
+  border-radius: 8px; /* Border removed as per your request */
   padding: 16px;
   margin: 8px; /* Margin around cards */
   text-align: center;
@@ -198,20 +199,20 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
   flex-direction: column;
   justify-content: space-between;
   color: var(--color-light-text); /* Light text on dark card */
-  transition: transform 0.2s ease-in-out; /* Smooth transition for interaction */
-  cursor: pointer; /* Indicate clickable */
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .product-card-image {
   width: 100%;
-  height: 200px; /* Fixed height for consistency */
-  object-fit: cover; /* Cover the area, cropping if needed */
+  height: 200px;
+  object-fit: cover;
   border-radius: 4px;
   margin-bottom: 12px;
 }
 
 .product-card-title {
-  font-family: var(--font-heading); /* Apply your custom NIGHTCROW font */
+  font-family: var(--font-heading);
   font-size: 1.2em;
   font-weight: bold;
   margin-bottom: 8px;
@@ -221,9 +222,9 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
 }
 
 .product-card-price {
-  font-family: var(--font-heading); /* Apply your custom NIGHTCROW font to price too */
+  font-family: var(--font-heading);
   font-size: 1.1em;
-  color: var(--color-accent-red); /* Use your accent red */
+  color: var(--color-accent-red);
   font-weight: 600;
   margin-top: auto; /* Push price to bottom */
 }
@@ -257,152 +258,10 @@ h3 { font-size: 1.5em; } /* Default for smaller headings */
   100% { transform: rotate(360deg); }
 }
 
-/* --- Blood Drip Loader Styles (If you decided to use this complex one) --- */
-/* If you want to use the blood drip loader, ensure this section is correct
-   and that you're using "blood-drip-loader" class in your JS, not "spinner" */
-/*
-.blood-drip-loader {
-  position: relative;
-  width: 30px;
-  height: 40px;
-  background-color: var(--color-accent-red);
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  animation: drip 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-  transform-origin: top center;
-  filter: drop-shadow(0 0 5px rgba(229, 0, 0, 0.5));
-}
-.blood-drip-loader::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%) scaleX(0.1);
-  width: 60px;
-  height: 5px;
-  background-color: var(--color-accent-red);
-  border-radius: 50%;
-  opacity: 0;
-  animation: splatter 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-  filter: drop-shadow(0 0 5px rgba(229, 0, 0, 0.5));
-}
-@keyframes drip {
-  0% { transform: translateY(0) scaleY(1); opacity: 1; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
-  25% { transform: translateY(50px) scaleY(1.2); opacity: 1; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
-  50% { transform: translateY(100px) scaleY(0.5); opacity: 0.8; border-radius: 50%; }
-  51% { transform: translateY(-20px) scaleY(0.1); opacity: 0; }
-  100% { transform: translateY(0) scaleY(1); opacity: 1; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
-}
-@keyframes splatter {
-  0% { transform: translateX(-50%) scaleX(0.1); opacity: 0; }
-  49% { transform: translateX(-50%) scaleX(0.1); opacity: 0; }
-  50% { transform: translateX(-50%) scaleX(1); opacity: 1; }
-  75% { transform: translateX(-50%) scaleX(0.5); opacity: 0; }
-  100% { transform: translateX(-50%) scaleX(0.1); opacity: 0; }
-}
-*/
+/* --- Blood Stream Loader Styles (If you decided to use this complex one) --- */
+/* This section should be uncommented and used if you are using the blood stream loader.
+   Ensure your JS components use "blood-stream-animation-wrapper" and "blood-stream-drip" classes. */
 
-
-/* --- Product Detail Page Styles --- */
-.product-detail-page-container {
-  padding: 20px;
-  max-width: 900px;
-  margin: 40px auto;
-  background-color: var(--color-detail-page-bg); /* Dark background for the detail card */
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-  color: var(--color-light-text);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.product-detail-image-container {
-  width: 100%;
-  max-width: 550px; /* Main image max width */
-  margin-bottom: 15px;
-  background-color: var(--color-dark-bg); /* Background for image area */
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.product-detail-image {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.product-detail-title { /* For h1 in ProductDetailPage */
-  font-size: 2.5em;
-  color: var(--color-accent-red);
-  margin-bottom: 10px;
-  font-family: var(--font-heading);
-  text-align: center;
-  word-break: break-word;
-}
-
-.product-detail-description {
-  font-size: 1.1em;
-  line-height: 1.6;
-  margin-bottom: 20px;
-  color: var(--color-detail-grey);
-  text-align: left;
-}
-
-.product-detail-variants-container {
-  width: 100%;
-  margin-top: 20px;
-  border-top: 1px solid var(--color-detail-grey);
-  padding-top: 20px;
-}
-
-.product-detail-variant-item {
-  background-color: var(--color-variant-bg); /* Use a variable for variant background */
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.product-detail-variant-price {
-  font-weight: bold;
-  color: var(--color-accent-red);
-  font-size: 1.1em;
-}
-
-.thumbnail-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.thumbnail-image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border 0.2s ease-in-out;
-}
-
-.thumbnail-image.active {
-  border-color: var(--color-accent-red);
-}
-
-/* Styles for "No enabled variants found" and "No variants available" messages */
-.product-detail-message {
-  color: var(--color-detail-grey);
-  text-align: center; /* Center these messages */
-  font-style: italic; /* Make them stand out slightly */
-}
-
-/* --- Blood Stream Loader Styles (Replacing the previous individual drops) --- */
-
-/* Wrapper for the blood stream animation */
 .blood-stream-animation-wrapper {
   position: absolute; /* Position over the whole page or container */
   top: 0;
