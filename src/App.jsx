@@ -6,42 +6,54 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Import your page components
 import ProductGridPage from './pages/ProductGridPage';
 import ProductDetailPage from './pages/ProductDetailPage';
-import ContactUsPage from './pages/ContactUsPage'; // We'll create this
-import OurStoryPage from './pages/OurStoryPage';   // We'll create this
+import ContactUsPage from './pages/ContactUsPage';
+import OurStoryPage from './pages/OurStoryPage';
 
 import './App.css'; // Your main stylesheet
 
-// Import your header image
-import headerImage from './assets/clawanddecay-header.png'; // <-- Adjust this path and filename to your actual image!
+// --- IMPORT BOTH DESKTOP AND MOBILE HEADER IMAGES ---
+import desktopHeaderImage from './assets/clawanddecay-header.png'; // Your current wider desktop header image
+import mobileHeaderImage from './assets/clawanddecay-header-mobile.png'; // Your new mobile-optimized header image
 
 // Import Navbar component
-import Navbar from './components/navbar';
+import Navbar from './components/Navbar'; // Corrected casing to 'Navbar' if your file is 'Navbar.jsx'
 
 
 function App() {
   return (
-    <Router> {/* Wrap your entire app with Router for client-side routing */}
-      {/* The main App div gets its base styles from App.css via the "App" class */}
+    <Router>
       <div className="App">
         {/* Header section with defined classes for styling in App.css */}
         <header className="app-header">
-          <img
-            src={headerImage} // Uses the imported image
-            alt="Claw and Decay Banner" // Important for accessibility
-            className="header-banner-image" // Class for styling the banner image
-          />
+          {/* --- DESKTOP HEADER CONTENT (hidden on mobile) --- */}
+          <div className="desktop-header-content">
+            <img
+              src={desktopHeaderImage} // Uses the imported desktop image
+              alt="Claw and Decay Desktop Banner"
+              className="header-banner-image" // Class for styling the desktop banner image
+            />
+          </div>
+
+          {/* --- MOBILE HEADER CONTENT (hidden on desktop) --- */}
+          <div className="mobile-header-content">
+            <img
+              src={mobileHeaderImage} // Uses the imported mobile image
+              alt="Claw and Decay Mobile Banner"
+              className="header-banner-mobile-image" // NEW class for mobile image styling
+            />
+          </div>
+          
+          {/* --- NAVBAR NESTED INSIDE THE HEADER --- */}
+          <Navbar /> {/* The Navbar component, its styling will adapt via CSS */}
         </header>
-        <Navbar />
+
         {/* Main content area where different pages will render based on the route */}
         <main className="app-main">
-          <Routes> {/* Defines your application's routes */}
-            {/* Route for the homepage (your product grid) */}
+          <Routes>
             <Route path="/" element={<ProductGridPage />} />
-            {/* Route for individual product detail pages, with a dynamic productId parameter */}
             <Route path="/products/:productId" element={<ProductDetailPage />} />
-            {/* Future: You can add more routes here for About, Contact, Cart, etc. */}
-            <Route path="/contact-us" element={<ContactUsPage />} /> {/* New route */}
-            <Route path="/our-story" element={<OurStoryPage />} />     {/* New route */}
+            <Route path="/contact-us" element={<ContactUsPage />} />
+            <Route path="/our-story" element={<OurStoryPage />} />
           </Routes>
         </main>
 
