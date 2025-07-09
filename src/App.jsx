@@ -8,6 +8,7 @@ import ProductGridPage from './pages/ProductGridPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ContactUsPage from './pages/ContactUsPage';
 import OurStoryPage from './pages/OurStoryPage';
+import FaqPage from './pages/faqPage';
 
 import './App.css'; // Your main stylesheet
 
@@ -54,6 +55,7 @@ function App() {
             <Route path="/products/:productId" element={<ProductDetailPage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
             <Route path="/our-story" element={<OurStoryPage />} />
+            <Route path="/faq-page" element={<FaqPage />} />
           </Routes>
         </main>
 

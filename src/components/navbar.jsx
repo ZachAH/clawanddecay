@@ -15,6 +15,9 @@ function Navbar() {
         <li className="navbar-item">
           <Link to="/our-story" className="navbar-link">Our Story</Link> {/* Link to Our Story page */}
         </li>
+        <li className="navbar-item">
+          <Link to="/faq-page" className="navbar-link">FAQ</Link> {/* Link to Our Story page */}
+        </li>
         {/* Future: Add a link for the shopping cart here */}
       </ul>
     </nav>
