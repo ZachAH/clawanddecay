@@ -2,9 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import tshirtIcon from '../assets/icons/tshirt-icon.svg';
-
-
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image";
 
 const NUM_BLOOD_STREAMS = 20;
@@ -118,7 +115,7 @@ function ProductDetailPage() {
           <div className="tee-description-anim">
             <h2>COMFORT COLORS 1717</h2>
             <p>
-            We print exclusively on these tees, widely regarded as the GOAT of T-shirt materials. Celebrated for their durable, high-quality fabric and rich, vintage-inspired colors. Soft, breathable, and built to last.            </p>
+We print exclusively on these tees, widely regarded as the GOAT of T-shirt materials. Celebrated for their durable, high-quality fabric and rich, vintage-inspired colors. Soft, breathable, and built to last.            </p>
           </div>
         )}
       </div>
