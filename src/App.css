@@ -440,6 +440,64 @@ h3 { font-size: 1.5em; }
   font-style: italic; /* Make them stand out slightly */
 }
 
+/* Make tag-selector container match navbar-list layout */
+.tag-selector {
+  max-width: 1200px;         /* Match your navbar max-width */
+  margin: 0 auto;            /* Center horizontally */
+  padding: 10px 0;           /* Vertical spacing */
+  
+  display: flex;             /* Use flexbox for horizontal layout */
+  justify-content: center;   /* Center the buttons */
+  gap: 30px;                 /* Same gap as navbar-list */
+  flex-wrap: wrap;           /* Allow wrapping on smaller screens */
+  box-sizing: border-box;    /* Include padding in width */
+}
+
+/* Ensure buttons have consistent height, padding, and alignment */
+.tag-selector button {
+  height: 40px;              /* Fix button height to align vertically */
+  display: flex;
+  align-items: center;       /* Vertically center text */
+  justify-content: center;   /* Horizontally center text */
+  padding: 0 24px;           /* Adjust horizontal padding */
+  box-sizing: border-box;
+  
+  /* Keep your existing styles */
+  font-family: var(--font-heading);
+  font-size: 1em;
+  border-radius: 0;
+  border: none;
+  color: #D4AF37;
+  background-color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-shadow: 0 0 2px #000;
+  backdrop-filter: blur(4px);
+
+  background-image: url('./assets/grunge-border.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  transition: all 0.2s ease-in-out;
+}
+
+.tag-selector button:hover {
+  background-color: #D4AF37;
+  color: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.tag-selector button.active {
+  background-color: #D4AF37;
+  color: #000;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+}
+
+
+
 /* --- Media Queries for Responsive Header Banners --- */
 @media (min-width: 768px) {
   .desktop-header-content {
@@ -474,3 +532,109 @@ h3 { font-size: 1.5em; }
     padding: 15px;
   }
 }
+
+.product-detail-image-and-description {
+  position: relative;
+  display: flex;
+  align-items: flex-start; /* Align description top with image */
+  gap: 20px; /* Space between image and description */
+  margin-bottom: 30px;
+}
+
+/* Description box styling */
+.tee-description-anim {
+  background-color: rgba(0, 0, 0, 0.85);
+  border: 2px solid #D4AF37;
+  color: #FFF;
+  font-family: var(--font-body);
+  font-size: 1em;
+  max-width: 350px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px #D4AF37;
+  /* Start off screen right */
+  transform: translateX(100%);
+  animation: slideInFromRight 0.6s forwards ease-out;
+  /* Optionally add a slight swing after sliding in */
+  animation-delay: 0.3s;
+}
+
+/* Animation for sliding in */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%) rotate(10deg);
+    opacity: 0;
+  }
+  70% {
+    transform: translateX(-10px) rotate(-5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.tee-description-anim {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 400px;
+  margin-left: 1rem;
+  animation: swing-in 0.8s ease-out forwards;
+  transform-origin: top right;
+}
+
+
+@keyframes swing-in {
+  0% {
+    transform: translateX(100%) rotate(25deg);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(0%) rotate(-10deg);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(10px) rotate(10deg);
+  }
+  100% {
+    transform: translateX(0%) rotate(0deg);
+  }
+}
+
+.product-detail-image-and-description {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 32px;
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+}
+
+.product-detail-image-container {
+  flex: 1 1 350px;
+  min-width: 250px;
+}
+
+.tee-description-heading {
+  flex: 1 1 300px;
+  max-width: 500px;
+}
+
+@media (max-width: 768px) {
+  .product-detail-image-and-description {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-detail-image-container,
+  .tee-description-heading {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .comfort-colors-icon-img {
+    width: 60px;
+  }
+}
+
