@@ -22,7 +22,7 @@ function ProductGrid() {
   useEffect(() => {
     const fetchProductsFromBackend = async () => {
       try {
-        const response = await fetch('/.netlify/functions/get-products');
+        const response = await fetch('/.netlify/functions/get-cached-products');
 
         if (!response.ok) {
           const errorDetails = await response.json();
