@@ -528,16 +528,25 @@ h3 { font-size: 1.5em; }
 
 @media (max-width: 768px) {
   .tag-selector button {
-    transition-duration: 0.1s !important;
-    box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
-    backdrop-filter: blur(2px);
+    transition: transform 0.1s ease-in-out !important; /* only transform */
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   .tag-selector button:hover {
-    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
     transform: translateY(-1px);
+    box-shadow: none !important;
   }
 }
+
+@media (max-width: 768px) {
+  .tag-selector button {
+    box-shadow: none !important;
+  }
+}
+
 
 @media (min-width: 641px) and (max-width: 1024px) {
   .product-grid-container {
