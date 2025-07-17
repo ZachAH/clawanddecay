@@ -7,17 +7,17 @@ import { getStorage } from 'firebase-admin/storage';
 if (!getApps().length) {
   initializeApp({
     credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET, // uses env var
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   });
 }
 
-const bucket = getStorage().bucket(); // uses the default bucket set above
+const bucket = getStorage().bucket();
 
 const loadProductsHandler = async () => {
   console.log('productLoadHandler started.');
 
   const shopId = process.env.PRINTIFY_SHOP_ID;
-  const apiKey = process.env.PRINTIFY_API_TOKEN; // match env var name
+  const apiKey = process.env.PRINTIFY_API_TOKEN;
 
   if (!shopId || !apiKey) {
     console.error('Missing PRINTIFY_SHOP_ID or PRINTIFY_API_TOKEN.');
@@ -39,11 +39,13 @@ const loadProductsHandler = async () => {
     }
 
     const data = await response.json();
-    console.log(`Fetched ${data.length} products.`);
+    const products = data.data || [];
+    console.log(`Fetched ${products.length} products.`);
 
     const fileName = 'cached-products.json';
     const file = bucket.file(fileName);
 
+    // Save the full data or just products, depending on what your frontend expects
     await file.save(JSON.stringify(data), {
       contentType: 'application/json',
       metadata: { cacheControl: 'public, max-age=300' },
@@ -52,7 +54,7 @@ const loadProductsHandler = async () => {
     console.log(`Saved ${fileName} to Cloud Storage.`);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Product cache updated', count: data.length }),
+      body: JSON.stringify({ message: 'Product cache updated', count: products.length }),
     };
   } catch (err) {
     console.error('Error:', err.message);
@@ -63,6 +65,5 @@ const loadProductsHandler = async () => {
   }
 };
 
-export const handler = schedule('0 */6 * * *', loadProductsHandler);
-//export const handler = schedule('* * * * *', loadProductsHandler);
-
+// export const handler = schedule('0 */6 * * *', loadProductsHandler); // every 6 hours
+export const handler = schedule('* * * * *', loadProductsHandler); // every minute for testing

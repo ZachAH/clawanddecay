@@ -48,7 +48,6 @@ exports.handler = async function(event, context) {
     const productsData = await response.json();
 
     // --- Start of image URL rewriting ---
-
     productsData.data.forEach(product => {
       product.images = (product.images || []).map(image => {
         const originalUrl = image.src;
@@ -63,8 +62,12 @@ exports.handler = async function(event, context) {
         };
       });
     });
-
     // --- End of image URL rewriting ---
+
+    // Debug: Log first product’s rewritten image URLs
+    console.log('Sample product images after rewrite:', 
+      productsData.data.slice(0, 1).map(p => p.images.map(img => img.src))
+    );
 
     return {
       statusCode: 200,
