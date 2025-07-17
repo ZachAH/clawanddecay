@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ProductCard from './ProductCard';
+import { FixedSizeGrid as Grid } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 const NUM_BLOOD_STREAMS = 20;
 const STREAM_ANIMATION_CYCLE_MS = 4000;
@@ -7,9 +9,8 @@ const STREAM_ANIMATION_CYCLE_MS = 4000;
 // Helper to extract tag from product title
 function extractTagFromTitle(title) {
   const TAGS = ["Crewneck", "Long-Sleeve", "Hoodie", "Tee", "Snapback", "Quarter-Sleeve"];
-  const words = title.trim().split(/\s+/); // Split by space
+  const words = title.trim().split(/\s+/);
   const lastWord = words[words.length - 1].toLowerCase();
-
   return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";
 }
 
@@ -23,20 +24,15 @@ function ProductGrid() {
     const fetchProductsFromBackend = async () => {
       try {
         const response = await fetch('/.netlify/functions/get-cached-products');
-
         if (!response.ok) {
           const errorDetails = await response.json();
           throw new Error(errorDetails.message || `HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
-
-        // Tag each product
         const taggedProducts = (data.data || []).map(product => ({
           ...product,
           tag: extractTagFromTitle(product.title)
         }));
-
         setProducts(taggedProducts);
       } catch (err) {
         console.error("Failed to fetch products:", err);
@@ -48,6 +44,10 @@ function ProductGrid() {
 
     fetchProductsFromBackend();
   }, []);
+
+  const filteredProducts = useMemo(() => {
+    return selectedTag === "All" ? products : products.filter(p => p.tag === selectedTag);
+  }, [products, selectedTag]);
 
   if (loading) {
     return (
@@ -74,26 +74,24 @@ function ProductGrid() {
 
   if (error) {
     return (
-      <div className="product-grid-container" style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
+      <div className="product-grid-container text-center py-6 text-red-500">
         Error: {error}
       </div>
     );
   }
 
-  if (products.length === 0) {
+  if (filteredProducts.length === 0) {
     return (
-      <div className="product-grid-container" style={{ textAlign: 'center', padding: '20px' }}>
+      <div className="product-grid-container text-center py-6">
         No products found.
       </div>
     );
   }
 
-  // Unique tags from products
   const uniqueTags = ["All", ...new Set(products.map(p => p.tag))];
 
-  // Filtered products
-  const filteredProducts =
-    selectedTag === "All" ? products : products.filter(p => p.tag === selectedTag);
+  const columnWidth = 300;
+  const rowHeight = 420;
 
   return (
     <div className="product-grid-wrapper">
@@ -114,11 +112,39 @@ function ProductGrid() {
         ))}
       </div>
 
-      {/* Product Grid */}
-      <div className="product-grid-container">
-        {filteredProducts.map(product => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+      {/* Virtualized Responsive Grid */}
+      <div style={{ height: '80vh' }}>
+        <AutoSizer>
+          {({ height, width }) => {
+            const columnCount = Math.max(1, Math.floor(width / columnWidth));
+            const rowCount = Math.ceil(filteredProducts.length / columnCount);
+
+            const Cell = ({ columnIndex, rowIndex, style }) => {
+              const productIndex = rowIndex * columnCount + columnIndex;
+              if (productIndex >= filteredProducts.length) return null;
+              const product = filteredProducts[productIndex];
+
+              return (
+                <div style={style}>
+                  <ProductCard product={product} />
+                </div>
+              );
+            };
+
+            return (
+              <Grid
+                columnCount={columnCount}
+                columnWidth={columnWidth}
+                height={height}
+                rowCount={rowCount}
+                rowHeight={rowHeight}
+                width={width}
+              >
+                {Cell}
+              </Grid>
+            );
+          }}
+        </AutoSizer>
       </div>
     </div>
   );
