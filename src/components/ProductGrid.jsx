@@ -3,9 +3,6 @@ import ProductCard from './ProductCard';
 import { FixedSizeGrid as Grid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
-const NUM_BLOOD_STREAMS = 20;
-const STREAM_ANIMATION_CYCLE_MS = 4000;
-
 // Helper to extract tag from product title
 function extractTagFromTitle(title) {
   const TAGS = ["Crewneck", "Long-Sleeve", "Hoodie", "Tee", "Snapback", "Quarter-Sleeve"];
@@ -49,25 +46,14 @@ function ProductGrid() {
     return selectedTag === "All" ? products : products.filter(p => p.tag === selectedTag);
   }, [products, selectedTag]);
 
+  const uniqueTags = ["All", ...new Set(products.map(p => p.tag))];
+  const columnWidth = 300;
+  const rowHeight = 420;
+
   if (loading) {
     return (
-      <div className="product-grid-container" style={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
-        <div className="spinner-container">
-          <div className="blood-stream-animation-wrapper">
-            {Array.from({ length: NUM_BLOOD_STREAMS }).map((_, i) => (
-              <div
-                key={i}
-                className="blood-stream-drip"
-                style={{
-                  left: `${(i / NUM_BLOOD_STREAMS) * 90 + 5}%`,
-                  animation: `bloodStreamDrip ${STREAM_ANIMATION_CYCLE_MS / 1000}s linear infinite`,
-                  animationDelay: `${(STREAM_ANIMATION_CYCLE_MS / NUM_BLOOD_STREAMS / 1000) * i}s`,
-                }}
-              ></div>
-            ))}
-          </div>
-          <span style={{ position: 'relative', zIndex: 10 }}>Loading products...</span>
-        </div>
+      <div className="flex justify-center items-center min-h-[300px]">
+        <div className="loader" />
       </div>
     );
   }
@@ -87,11 +73,6 @@ function ProductGrid() {
       </div>
     );
   }
-
-  const uniqueTags = ["All", ...new Set(products.map(p => p.tag))];
-
-  const columnWidth = 300;
-  const rowHeight = 420;
 
   return (
     <div className="product-grid-wrapper">

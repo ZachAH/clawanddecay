@@ -32,7 +32,6 @@ function ProductCard({ product }) {
           src={primaryImageUrl || FALLBACK_IMAGE_URL}
           alt={product.title}
           className="product-card-image"
-          loading="lazy"
           width="400"
           height="400"
           loading="lazy"
