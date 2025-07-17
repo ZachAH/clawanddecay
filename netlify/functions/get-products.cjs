@@ -6,16 +6,18 @@ exports.handler = async function(event, context) {
   try {
     const PRINTIFY_API_TOKEN = process.env.PRINTIFY_API_TOKEN;
     const PRINTIFY_SHOP_ID = process.env.PRINTIFY_SHOP_ID;
+    const FIREBASE_BUCKET_NAME = process.env.FIREBASE_STORAGE_BUCKET;
 
-    if (!PRINTIFY_API_TOKEN || !PRINTIFY_SHOP_ID) {
+    if (!PRINTIFY_API_TOKEN || !PRINTIFY_SHOP_ID || !FIREBASE_BUCKET_NAME) {
       console.error("Function Error: Missing environment variables.");
       return {
         statusCode: 500,
         body: JSON.stringify({
-          message: "Server configuration error: Printify API token or Shop ID missing. Please ensure they are set in Netlify environment variables.",
+          message: "Server configuration error: Missing Printify API token, Shop ID, or Firebase bucket env variables.",
           debug: {
             tokenSet: !!PRINTIFY_API_TOKEN,
-            shopIdSet: !!PRINTIFY_SHOP_ID
+            shopIdSet: !!PRINTIFY_SHOP_ID,
+            bucketSet: !!FIREBASE_BUCKET_NAME
           }
         })
       };
@@ -47,15 +49,13 @@ exports.handler = async function(event, context) {
 
     // --- Start of image URL rewriting ---
 
-    const FIREBASE_BUCKET_NAME = 'clawanddecay.appspot.com'; // Replace with your actual Firebase bucket name
-
     productsData.data.forEach(product => {
       product.images = (product.images || []).map(image => {
         const originalUrl = image.src;
-        const fileName = originalUrl.split('/').pop().split('?')[0]; // Extract filename without query params
+        const fileName = originalUrl.split('/').pop().split('?')[0]; // Remove query params
 
-        // Construct Firebase public URL
-        const firebaseUrl = `https://firebasestorage.googleapis.com/v0/b/${FIREBASE_BUCKET_NAME}/o/${encodeURIComponent(product.id + '/' + fileName)}?alt=media`;
+        // Construct Firebase Storage public URL
+        const firebaseUrl = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(FIREBASE_BUCKET_NAME)}/o/${encodeURIComponent(product.id + '/' + fileName)}?alt=media`;
 
         return {
           ...image,
