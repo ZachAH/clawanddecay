@@ -1,11 +1,6 @@
 // src/components/ProductCard.jsx
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-
-// --- IMPORTANT: All these styles are now defined in src/App.css. ---
-// You no longer need these 'const' declarations or the commented-out blocks here.
-// You can remove all the 'const cardStyle = {...}', 'const imageStyle = {...}',
-// 'const titleStyle = {...}', 'const priceStyle = {...}' definitions from your actual file.
+import { Link } from 'react-router-dom'; 
 
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image";
 
@@ -37,6 +32,10 @@ function ProductCard({ product }) {
           src={primaryImageUrl || FALLBACK_IMAGE_URL}
           alt={product.title}
           className="product-card-image"
+          loading="lazy"
+          width="400"
+          height="400"
+          loading="lazy"
           onError={(e) => {
             e.target.onerror = null; // Prevent infinite loop if fallback also fails
             e.target.src = FALLBACK_IMAGE_URL; // Set fallback image on error

@@ -52,6 +52,14 @@ body {
   flex-direction: column;
 }
 
+/* Mobile optimized background */
+@media (max-width: 767px) {
+  body {
+    background-image: url('./assets/bloodstained-background-mobile.webp');
+    background-attachment: scroll; /* Fixed backgrounds can be laggy on mobile */
+  }
+}
+
 .App {
   min-height: 100vh;
   display: flex;
