@@ -1,66 +1,83 @@
-const fetch = require('node-fetch');
+// netlify/functions/get-load-products.cjs
 const admin = require('firebase-admin');
-const { schedule } = require('@netlify/functions'); // For scheduled execution
+const { schedule } = require('@netlify/functions');
 
-// Initialize Firebase Admin SDK if it hasn't been initialized
-// This check prevents re-initialization in subsequent invocations if the function instance persists
+// Declare a variable for node-fetch at the top
+let fetch;
+
+// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET, // Your Firebase Storage bucket name
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   });
 }
 
-// Get a reference to the Firebase Storage bucket
 const bucket = admin.storage().bucket();
 
-// Define the handler function for loading products
 const productLoadHandler = async function () {
+  console.log('productLoadHandler started.');
+
+  // Dynamically import node-fetch inside the handler
+  // This ensures it's loaded asynchronously and correctly
+  if (!fetch) {
+    // We use a try-catch here as dynamic imports can fail
+    try {
+      const nodeFetchModule = await import('node-fetch');
+      fetch = nodeFetchModule.default; // node-fetch exports its main function as 'default'
+      console.log('node-fetch imported dynamically.');
+    } catch (e) {
+      console.error('Failed to dynamically import node-fetch:', e.message);
+      return { statusCode: 500, body: JSON.stringify({ error: 'Failed to load fetch module.' }) };
+    }
+  }
+
   const shopId = process.env.PRINTIFY_SHOP_ID;
   const apiKey = process.env.PRINTIFY_API_KEY;
 
+  if (!shopId || !apiKey) {
+    console.error('Missing PRINTIFY_SHOP_ID or PRINTIFY_API_KEY environment variables.');
+    return { statusCode: 500, body: JSON.stringify({ error: 'Missing API credentials.' }) };
+  }
+  console.log('API credentials appear to be present.');
+
   try {
-    // 1. Fetch data from Printify API
+    console.log(`Fetching from Printify API for shopId: ${shopId}`);
     const response = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
 
+    console.log(`Printify API response status: ${response.status}`);
     if (!response.ok) {
       const errorText = await response.text();
+      console.error(`Printify API returned non-OK status: ${response.status} - ${errorText}`);
       throw new Error(`Printify API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const fileName = 'cached-products.json'; // The name of the file in your storage bucket
+    console.log(`Successfully fetched ${data.length} products from Printify.`);
+
+    const fileName = 'cached-products.json';
     const file = bucket.file(fileName);
 
-    // 2. Write the fetched data to Firebase Cloud Storage
+    console.log(`Attempting to save to Firebase Storage file: ${fileName}`);
     await file.save(JSON.stringify(data), {
       contentType: 'application/json',
-      // Optional: Set cache control headers for better client-side caching if you serve this file directly later
-      metadata: { cacheControl: 'public, max-age=300' } // Example: cache for 5 minutes
+      metadata: { cacheControl: 'public, max-age=300' }
     });
-
-    console.log(`Successfully updated ${fileName} in Cloud Storage. Products found: ${data.length}`);
+    console.log(`Successfully saved ${fileName} to Cloud Storage.`);
 
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Product cache updated in Cloud Storage', count: data.length }),
     };
   } catch (err) {
-    console.error('Failed to load or update product cache:', err.message);
+    console.error('Error during product load and cache update:', err.message);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message || 'An unexpected error occurred.' }),
+      body: JSON.stringify({ error: err.message || 'An unexpected error occurred during API fetch or Firebase write.' }),
     };
   }
 };
 
-// Export the handler with a schedule. This will make it a Netlify Scheduled Function.
-// Example: Run every 6 hours (0 */6 * * *)
-// You can adjust the cron schedule to your needs: https://crontab.guru/
 exports.handler = schedule('0 */6 * * *', productLoadHandler);
-
-// If you also want to be able to manually trigger this function via an HTTP request,
-// you can optionally export it separately. The scheduled function will not be callable via HTTP by default.
-// exports.manualTrigger = productLoadHandler;
