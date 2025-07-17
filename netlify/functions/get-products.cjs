@@ -1,21 +1,12 @@
 // netlify/functions/get-products.js
 
-// This function acts as a secure proxy to fetch products from the Printify API.
-// It uses environment variables for the API token and shop ID, keeping them secret.
-
-// Note: Node.js 18+ has native 'fetch'. If you are using an older Node.js version
-// (which is less common for new Netlify builds but possible), you might need to
-// install 'node-fetch' (npm install node-fetch@2) and uncomment the line below:
-// const fetch = require('node-fetch');
+// Note: Node.js 18+ has native 'fetch'. If using older Node, install 'node-fetch' and import it.
 
 exports.handler = async function(event, context) {
   try {
-    // 1. Retrieve API token and Shop ID from Netlify environment variables.
-    //    These MUST be set in your Netlify dashboard under Site Settings -> Build & Deploy -> Environment.
     const PRINTIFY_API_TOKEN = process.env.PRINTIFY_API_TOKEN;
     const PRINTIFY_SHOP_ID = process.env.PRINTIFY_SHOP_ID;
 
-    // 2. Basic validation for missing environment variables.
     if (!PRINTIFY_API_TOKEN || !PRINTIFY_SHOP_ID) {
       console.error("Function Error: Missing environment variables.");
       return {
@@ -30,55 +21,67 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // 3. Construct the Printify API URL to fetch products for your specific shop.
-    //    This endpoint lists all products created by you within that shop.
     const printifyApiUrl = `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`;
 
-    // 4. Make the secure, server-side request to the Printify API.
-    //    The Authorization header includes your API token.
     const response = await fetch(printifyApiUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`, // Authentication with your token
-        'Content-Type': 'application/json'               // Specify content type
+        'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
+        'Content-Type': 'application/json'
       }
     });
 
-    // 5. Handle non-2xx HTTP responses from Printify (e.g., authentication errors, not found).
     if (!response.ok) {
-      const errorText = await response.text(); // Get raw error text for debugging
+      const errorText = await response.text();
       console.error(`Printify API Error (${response.status}):`, errorText);
       return {
-        statusCode: response.status, // Pass through Printify's status code
+        statusCode: response.status,
         body: JSON.stringify({
           message: `Error from Printify API: ${response.statusText}`,
-          details: errorText // Include raw error for more detailed debugging
+          details: errorText
         })
       };
     }
 
-    // 6. Parse the JSON response from Printify.
     const productsData = await response.json();
 
-    // 7. Return the fetched data to your frontend.
-    //    The frontend's `ProductGrid.jsx` will receive this JSON.
+    // --- Start of image URL rewriting ---
+
+    const FIREBASE_BUCKET_NAME = 'clawanddecay.appspot.com'; // Replace with your actual Firebase bucket name
+
+    productsData.data.forEach(product => {
+      product.images = (product.images || []).map(image => {
+        const originalUrl = image.src;
+        const fileName = originalUrl.split('/').pop().split('?')[0]; // Extract filename without query params
+
+        // Construct Firebase public URL
+        const firebaseUrl = `https://firebasestorage.googleapis.com/v0/b/${FIREBASE_BUCKET_NAME}/o/${encodeURIComponent(product.id + '/' + fileName)}?alt=media`;
+
+        return {
+          ...image,
+          src: firebaseUrl
+        };
+      });
+    });
+
+    // --- End of image URL rewriting ---
+
     return {
       statusCode: 200,
       headers: {
-        "Content-Type": "application/json" // Tell the client it's JSON
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(productsData) // Send the Printify data as a string
+      body: JSON.stringify(productsData)
     };
 
   } catch (error) {
-    // 8. Catch any unexpected errors during function execution (e.g., network issues, coding errors).
     console.error('Unhandled Error in Netlify Function:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         message: 'Failed to fetch products due to an unexpected server error.',
         error: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined // Include stack in dev for debugging
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       })
     };
   }

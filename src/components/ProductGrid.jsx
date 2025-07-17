@@ -8,7 +8,7 @@ function extractTagFromTitle(title) {
   const TAGS = ["Crewneck", "Long-Sleeve", "Hoodie", "Tee", "Snapback", "Quarter-Sleeve"];
   const words = title.trim().split(/\s+/);
   const lastWord = words[words.length - 1].toLowerCase();
-  return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";
+  return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";ß
 }
 
 function ProductGrid() {
