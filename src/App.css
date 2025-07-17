@@ -41,7 +41,7 @@ html, body {
 
 body {
   font-family: var(--font-body); /* Apply the body font globally */
-  background-image: url('./assets/bloodstained-background.jpg'); /* Your awesome background image */
+  background-image: url('./assets/bloodstained-background.webp'); /* Your awesome background image */
   background-size: cover;          /* Make the background image cover the entire viewport */
   background-position: center;     /* Center the image */
   background-attachment: fixed;    /* Keep background fixed when scrolling */
@@ -474,7 +474,7 @@ h3 { font-size: 1.5em; }
   text-shadow: 0 0 2px #000;
   backdrop-filter: blur(4px);
 
-  background-image: url('./assets/grunge-border.png');
+  background-image: url('./assets/grunge-border.webp');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

@@ -13,8 +13,8 @@ import FaqPage from './pages/faqPage';
 import './App.css'; // Your main stylesheet
 
 // --- IMPORT BOTH DESKTOP AND MOBILE HEADER IMAGES ---
-import desktopHeaderImage from './assets/clawanddecay-header.png'; // Your current wider desktop header image
-import mobileHeaderImage from './assets/clawanddecay-header-mobile.png'; // Your new mobile-optimized header image
+import desktopHeaderImage from './assets/clawanddecay-header.webp'; // Your current wider desktop header image
+import mobileHeaderImage from './assets/clawanddecay-header-mobile.webp'; // Your new mobile-optimized header image
 
 // Import Navbar component
 import Navbar from './components/navbar'; // Corrected casing to 'Navbar' if your file is 'Navbar.jsx'
