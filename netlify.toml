@@ -1,6 +1,7 @@
 [build]
   command = "npm run build"
-  publish = "dist" # Or "build" if using Create React App
+  publish = "dist"
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
