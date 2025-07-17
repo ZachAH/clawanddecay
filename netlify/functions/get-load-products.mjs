@@ -7,20 +7,20 @@ import { getStorage } from 'firebase-admin/storage';
 if (!getApps().length) {
   initializeApp({
     credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET, // uses env var
   });
 }
 
-const bucket = getStorage().bucket();
+const bucket = getStorage().bucket(); // uses the default bucket set above
 
 const loadProductsHandler = async () => {
   console.log('productLoadHandler started.');
 
   const shopId = process.env.PRINTIFY_SHOP_ID;
-  const apiKey = process.env.PRINTIFY_API_KEY;
+  const apiKey = process.env.PRINTIFY_API_TOKEN; // match env var name
 
   if (!shopId || !apiKey) {
-    console.error('Missing PRINTIFY_SHOP_ID or PRINTIFY_API_KEY.');
+    console.error('Missing PRINTIFY_SHOP_ID or PRINTIFY_API_TOKEN.');
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Missing API credentials.' }),
@@ -63,5 +63,4 @@ const loadProductsHandler = async () => {
   }
 };
 
-// ✅ Export with schedule using a different name to avoid redeclaration
 export const handler = schedule('0 */6 * * *', loadProductsHandler);
