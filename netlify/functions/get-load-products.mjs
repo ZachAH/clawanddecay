@@ -63,6 +63,6 @@ const loadProductsHandler = async () => {
   }
 };
 
-//export const handler = schedule('0 */6 * * *', loadProductsHandler);
-export const handler = schedule('* * * * *', loadProductsHandler);
+export const handler = schedule('0 */6 * * *', loadProductsHandler);
+//export const handler = schedule('* * * * *', loadProductsHandler);
 
