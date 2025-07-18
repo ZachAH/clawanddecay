@@ -54,8 +54,7 @@ exports.handler = async function(event, context) {
         const fileName = originalUrl.split('/').pop().split('?')[0]; // Remove query params
 
         // Construct Firebase Storage public URL
-        const firebaseUrl = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(FIREBASE_BUCKET_NAME)}/o/${encodeURIComponent(product.id + '/' + fileName)}?alt=media`;
-
+        const firebaseUrl = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(FIREBASE_BUCKET_NAME)}/o/${encodeURIComponent('products/' + product.id + '/' + fileName)}?alt=media`;
         return {
           ...image,
           src: firebaseUrl
