@@ -205,6 +205,7 @@ h3 {
   justify-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  box-sizing: border-box;  /* Add this */
 }
 
 .product-grid-wrapper {
@@ -233,6 +234,9 @@ h3 {
   color: var(--color-light-text);
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
+  max-width: 280px;
+  width: 100%; /* Ensure it fills grid cell */
+  box-sizing: border-box;
 }
 
 .product-card-image {
@@ -566,6 +570,13 @@ h3 {
 /* --- Media Queries --- */
 
 /* Desktop header */
+@media (min-width: 1200px) {
+  .product-grid-container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
 @media (min-width: 768px) {
   .desktop-header-content {
     display: flex;
