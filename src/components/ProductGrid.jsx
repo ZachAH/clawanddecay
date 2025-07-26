@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import ProductCard from './ProductCard';
-import { FixedSizeGrid as Grid } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 
-// Helper to extract tag from product title
 function extractTagFromTitle(title) {
   const TAGS = ["Crewneck", "Long-Sleeve", "Hoodie", "Tee", "Snapback", "Quarter-Sleeve"];
   const words = title.trim().split(/\s+/);
   const lastWord = words[words.length - 1].toLowerCase();
-  return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";ß
+  return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";
 }
 
 function ProductGrid() {
@@ -18,7 +15,7 @@ function ProductGrid() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchProductsFromBackend = async () => {
+    const fetchProducts = async () => {
       try {
         const response = await fetch('/.netlify/functions/get-cached-products');
         if (!response.ok) {
@@ -33,13 +30,13 @@ function ProductGrid() {
         setProducts(taggedProducts);
       } catch (err) {
         console.error("Failed to fetch products:", err);
-        setError(err.message || "Failed to load products from Printify.");
+        setError(err.message || "Failed to load products.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProductsFromBackend();
+    fetchProducts();
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -47,85 +44,42 @@ function ProductGrid() {
   }, [products, selectedTag]);
 
   const uniqueTags = ["All", ...new Set(products.map(p => p.tag))];
-  const columnWidth = 300;
-  const rowHeight = 420;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[300px]">
+      <div className="loading-container">
         <div className="loader" />
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="product-grid-container text-center py-6 text-red-500">
-        Error: {error}
-      </div>
-    );
+    return <div className="error-message">Error: {error}</div>;
   }
 
   if (filteredProducts.length === 0) {
-    return (
-      <div className="product-grid-container text-center py-6">
-        No products found.
-      </div>
-    );
+    return <div className="no-products">No products found.</div>;
   }
 
   return (
     <div className="product-grid-wrapper">
-      {/* Tag Filter */}
-      <div className="tag-selector flex flex-wrap gap-2 py-4 justify-center">
+      <div className="tag-selector">
         {uniqueTags.map((tag) => (
           <button
             key={tag}
             onClick={() => setSelectedTag(tag)}
-            className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${
-              selectedTag === tag
-                ? "bg-yellow-600 text-black border-yellow-600"
-                : "bg-black text-yellow-500 border-yellow-500 hover:bg-yellow-500 hover:text-black"
-            }`}
+            className={`tag-button ${selectedTag === tag ? 'active' : ''}`}
+            type="button"
           >
             {tag}
           </button>
         ))}
       </div>
 
-      {/* Virtualized Responsive Grid */}
-      <div style={{ height: '80vh' }}>
-        <AutoSizer>
-          {({ height, width }) => {
-            const columnCount = Math.max(1, Math.floor(width / columnWidth));
-            const rowCount = Math.ceil(filteredProducts.length / columnCount);
-
-            const Cell = ({ columnIndex, rowIndex, style }) => {
-              const productIndex = rowIndex * columnCount + columnIndex;
-              if (productIndex >= filteredProducts.length) return null;
-              const product = filteredProducts[productIndex];
-
-              return (
-                <div style={style}>
-                  <ProductCard product={product} />
-                </div>
-              );
-            };
-
-            return (
-              <Grid
-                columnCount={columnCount}
-                columnWidth={columnWidth}
-                height={height}
-                rowCount={rowCount}
-                rowHeight={rowHeight}
-                width={width}
-              >
-                {Cell}
-              </Grid>
-            );
-          }}
-        </AutoSizer>
+      <div className="product-grid-container">
+        {filteredProducts.map(product => (
+          <ProductCard key={product.id} product={product} />
+        ))}
       </div>
     </div>
   );

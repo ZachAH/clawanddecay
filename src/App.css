@@ -683,4 +683,79 @@ h3 { font-size: 1.5em; }
   }
 }
 
+/* Reuse existing CSS variables and fonts from your App.css */
+
+.product-grid-wrapper {
+  padding: 1rem 0 3rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tag-selector {
+  /* You already have .tag-selector styles in your App.css with nice custom fonts & effects */
+  /* So no change needed here if you want to keep those */
+}
+
+.tag-button {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  font-family: var(--font-heading);
+  font-size: 1em;
+  border-radius: 0;
+  border: none;
+  color: #D4AF37;
+  background-color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-shadow: 0 0 2px #000;
+  backdrop-filter: blur(4px);
+
+  background-image: url('./assets/grunge-border.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  transition: all 0.2s ease-in-out;
+}
+
+.tag-button:hover {
+  background-color: #D4AF37;
+  color: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.tag-button.active {
+  background-color: #D4AF37;
+  color: #000;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+}
+
+/* Grid container for products */
+.product-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+  justify-items: center;
+}
+
+/* Loading spinner already styled as .loader in your App.css */
+/* Error and no products messages */
+.error-message,
+.no-products {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--color-accent-red);
+}
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
 
