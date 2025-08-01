@@ -1,6 +1,5 @@
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
-import { URL } from 'url';
 
 if (!getApps().length) {
   initializeApp({
@@ -10,7 +9,6 @@ if (!getApps().length) {
 }
 
 const bucket = getStorage().bucket();
-const bucketName = process.env.FIREBASE_STORAGE_BUCKET;
 
 export const handler = async () => {
   const fileName = 'cached-products.json';
@@ -28,35 +26,11 @@ export const handler = async () => {
     const [raw] = await file.download();
     const data = JSON.parse(raw.toString('utf8'));
 
-    // If your JSON is an array of products
-    const products = Array.isArray(data) ? data : [data];
-
-    for (const product of products) {
-      const productId = product.id;
-      if (!productId || !product.images) continue;
-
-      product.images = product.images.map((image) => {
-        try {
-          const oldSrc = new URL(image.src);
-          const filename = oldSrc.pathname.split('/').pop(); // grab filename from URL
-          const encodedPath = encodeURIComponent(`products/${productId}/${filename}`);
-          const newSrc = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedPath}?alt=media`;
-
-          return {
-            ...image,
-            src: newSrc,
-          };
-        } catch (err) {
-          console.warn('Failed to parse or update image:', err);
-          return image; // fallback to original
-        }
-      });
-    }
-
+    // Return the cached JSON exactly as is, no modifications
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Array.isArray(data) ? products : products[0]),
+      body: JSON.stringify(data),
     };
   } catch (err) {
     console.error('Failed to process cached product data:', err.message);
