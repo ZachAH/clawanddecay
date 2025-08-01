@@ -77,10 +77,15 @@ function ProductGrid() {
       </div>
 
       <div className="product-grid-container">
-        {filteredProducts.map(product => (
-          <ProductCard key={product.id} product={product} />
+        {filteredProducts.map((product, idx) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            isFirst={idx === 0} // ✅ Eager load the first visible product image
+          />
         ))}
       </div>
+
     </div>
   );
 }

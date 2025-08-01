@@ -33,7 +33,7 @@ function ProductCard({ product, isFirst = false }) {
           src={primaryImageUrl || FALLBACK_IMAGE_URL}
           alt={product.title}
           className="product-card-image"
-          loading={isFirst ? 'eager' : 'lazy'}  // <-- conditional loading here
+          loading={isFirst ? 'eager' : 'lazy'} // Conditional loading
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = FALLBACK_IMAGE_URL;
