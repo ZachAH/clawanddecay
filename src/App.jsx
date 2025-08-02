@@ -1,12 +1,12 @@
 // src/App.jsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import ProductGridPage from './pages/ProductGridPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ContactUsPage from './pages/ContactUsPage';
 import OurStoryPage from './pages/OurStoryPage';
 import FaqPage from './pages/faqPage';
-
 import './App.css';
 import desktopHeaderImage from './assets/clawanddecay-header.webp';
 import mobileHeaderImage from './assets/clawanddecay-header-mobile.webp';
@@ -38,8 +38,9 @@ function App() {
 
         <main className="app-main">
           <Routes>
+            <Route path="/" element={<LandingPage selectedTag={selectedTag} />} />
             <Route
-              path="/"
+              path="/merch"
               element={
                 <ProductGridPage
                   selectedTag={selectedTag}
