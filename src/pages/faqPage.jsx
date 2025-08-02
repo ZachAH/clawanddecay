@@ -68,7 +68,7 @@ function FaqPage() {
   };
 
   return (
-    <div className="app-main-content">
+    <div className="glow-card">
       <Helmet>
         <title>FAQ — Claw & Decay</title>
         <meta
@@ -78,34 +78,32 @@ function FaqPage() {
       </Helmet>
 
       <h2>FAQS</h2>
-      <div className="glow-card">
-        <div className="faq-container">
-          {faqs.map((f, i) => (
-            <div key={i} className="faq-item">
-              <button
-                aria-expanded={openIndex === i}
-                aria-controls={`faq-answer-${i}`}
-                className="faq-question"
-                onClick={() => toggle(i)}
-                type="button"
-              >
-                <span>{f.question}</span>
-                <span className="chevron">{openIndex === i ? '▴' : '▾'}</span>
-              </button>
-              <div
-                id={`faq-answer-${i}`}
-                className={`faq-answer ${openIndex === i ? 'open' : ''}`}
-                style={{
-                  maxHeight: openIndex === i ? '500px' : '0',
-                  overflow: 'hidden',
-                  transition: 'max-height 0.3s ease',
-                }}
-              >
-                <p>{f.answer}</p>
-              </div>
+      <div className="faq-container">
+        {faqs.map((f, i) => (
+          <div key={i} className="faq-item">
+            <button
+              aria-expanded={openIndex === i}
+              aria-controls={`faq-answer-${i}`}
+              className="faq-question"
+              onClick={() => toggle(i)}
+              type="button"
+            >
+              <span>{f.question}</span>
+              <span className="chevron">{openIndex === i ? '▴' : '▾'}</span>
+            </button>
+            <div
+              id={`faq-answer-${i}`}
+              className={`faq-answer ${openIndex === i ? 'open' : ''}`}
+              style={{
+                maxHeight: openIndex === i ? '500px' : '0',
+                overflow: 'hidden',
+                transition: 'max-height 0.3s ease',
+              }}
+            >
+              <p>{f.answer}</p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
