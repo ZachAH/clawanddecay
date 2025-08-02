@@ -681,6 +681,8 @@ h3 {
   display: none;
   flex-direction: column;
   padding: 8px 0;
+  user-select: none; /* Prevent text selection on click */
+  white-space: nowrap; /* Prevent line breaks in tags */
 }
 
 .navbar-item.dropdown:hover .navbar-dropdown {
@@ -690,7 +692,6 @@ h3 {
 .navbar-dropdown-link {
   padding: 10px 16px;
   color: var(--color-light-text);
-  text-decoration: none;
   font-family: var(--font-heading);
   font-size: 1em;
   background: none;
@@ -698,7 +699,7 @@ h3 {
   text-align: left;
   width: 100%;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 .navbar-dropdown-link:hover,
@@ -709,11 +710,26 @@ h3 {
 
 /* Remove extra gap between Merch and next items */
 .navbar-list {
-  gap: 30px;
+  gap: 15px; /* Adjusted to reduce excessive spacing */
   display: flex;
   justify-content: center;
   margin: 0;
   padding: 0;
   list-style: none;
 }
+
+/* Optional: Add a subtle transition to dropdown appearance */
+.navbar-dropdown {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.navbar-item.dropdown:hover .navbar-dropdown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 

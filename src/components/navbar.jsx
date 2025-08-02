@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-function Navbar({ onSelectTag }) {
+function Navbar({ selectedTag, onSelectTag }) {
   const location = useLocation();
 
   const merchTags = [
@@ -18,15 +18,18 @@ function Navbar({ onSelectTag }) {
     <nav className="main-navbar">
       <ul className="navbar-list">
         <li className="navbar-item dropdown">
-          <span className={`navbar-link ${location.pathname === '/' ? 'active-glow' : ''}`}>
+          <span
+            className={`navbar-link ${location.pathname === '/' ? 'active-glow' : ''}`}
+          >
             Merch
           </span>
           <div className="navbar-dropdown">
             {merchTags.map(tag => (
               <button
                 key={tag}
-                className="navbar-dropdown-link"
+                className={`navbar-dropdown-link ${selectedTag === tag ? 'active' : ''}`}
                 onClick={() => onSelectTag(tag)}
+                type="button"
               >
                 {tag}
               </button>

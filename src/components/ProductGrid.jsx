@@ -72,21 +72,6 @@ function ProductGrid({ showTagSelector = true }) {
         )}
       </Helmet>
 
-      {showTagSelector && (
-        <div className="tag-selector">
-          {uniqueTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setSelectedTag(tag)}
-              className={`tag-button ${selectedTag === tag ? 'active' : ''}`}
-              type="button"
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-      )}
-
       <div className="product-grid-container">
         {filteredProducts.map((product, idx) => (
           <ProductCard
