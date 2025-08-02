@@ -732,6 +732,11 @@ h3 {
   opacity: 0;
   transform: translateY(-5px);
   transition: opacity 0.25s ease, transform 0.25s ease;
+  display: flex !important;
+  opacity: 1 !important;
+  transform: none !important;
+  background-color: rgba(229, 0, 0, 0.8) !important;
+
 }
 
 .navbar-item.dropdown:hover .navbar-dropdown {
@@ -774,4 +779,68 @@ h3 {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* Reserve aspect ratio space for header banners */
+.header-banner-image,
+.header-banner-mobile-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 300; /* adjust this ratio to match your actual banner image dimensions */
+  display: block;
+}
+
+/* Reserve space for product images: assumes square; if not, replace with real ratio like 4/5 */
+.product-card-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  aspect-ratio: 1 / 1; /* or actual width/height ratio of your mockups */
+  border-radius: 4px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* Skeleton placeholder */
+.product-skeleton {
+  width: 100%;
+  max-width: 280px;
+  padding: 16px;
+  background: rgba(58,58,58,0.7);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.skeleton-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(90deg, rgba(58,58,58,1) 0%, rgba(80,80,80,1) 50%, rgba(58,58,58,1) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 16px;
+  background: rgba(80,80,80,1);
+  border-radius: 4px;
+}
+
+.skeleton-price {
+  width: 50%;
+  height: 18px;
+  background: rgba(212,175,55,0.6);
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

@@ -9,14 +9,14 @@ function extractTagFromTitle(title) {
   return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";
 }
 
-/**
- * @param {{ selectedTag?: string }} props
- * selectedTag comes from parent (e.g., App) and controls filtering.
- */
 function ProductGrid({ selectedTag = "All" }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Track when filtering happens to show skeleton briefly if selectedTag changes
+  const [isFiltering, setIsFiltering] = useState(false);
+  const prevTagRef = React.useRef(selectedTag);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,6 +43,18 @@ function ProductGrid({ selectedTag = "All" }) {
     fetchProducts();
   }, []);
 
+  // Detect tag change to briefly show filtering skeleton
+  useEffect(() => {
+    if (prevTagRef.current !== selectedTag) {
+      setIsFiltering(true);
+      const t = setTimeout(() => {
+        setIsFiltering(false);
+      }, 300); // small delay to simulate transition; adjust if needed
+      prevTagRef.current = selectedTag;
+      return () => clearTimeout(t);
+    }
+  }, [selectedTag]);
+
   const filteredProducts = useMemo(() => {
     return selectedTag === "All" ? products : products.filter(p => p.tag === selectedTag);
   }, [products, selectedTag]);
@@ -51,8 +63,16 @@ function ProductGrid({ selectedTag = "All" }) {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loader" />
+      <div className="product-grid-wrapper">
+        <div className="product-grid-container">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div className="product-skeleton" key={i}>
+              <div className="skeleton-image" />
+              <div className="skeleton-text" style={{ width: '80%' }} />
+              <div className="skeleton-price" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -72,13 +92,21 @@ function ProductGrid({ selectedTag = "All" }) {
       </Helmet>
 
       <div className="product-grid-container">
-        {filteredProducts.map((product, idx) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            isFirst={idx === 0} // eager load the first visible product image
-          />
-        ))}
+        {(isFiltering
+          ? Array.from({ length: Math.min(6, filteredProducts.length) }).map((_, i) => (
+              <div className="product-skeleton" key={`filter-skel-${i}`}>
+                <div className="skeleton-image" />
+                <div className="skeleton-text" style={{ width: '70%' }} />
+                <div className="skeleton-price" />
+              </div>
+            ))
+          : filteredProducts.map((product, idx) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isFirst={idx === 0}
+              />
+            )))}
       </div>
     </div>
   );
