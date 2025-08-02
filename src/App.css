@@ -831,17 +831,18 @@ h3 {
 }
 
 
-.our-story-section,
-.timeline,
-.callout-newsletter {
-  opacity: 0 !important;
-  transform: translateY(30px) !important;
-  transition: opacity 0.7s ease-out, transform 0.7s ease-out !important;
+/* OurStoryPage animations overrides */
+.app-main-content .our-story-section,
+.app-main-content .timeline,
+.app-main-content .callout-newsletter {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
 }
 
-.our-story-section.revealed,
-.timeline.revealed,
-.callout-newsletter.revealed {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
+.app-main-content .our-story-section.revealed,
+.app-main-content .timeline.revealed,
+.app-main-content .callout-newsletter.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
