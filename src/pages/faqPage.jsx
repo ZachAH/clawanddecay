@@ -26,8 +26,7 @@ const faqs = [
   {
     question: 'How do I know what size to get?',
     answer: `Each product has its own size guide on the product detail page. We recommend comparing 
-             your favorite tee measurements to the provided chart. If you're between sizes, sizing up 
-             often gives a more relaxed fit.`,
+             your favorite tee measurements to the provided chart. If you're between sizes, size up.`,
   },
   {
     question: 'Are the drops limited?',
@@ -79,32 +78,34 @@ function FaqPage() {
       </Helmet>
 
       <h2>FAQS</h2>
-      <div className="faq-container">
-        {faqs.map((f, i) => (
-          <div key={i} className="faq-item">
-            <button
-              aria-expanded={openIndex === i}
-              aria-controls={`faq-answer-${i}`}
-              className="faq-question"
-              onClick={() => toggle(i)}
-              type="button"
-            >
-              <span>{f.question}</span>
-              <span className="chevron">{openIndex === i ? '▴' : '▾'}</span>
-            </button>
-            <div
-              id={`faq-answer-${i}`}
-              className={`faq-answer ${openIndex === i ? 'open' : ''}`}
-              style={{
-                maxHeight: openIndex === i ? '500px' : '0',
-                overflow: 'hidden',
-                transition: 'max-height 0.3s ease',
-              }}
-            >
-              <p>{f.answer}</p>
+      <div className="glow-card">
+        <div className="faq-container">
+          {faqs.map((f, i) => (
+            <div key={i} className="faq-item">
+              <button
+                aria-expanded={openIndex === i}
+                aria-controls={`faq-answer-${i}`}
+                className="faq-question"
+                onClick={() => toggle(i)}
+                type="button"
+              >
+                <span>{f.question}</span>
+                <span className="chevron">{openIndex === i ? '▴' : '▾'}</span>
+              </button>
+              <div
+                id={`faq-answer-${i}`}
+                className={`faq-answer ${openIndex === i ? 'open' : ''}`}
+                style={{
+                  maxHeight: openIndex === i ? '500px' : '0',
+                  overflow: 'hidden',
+                  transition: 'max-height 0.3s ease',
+                }}
+              >
+                <p>{f.answer}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -63,7 +63,7 @@ function OurStoryPage() {
   useRevealOnScrollMultiple([...sectionRefs, timelineRef, newsletterRef]);
 
   return (
-    <div className="app-main-content">
+    <div className="glow-card">
       <div className="our-story-glow">
         <Helmet>
           <title>Our Story — Claw & Decay</title>
