@@ -1,8 +1,10 @@
+// src/components/Navbar.jsx
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 function Navbar({ selectedTag, onSelectTag }) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const merchTags = [
     "All",
@@ -13,6 +15,11 @@ function Navbar({ selectedTag, onSelectTag }) {
     "Snapback",
     "Quarter-Sleeve"
   ];
+
+  const handleTagClick = (tag) => {
+    onSelectTag(tag);
+    navigate("/"); // Always go back to homepage when selecting merch
+  };
 
   return (
     <nav className="main-navbar">
@@ -28,7 +35,7 @@ function Navbar({ selectedTag, onSelectTag }) {
               <button
                 key={tag}
                 className={`navbar-dropdown-link ${selectedTag === tag ? 'active' : ''}`}
-                onClick={() => onSelectTag(tag)}
+                onClick={() => handleTagClick(tag)}
                 type="button"
               >
                 {tag}
