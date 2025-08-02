@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import './LandingPage.css'; // landing-specific styles
 import landingBgWebm from '../assets/CAD_vid.webm'; // your converted webm
-//import landingBgMp4 from '../assets/landing-bg.mp4'; // fallback mp4 (optional)
-import logoImage from '../assets/clawanddecay-logo.svg'; // or PNG/SVG
 
 // Featured products loader (reuse existing cached-products endpoint)
 async function fetchFeaturedProducts() {
@@ -80,7 +78,7 @@ function LandingPage({ selectedTag = 'All' }) {
   return (
     <div className="landing-page">
       <section className="hero" ref={heroRef}>
-        {/* Background video with fallback */}
+        {/* Background video only (no fallback mp4) */}
         {!window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
           <div className="video-wrapper">
             <video
@@ -89,13 +87,12 @@ function LandingPage({ selectedTag = 'All' }) {
               muted
               loop
               playsInline
-              poster="/assets/hero-poster.jpg"
+              poster="/assets/hero-poster.jpg" // optional poster image
               preload="auto"
               aria-hidden="true"
             >
               <source src={landingBgWebm} type="video/webm" />
-              <source src={landingBgMp4} type="video/mp4" />
-              {/* Fallback: nothing */}
+              {/* No mp4 fallback */}
             </video>
           </div>
         )}
@@ -103,9 +100,7 @@ function LandingPage({ selectedTag = 'All' }) {
         <div className="hero-overlay" />
 
         <div className="hero-content">
-          <div className="logo-wrapper">
-            <img src={logoImage} alt="Claw and Decay" className="hero-logo" />
-          </div>
+          {/* Logo removed as requested */}
           <p className="hero-sub">
             Streetwear with bite. Limited drops. Bold statements.
           </p>
