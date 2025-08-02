@@ -9,7 +9,7 @@ function extractTagFromTitle(title) {
   return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";
 }
 
-function ProductGrid() {
+function ProductGrid({ showTagSelector = true }) {
   const [products, setProducts] = useState([]);
   const [selectedTag, setSelectedTag] = useState("All");
   const [loading, setLoading] = useState(true);
@@ -72,25 +72,27 @@ function ProductGrid() {
         )}
       </Helmet>
 
-      <div className="tag-selector">
-        {uniqueTags.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => setSelectedTag(tag)}
-            className={`tag-button ${selectedTag === tag ? 'active' : ''}`}
-            type="button"
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
+      {showTagSelector && (
+        <div className="tag-selector">
+          {uniqueTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setSelectedTag(tag)}
+              className={`tag-button ${selectedTag === tag ? 'active' : ''}`}
+              type="button"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="product-grid-container">
         {filteredProducts.map((product, idx) => (
           <ProductCard
             key={product.id}
             product={product}
-            isFirst={idx === 0} // ✅ Eager load the first visible product image
+            isFirst={idx === 0} // eager load the first visible product image
           />
         ))}
       </div>

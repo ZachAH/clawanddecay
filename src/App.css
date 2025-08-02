@@ -662,3 +662,107 @@ h3 {
   align-items: center;
   min-height: 300px;
 }
+
+/* --- Navbar Dropdown (Merch) --- */
+.main-navbar {
+  position: relative;
+  width: 100%;
+  padding: 10px 0;
+  margin-top: 15px;
+}
+
+.navbar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.navbar-item {
+  position: relative;
+}
+
+/* Dropdown container */
+.navbar-item.dropdown {
+  cursor: pointer;
+}
+
+/* Dropdown toggle link style */
+.navbar-item.dropdown > .navbar-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Dropdown arrow */
+.navbar-item.dropdown > .navbar-link::after {
+  content: "▼";
+  font-size: 0.6em;
+  margin-left: 6px;
+  transition: transform 0.3s ease;
+}
+
+/* Dropdown menu container */
+.navbar-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--color-dark-bg);
+  border: 1px solid var(--color-accent-red);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.6);
+  min-width: 180px;
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+}
+
+/* Show dropdown on hover */
+.navbar-item.dropdown:hover .navbar-dropdown {
+  display: flex;
+}
+
+/* Dropdown links */
+.navbar-dropdown-link {
+  padding: 10px 16px;
+  color: var(--color-light-text);
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-size: 1em;
+  transition: background-color 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.navbar-dropdown-link:hover,
+.navbar-dropdown-link.active {
+  background-color: var(--color-accent-red);
+  color: #000;
+}
+
+/* Hide tag selector when using merch dropdown */
+.tag-selector {
+  display: none !important;
+}
+
+/* Responsive adjustment: close dropdown on small screens */
+@media (max-width: 767px) {
+  .navbar-list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .navbar-item.dropdown:hover .navbar-dropdown {
+    display: none; /* Disable hover dropdown on mobile */
+  }
+
+  .navbar-item.dropdown .navbar-dropdown {
+    position: static;
+    border: none;
+    box-shadow: none;
+    display: none;
+  }
+}

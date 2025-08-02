@@ -26,22 +26,8 @@ function Navbar() {
 
           {/* Merch dropdown with product grid */}
           {showMerch && (
-            <div
-              className="merch-dropdown"
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                background: '#fff',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                zIndex: 1000,
-                padding: '1rem',
-                width: '600px', // or whatever fits your layout
-                maxHeight: '500px',
-                overflowY: 'auto',
-              }}
-            >
-              <ProductGrid />
+            <div className="merch-dropdown">
+              <ProductGrid showTagSelector={true} />
             </div>
           )}
         </li>
