@@ -746,3 +746,9 @@ h3 {
 }
 
 
+.app-main,
+.product-grid-wrapper,
+.product-grid-container {
+  overflow: visible !important;
+}
+
