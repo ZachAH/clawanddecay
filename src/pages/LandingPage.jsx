@@ -101,9 +101,9 @@ function LandingPage({ selectedTag = 'All' }) {
 
         <div className="hero-content">
           {/* Logo removed as requested */}
-          <p className="hero-sub">
+          {/* <p className="hero-sub">
             Streetwear with bite. Limited drops. Bold statements.
-          </p>
+          </p> */}
           <button className="hero-cta" onClick={handleShopNow}>
             Shop The Drop
           </button>
