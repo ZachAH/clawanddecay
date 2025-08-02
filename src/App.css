@@ -674,6 +674,7 @@ h3 {
 /* --- Navbar Dropdown (Merch) --- */
 .navbar-item.dropdown {
   position: relative;
+  z-index: 1100; /* Ensure it stacks above main content */
 }
 
 .navbar-dropdown {
@@ -684,21 +685,29 @@ h3 {
   border: 1px solid var(--color-accent-red);
   border-radius: 4px;
   box-shadow: 0 4px 10px rgba(212, 175, 55, 0.6);
-  min-width: 180px;
-  z-index: 1000;
+  min-width: 140px;  /* Reduced width for better fit */
+  z-index: 1100;      /* Match parent to ensure stacking */
   display: none;
   flex-direction: column;
-  padding: 8px 0;
-  user-select: none; /* Prevent text selection on click */
-  white-space: nowrap; /* Prevent line breaks in tags */
+  padding: 4px 0;
+  white-space: nowrap; /* Prevent line breaks */
+  user-select: none;   /* Prevent text selection on click */
+  box-sizing: border-box; /* Ensure padding doesn't add width */
+  /* Optional subtle transition */
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .navbar-item.dropdown:hover .navbar-dropdown {
   display: flex;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .navbar-dropdown-link {
-  padding: 10px 16px;
+  padding: 8px 12px;   /* Reduced padding for compactness */
   color: var(--color-light-text);
   font-family: var(--font-heading);
   font-size: 1em;
@@ -707,6 +716,8 @@ h3 {
   text-align: left;
   width: 100%;
   cursor: pointer;
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: visible;   /* Ensure no clipping */
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
@@ -718,37 +729,11 @@ h3 {
 
 /* Remove extra gap between Merch and next items */
 .navbar-list {
-  gap: 15px; /* Adjusted to reduce excessive spacing */
+  gap: 15px; /* Reduced spacing */
   display: flex;
   justify-content: center;
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-/* Optional: Add a subtle transition to dropdown appearance */
-.navbar-dropdown {
-  min-width: 140px; /* reduce width so it fits better */
-  padding: 4px 0;   /* reduce vertical padding a bit */
-  box-sizing: border-box; /* ensure padding doesn't add width */
-}
-
-.navbar-dropdown-link {
-  padding: 8px 12px;   /* reduce horizontal padding */
-  white-space: nowrap; /* prevent text wrap */
-  overflow: visible;   /* make sure nothing gets cut off */
-}
-
-.navbar-item.dropdown:hover .navbar-dropdown {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-
-.app-main,
-.product-grid-wrapper,
-.product-grid-container {
-  overflow: visible !important;
 }
 
