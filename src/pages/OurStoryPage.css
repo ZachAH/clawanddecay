@@ -1,141 +1,164 @@
-/* OurStoryPage.css (or add to App.css) */
-
-.our-story-section {
-    margin-bottom: 2.5rem;
-    padding: 1.5rem 1rem;
-    background-color: #282828; /* charcoal dark bg */
-    border: 2px solid #D4AF37; /* metallic gold border */
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
-    color: #F0EDEE; /* off-white text */
-    font-family: var(--font-body);
-    line-height: 1.6;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.app-main-content {
+    background: linear-gradient(135deg, #121212 0%, #1c1c1c 100%);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="%23D4AF37" stroke-opacity="0.05"><circle cx="20" cy="20" r="1"/></svg>');
+    background-repeat: repeat;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+    color: #F0EDEE;
+  }
+  
+  .our-story-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    border: 2px solid #D4AF37;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    background: #222;
   }
   
   .our-story-section.revealed {
-    transform: translateY(0);
     opacity: 1;
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.9);
+    transform: translateY(0);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
   }
   
-  .our-story-section h3 {
-    font-family: var(--font-heading);
-    color: #D4AF37; /* metallic gold */
-    margin-bottom: 0.8rem;
-    font-size: 1.8rem;
+  h2, .our-story-section h3 {
+    font-family: 'Oswald', sans-serif;
+    color: #D4AF37;
+    text-shadow:
+      0 0 6px #D4AF37,
+      0 0 10px #D4AF37,
+      0 0 15px #B8860B;
     text-align: center;
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.8);
+  }
+  
+  h2 {
+    font-size: 3rem;
+    margin-bottom: 3rem;
   }
   
   .our-story-section p {
-    font-size: 1.1rem;
-    color: #F0EDEE;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #eee;
     text-align: center;
   }
   
   .timeline {
-    margin-top: 3rem;
-    padding: 1.5rem 1rem;
-    background-color: #1A1A1A; /* darker bg for contrast */
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 1.5rem 2rem;
     border: 2px solid #D4AF37;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
-    color: #F0EDEE;
-    font-family: var(--font-body);
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    background: #222;
+    color: #eee;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  
+  .timeline.revealed {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
   }
   
   .timeline h3 {
-    font-family: var(--font-heading);
-    font-size: 2rem;
     color: #D4AF37;
-    margin-bottom: 1rem;
+    text-shadow: 0 0 8px #D4AF37;
     text-align: center;
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.9);
+    font-size: 2rem;
+    margin-bottom: 1rem;
   }
   
   .timeline ul {
-    list-style-type: none;
-    padding-left: 0;
-    max-width: 600px;
-    margin: 0 auto;
+    list-style: none;
+    padding: 0;
   }
   
   .timeline ul li {
-    padding: 0.6rem 0;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     font-size: 1.1rem;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-    color: #F0EDEE;
-    font-weight: 500;
+    cursor: default;
+    transition: color 0.3s ease, background-color 0.3s ease;
   }
   
-  .timeline ul li strong {
-    color: #D4AF37;
-    font-weight: 700;
-    margin-right: 0.5rem;
-    text-shadow: 0 0 4px rgba(212, 175, 55, 0.8);
+  .timeline ul li:hover {
+    color: #fff;
+    background-color: rgba(212, 175, 55, 0.2);
+    border-radius: 5px;
+    box-shadow: 0 0 15px #D4AF37;
   }
   
   .callout-newsletter {
-    margin-top: 4rem;
-    background-color: #282828;
-    border: 2px solid #D4AF37;
-    border-radius: 10px;
-    padding: 2rem 1.5rem;
     max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.85);
+    margin: 4rem auto;
+    padding: 2rem;
+    border-radius: 10px;
+    background: #222;
+    border: 2px solid #D4AF37;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.8);
     text-align: center;
-    color: #F0EDEE;
-    font-family: var(--font-body);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  
+  .callout-newsletter.revealed {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 45px rgba(212, 175, 55, 1);
   }
   
   .callout-newsletter h3 {
-    font-family: var(--font-heading);
-    font-size: 2rem;
+    font-family: 'Oswald', sans-serif;
     color: #D4AF37;
+    font-size: 2.2rem;
     margin-bottom: 1rem;
-    text-shadow: 0 0 7px rgba(212, 175, 55, 1);
+    text-shadow: 0 0 10px #D4AF37;
   }
   
   .callout-newsletter p {
+    font-family: 'Roboto', sans-serif;
     font-size: 1.1rem;
-    margin-bottom: 1.8rem;
+    margin-bottom: 2rem;
+    color: #eee;
   }
   
   .subscribe-btn {
     background-color: #D4AF37;
-    color: #000;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1.1rem;
-    padding: 0.8rem 2rem;
     border: none;
     border-radius: 6px;
+    padding: 0.8rem 2.2rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #111;
     cursor: pointer;
-    box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+    box-shadow: 0 0 10px #D4AF37;
+    animation: pulse 2.5s infinite;
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
   
   .subscribe-btn:hover {
     background-color: #b88f2f;
-    transform: scale(1.05);
-    box-shadow: 0 0 18px rgba(184, 143, 47, 1);
+    transform: scale(1.07);
+    box-shadow: 0 0 20px #b88f2f;
   }
   
-  /* Reveal animation (optional) */
-  .our-story-section,
-  .timeline,
-  .callout-newsletter {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .our-story-section.revealed,
-  .timeline.revealed,
-  .callout-newsletter.revealed {
-    opacity: 1;
-    transform: translateY(0);
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 10px #D4AF37;
+    }
+    50% {
+      box-shadow: 0 0 20px #D4AF37;
+    }
   }
   

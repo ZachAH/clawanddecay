@@ -14,49 +14,56 @@ const sections = [
   {
     id: 'mission',
     title: 'Our Mission',
-    body: `We exist to give voice to the bold. Limited drops, sustainable mindset, and designs that
-           make you feel seen. No fluff. No overproduction. Just streetwear with bite.`,
+    body: `We exist to give voice to the bold. Our designs are not for everyone and that is fine! This is for the people who are into the alternative culture. Growing up in the metal scene I know what its like
+    to be cast out, have your music called just noise, satanic etc. This brand is for us the misfits the outcasts the bold!`,
   },
   {
     id: 'process',
     title: 'The Process',
-    body: `Every item is curated in small batches. We collaborate with artists, source quality materials,
-           and apply attention to detail that you can see and feel. From concept to drop, it's crafted
-           to last and designed to stand out.`,
+    body: `Every item is made by the brand excpet for some of the art which I work with freelance artitst and local artists to design. As of right now I am only one person so it takes some time to get new products
+    out. Rest assured I spend probbaly to much time and all the products before publishing them.`,
   },
   {
     id: 'community',
     title: 'Community & Culture',
     body: `This isn’t just a brand—it’s a movement. Fans, collaborators, and outsiders alike help shape
-           what Claw & Decay becomes. Your feedback, your style, your voice are all part of the story.`,
+           what Claw & Decay becomes. Your feedback, your style, your voice are all part of the story. If you have and merch, design or any sort of ideas I would love to hear them form you. You can contact us on the Contact Page.`,
   },
 ];
 
-function useRevealOnScroll(ref, options = {}) {
+// Hook to reveal multiple elements on scroll
+function useRevealOnScrollMultiple(refs, options = {}) {
   useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('revealed');
-            observer.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.15, ...options }
-    );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [ref, options]);
+    const observers = [];
+    refs.forEach(ref => {
+      if (!ref.current) return;
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, ...options }
+      );
+      observer.observe(ref.current);
+      observers.push(observer);
+    });
+    return () => observers.forEach(observer => observer.disconnect());
+  }, [refs, options]);
 }
 
 function OurStoryPage() {
-  const containerRef = useRef(null);
-  useRevealOnScroll(containerRef);
+  const sectionRefs = sections.map(() => useRef(null));
+  const timelineRef = useRef(null);
+  const newsletterRef = useRef(null);
+
+  useRevealOnScrollMultiple([...sectionRefs, timelineRef, newsletterRef]);
 
   return (
-    <div className="app-main-content" ref={containerRef}>
+    <div className="app-main-content">
       <Helmet>
         <title>Our Story — Claw & Decay</title>
         <meta
@@ -67,14 +74,19 @@ function OurStoryPage() {
 
       <h2>Our Story</h2>
 
-      {sections.map((sec) => (
-        <section key={sec.id} className="our-story-section" id={sec.id}>
+      {sections.map((sec, i) => (
+        <section
+          key={sec.id}
+          className="our-story-section"
+          id={sec.id}
+          ref={sectionRefs[i]}
+        >
           <h3>{sec.title}</h3>
           <p>{sec.body}</p>
         </section>
       ))}
 
-      <div className="timeline">
+      <div className="timeline" ref={timelineRef}>
         <h3>Milestones</h3>
         <ul>
           <li>
@@ -90,7 +102,7 @@ function OurStoryPage() {
         </ul>
       </div>
 
-      <div className="callout-newsletter">
+      <div className="callout-newsletter" ref={newsletterRef}>
         <h3>Stay in the Loop 🤘</h3>
         <p>
           Join the Claw & Decay mailing list for early access, behind-the-scenes, and exclusive
