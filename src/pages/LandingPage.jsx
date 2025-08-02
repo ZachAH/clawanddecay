@@ -115,7 +115,7 @@ function LandingPage({ selectedTag = 'All' }) {
       <section className="features" ref={featuresRef}>
         <div className="feature-item">
           <h2>Premium Materials</h2>
-          <p>Comfort without compromise—crafted to last in and out of the PIT.</p>
+          <p>Comfort without compromise—crafted to last in and out of the PIT...or BAR.🤘</p>
         </div>
         <div className="feature-item">
           <h2>Limited Editions</h2>
@@ -143,7 +143,7 @@ function LandingPage({ selectedTag = 'All' }) {
         </div>
       </section>
 
-      <section className="email-signup">
+      {/* <section className="email-signup">
         <div className="signup-inner">
           <div className="signup-text">
             <h3>Get Early Access</h3>
@@ -166,7 +166,7 @@ function LandingPage({ selectedTag = 'All' }) {
             </button>
           </form>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
