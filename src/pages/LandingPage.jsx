@@ -126,7 +126,7 @@ function LandingPage({ selectedTag = 'All' }) {
         </div>
         <div className="feature-item">
           <h2>Made From The Ground Up</h2>
-          <p>This website and products built with care, straight from the MIDWEST!</p>
+          <p>This website and products built with care and passion, straight from the MIDWEST!</p>
         </div>
       </section>
 
