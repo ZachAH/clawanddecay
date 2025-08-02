@@ -2,9 +2,10 @@
 
 /* --- Custom Fonts --- */
 @font-face {
-  font-family: 'NIGHTCROW'; /* Must exactly match usage in --font-heading */
+  font-family: 'NIGHTCROW';
+  /* Must exactly match usage in --font-heading */
   src: url('./assets/fonts/NIGHTCROW.woff2') format('woff2'),
-       url('./assets/fonts/NIGHTCROW.woff') format('woff');
+    url('./assets/fonts/NIGHTCROW.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -28,7 +29,8 @@
 }
 
 /* --- Base Styles & Layout --- */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -64,7 +66,12 @@ body {
 }
 
 /* --- Headings --- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   color: var(--color-light-text);
   text-align: center;
@@ -91,7 +98,7 @@ h3 {
   margin: 0;
   background-color: transparent;
   box-shadow: none;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -133,7 +140,8 @@ h3 {
   padding: 10px 0;
   margin-top: 15px;
   position: relative;
-  z-index: 1100; /* higher than product grid and other content */
+  z-index: 1100;
+  /* higher than product grid and other content */
 }
 
 .product-grid-wrapper,
@@ -174,7 +182,7 @@ h3 {
   margin: 40px auto;
   background-color: var(--color-detail-page-bg);
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   color: var(--color-light-text);
 }
 
@@ -201,7 +209,7 @@ h3 {
   color: var(--color-light-text);
   text-align: center;
   padding: 20px;
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* --- Product Grid --- */
@@ -213,7 +221,8 @@ h3 {
   justify-items: center;
   max-width: 1200px;
   margin: 0 auto;
-  box-sizing: border-box;  /* Add this */
+  box-sizing: border-box;
+  /* Add this */
 }
 
 .product-grid-wrapper {
@@ -243,7 +252,8 @@ h3 {
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
   max-width: 280px;
-  width: 100%; /* Ensure it fills grid cell */
+  width: 100%;
+  /* Ensure it fills grid cell */
   box-sizing: border-box;
 }
 
@@ -297,8 +307,13 @@ h3 {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .blood-stream-animation-wrapper {
@@ -331,23 +346,27 @@ h3 {
     opacity: 0;
     border-radius: 4px;
   }
+
   10% {
     height: 15px;
     transform: translateY(0) scaleY(1);
     opacity: 1;
   }
+
   50% {
     height: 150px;
     transform: translateY(calc(100vh - 200px)) scaleY(0.8);
     opacity: 1;
     border-radius: 4px;
   }
+
   80% {
     height: 20px;
     transform: translateY(calc(100vh - 100px)) scaleY(0.1);
     opacity: 0.5;
     border-radius: 50%;
   }
+
   100% {
     height: 0px;
     transform: translateY(calc(100vh + 50px)) scaleY(0.1);
@@ -363,7 +382,7 @@ h3 {
   margin: 40px auto;
   background-color: var(--color-detail-page-bg);
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   color: var(--color-light-text);
   display: flex;
   flex-direction: column;
@@ -488,13 +507,16 @@ h3 {
     transform: translateX(100%) rotate(25deg);
     opacity: 0;
   }
+
   60% {
     transform: translateX(0%) rotate(-10deg);
     opacity: 1;
   }
+
   80% {
     transform: translateX(10px) rotate(10deg);
   }
+
   100% {
     transform: translateX(0%) rotate(0deg);
   }
@@ -511,11 +533,13 @@ h3 {
     flex-direction: column;
     align-items: center;
   }
+
   .product-detail-image-container,
   .tee-description-heading {
     width: 100%;
     max-width: 100%;
   }
+
   .comfort-colors-icon-img {
     width: 60px;
   }
@@ -589,6 +613,7 @@ h3 {
   .desktop-header-content {
     display: flex;
   }
+
   .mobile-header-content {
     display: none;
   }
@@ -599,6 +624,7 @@ h3 {
   .desktop-header-content {
     display: none;
   }
+
   .mobile-header-content {
     display: flex;
     justify-content: center;
@@ -623,10 +649,12 @@ h3 {
     will-change: transform;
     transform: translateZ(0);
   }
+
   .tag-selector button:hover {
     transform: translateY(-1px);
     box-shadow: none !important;
   }
+
   .tag-selector button {
     box-shadow: none !important;
   }
@@ -645,7 +673,8 @@ h3 {
   width: 48px;
   height: 48px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #facc15; /* yellow-400 */
+  border-top: 4px solid #facc15;
+  /* yellow-400 */
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -674,7 +703,8 @@ h3 {
 /* --- Navbar Dropdown (Merch) --- */
 .navbar-item.dropdown {
   position: relative;
-  z-index: 1100; /* Ensure it stacks above main content */
+  z-index: 1100;
+  /* Ensure it stacks above main content */
 }
 
 .navbar-dropdown {
@@ -685,18 +715,28 @@ h3 {
   border: 1px solid var(--color-accent-red);
   border-radius: 4px;
   box-shadow: 0 4px 10px rgba(212, 175, 55, 0.6);
-  min-width: 140px;  /* Reduced width for better fit */
-  z-index: 1100;      /* Match parent to ensure stacking */
+  min-width: 140px;
+  /* Reduced width for better fit */
+  z-index: 1100;
+  /* Match parent to ensure stacking */
   display: none;
   flex-direction: column;
   padding: 4px 0;
-  white-space: nowrap; /* Prevent line breaks */
-  user-select: none;   /* Prevent text selection on click */
-  box-sizing: border-box; /* Ensure padding doesn't add width */
+  white-space: nowrap;
+  /* Prevent line breaks */
+  user-select: none;
+  /* Prevent text selection on click */
+  box-sizing: border-box;
+  /* Ensure padding doesn't add width */
   /* Optional subtle transition */
   opacity: 0;
   transform: translateY(-5px);
   transition: opacity 0.25s ease, transform 0.25s ease;
+  display: flex !important;
+  opacity: 1 !important;
+  transform: none !important;
+  background-color: rgba(229, 0, 0, 0.8) !important;
+
 }
 
 .navbar-item.dropdown:hover .navbar-dropdown {
@@ -707,7 +747,8 @@ h3 {
 }
 
 .navbar-dropdown-link {
-  padding: 8px 12px;   /* Reduced padding for compactness */
+  padding: 8px 12px;
+  /* Reduced padding for compactness */
   color: var(--color-light-text);
   font-family: var(--font-heading);
   font-size: 1em;
@@ -716,8 +757,10 @@ h3 {
   text-align: left;
   width: 100%;
   cursor: pointer;
-  white-space: nowrap; /* Prevent wrapping */
-  overflow: visible;   /* Ensure no clipping */
+  white-space: nowrap;
+  /* Prevent wrapping */
+  overflow: visible;
+  /* Ensure no clipping */
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
@@ -729,11 +772,11 @@ h3 {
 
 /* Remove extra gap between Merch and next items */
 .navbar-list {
-  gap: 15px; /* Reduced spacing */
+  gap: 15px;
+  /* Reduced spacing */
   display: flex;
   justify-content: center;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-
