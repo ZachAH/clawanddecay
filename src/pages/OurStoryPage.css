@@ -162,3 +162,25 @@
     }
   }
   
+  /* glowing container (you can apply to .app-main-content on the story page or wrap inner content) */
+.our-story-glow {
+    position: relative;
+    padding: 2rem;
+    border-radius: 10px;
+    background: #0f0f0f; /* slightly off-black to separate from page bg */
+    box-shadow:
+      0 0 20px 4px rgba(212, 175, 55, 0.6), /* soft gold halo */
+      0 0 40px 8px rgba(212, 175, 55, 0.3); /* deeper spread */
+    overflow: hidden;
+  }
+  
+  /* optional inner subtle border line */
+  .our-story-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    border-radius: 10px;
+    pointer-events: none;
+  }
+  
