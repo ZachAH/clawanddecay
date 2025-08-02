@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ContactUsPage.css'; // We'll create this next
+import './ContactUsPage.css';
 
 function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -34,11 +34,15 @@ function ContactPage() {
         name="contact"
         method="POST"
         data-netlify="true"
-        netlify-honeypot="bot-field"
+        data-netlify-honeypot="bot-field"
         onSubmit={handleSubmit}
+        netlify
       >
+        {/* Hidden input to identify the form */}
         <input type="hidden" name="form-name" value="contact" />
-        <p className="hidden">
+
+        {/* Honeypot for spam */}
+        <p className="hidden" style={{ display: 'none' }}>
           <label>
             Don’t fill this out if you’re human: <input name="bot-field" />
           </label>
