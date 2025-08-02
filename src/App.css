@@ -873,14 +873,14 @@ h3 {
 
 /* glowing container (you can apply to .app-main-content on the story page or wrap inner content) */
 .our-story-glow {
-  position: relative;
+  max-width: 600px;
+  margin: 3rem auto;
   padding: 2rem;
-  border-radius: 10px;
-  background: #0f0f0f; /* slightly off-black to separate from page bg */
-  box-shadow:
-    0 0 20px 4px rgba(212, 175, 55, 0.6), /* soft gold halo */
-    0 0 40px 8px rgba(212, 175, 55, 0.3); /* deeper spread */
-  overflow: hidden;
+  background-color: var(--color-detail-page-bg);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+  color: var(--color-light-text);
+  font-family: var(--font-body);
 }
 
 /* optional inner subtle border line */
