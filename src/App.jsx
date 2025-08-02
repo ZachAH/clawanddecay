@@ -14,7 +14,7 @@ import './App.css';
 import desktopHeaderImage from './assets/clawanddecay-header.webp';
 import mobileHeaderImage from './assets/clawanddecay-header-mobile.webp';
 
-import Navbar from './components/Navbar'; // ensure casing matches file
+import Navbar from './components/navbar'; // ensure casing matches file
 
 function App() {
   const [selectedTag, setSelectedTag] = useState("All");
