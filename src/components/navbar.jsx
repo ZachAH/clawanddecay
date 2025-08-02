@@ -20,15 +20,23 @@ function Navbar({ selectedTag, onSelectTag }) {
     onSelectTag(tag);
     const params = new URLSearchParams();
     if (tag && tag !== 'All') params.set('tag', tag);
-    navigate(`/?${params.toString()}`);
+    navigate(`/merch?${params.toString()}`);
   };
+
+  const isMerchActive = location.pathname === '/merch' || location.pathname === '/';
 
   return (
     <nav className="main-navbar">
       <ul className="navbar-list">
         <li className="navbar-item dropdown">
+          {/* Clicking Merch goes to /merch */}
           <span
-            className={`navbar-link ${location.pathname === '/' ? 'active-glow' : ''}`}
+            role="button"
+            className={`navbar-link ${location.pathname.startsWith('/merch') ? 'active-glow' : ''}`}
+            onClick={() => {
+              onSelectTag('All');
+              navigate('/merch');
+            }}
           >
             Merch
           </span>
