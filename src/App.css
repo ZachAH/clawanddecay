@@ -132,6 +132,14 @@ h3 {
   width: 100%;
   padding: 10px 0;
   margin-top: 15px;
+  position: relative;
+  z-index: 1100; /* higher than product grid and other content */
+}
+
+.product-grid-wrapper,
+.product-grid-container {
+  position: relative;
+  z-index: 1;
 }
 
 .navbar-list {
