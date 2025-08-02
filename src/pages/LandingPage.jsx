@@ -9,7 +9,7 @@ import landingBgWebm from '../assets/CAD_vid.webm'; // your converted webm
 async function fetchFeaturedProducts() {
   const res = await fetch('/.netlify/functions/get-cached-products');
   const data = await res.json();
-  const products = (data.data || []).slice(0, 6); // top 6
+  const products = (data.data || []).slice(0, 3); // top 6
   return products;
 }
 
@@ -115,18 +115,18 @@ function LandingPage({ selectedTag = 'All' }) {
       <section className="features" ref={featuresRef}>
         <div className="feature-item">
           <h2>Premium Materials</h2>
-          <p>Comfort without compromise—crafted to last.</p>
+          <p>Comfort without compromise—crafted to last in and out of the PIT.</p>
         </div>
         <div className="feature-item">
           <h2>Limited Editions</h2>
           <p>
             Every release is one of a kind. We work with artists in and from the
-            scene to create our products!
+            scene to create our products! NO AI Here!!
           </p>
         </div>
         <div className="feature-item">
-          <h2>Made in Small Batches</h2>
-          <p>Built with care, not mass-produced.</p>
+          <h2>Made From The Ground Up</h2>
+          <p>This website and products built with care, straight from the MIDWEST!</p>
         </div>
       </section>
 
