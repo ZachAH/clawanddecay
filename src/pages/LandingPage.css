@@ -37,7 +37,7 @@
   }
   
   .hero-cta {
-    background: var(--color-accent-red);
+    background: #D4AF37;
     border: none;
     padding: 12px 28px;
     font-family: var(--font-heading);
