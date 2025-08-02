@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet';
 import ProductCard from './ProductCard';
 
 function extractTagFromTitle(title) {
@@ -45,6 +46,8 @@ function ProductGrid() {
 
   const uniqueTags = ["All", ...new Set(products.map(p => p.tag))];
 
+  const firstImageUrl = filteredProducts.length > 0 && filteredProducts[0].images?.[0]?.src;
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -63,6 +66,12 @@ function ProductGrid() {
 
   return (
     <div className="product-grid-wrapper">
+      <Helmet>
+        {firstImageUrl && (
+          <link rel="preload" as="image" href={firstImageUrl} />
+        )}
+      </Helmet>
+
       <div className="tag-selector">
         {uniqueTags.map((tag) => (
           <button
@@ -85,7 +94,6 @@ function ProductGrid() {
           />
         ))}
       </div>
-
     </div>
   );
 }
