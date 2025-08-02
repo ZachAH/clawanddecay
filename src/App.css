@@ -720,10 +720,15 @@ h3 {
 
 /* Optional: Add a subtle transition to dropdown appearance */
 .navbar-dropdown {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  pointer-events: none;
+  min-width: 140px; /* reduce width so it fits better */
+  padding: 4px 0;   /* reduce vertical padding a bit */
+  box-sizing: border-box; /* ensure padding doesn't add width */
+}
+
+.navbar-dropdown-link {
+  padding: 8px 12px;   /* reduce horizontal padding */
+  white-space: nowrap; /* prevent text wrap */
+  overflow: visible;   /* make sure nothing gets cut off */
 }
 
 .navbar-item.dropdown:hover .navbar-dropdown {
