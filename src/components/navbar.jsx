@@ -18,7 +18,9 @@ function Navbar({ selectedTag, onSelectTag }) {
 
   const handleTagClick = (tag) => {
     onSelectTag(tag);
-    navigate("/"); // Always go back to homepage when selecting merch
+    const params = new URLSearchParams();
+    if (tag && tag !== 'All') params.set('tag', tag);
+    navigate(`/?${params.toString()}`);
   };
 
   return (
