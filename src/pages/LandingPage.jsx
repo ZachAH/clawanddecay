@@ -101,9 +101,6 @@ function LandingPage({ selectedTag = 'All' }) {
 
         <div className="hero-content">
           {/* Logo removed as requested */}
-          <p className="hero-sub">
-            Streetwear with bite. Limited drops. Bold statements.
-          </p>
           {/* Removed button from here */}
         </div>
       </section>

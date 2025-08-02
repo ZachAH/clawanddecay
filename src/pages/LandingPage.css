@@ -23,13 +23,7 @@
     z-index: 0;
     pointer-events: none;
     filter: brightness(0.6);
-  }
-  
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    z-index: 1;
+    border-radius: 16px; /* match the wrapper */
   }
   
   .hero-content {
@@ -40,11 +34,6 @@
     flex-direction: column;
     gap: 16px;
     align-items: center;
-  }
-  
-  .hero-sub {
-    font-size: 1.2rem;
-    margin: 0;
   }
   
   .hero-cta {
@@ -99,3 +88,7 @@
     margin: 24px 0 48px 0; /* Adjust spacing above and below the button */
   }
   
+  .video-wrapper {
+    border-radius: 16px; /* adjust radius as you like */
+    overflow: hidden; /* ensure content respects border-radius */
+  }
