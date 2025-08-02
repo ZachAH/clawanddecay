@@ -703,8 +703,7 @@ h3 {
 /* --- Navbar Dropdown (Merch) --- */
 .navbar-item.dropdown {
   position: relative;
-  z-index: 1100;
-  /* Ensure it stacks above main content */
+  z-index: 1100; /* ensure it stacks above main content */
 }
 
 .navbar-dropdown {
@@ -716,27 +715,16 @@ h3 {
   border-radius: 4px;
   box-shadow: 0 4px 10px rgba(212, 175, 55, 0.6);
   min-width: 140px;
-  /* Reduced width for better fit */
   z-index: 1100;
-  /* Match parent to ensure stacking */
   display: none;
   flex-direction: column;
   padding: 4px 0;
   white-space: nowrap;
-  /* Prevent line breaks */
   user-select: none;
-  /* Prevent text selection on click */
   box-sizing: border-box;
-  /* Ensure padding doesn't add width */
-  /* Optional subtle transition */
   opacity: 0;
   transform: translateY(-5px);
   transition: opacity 0.25s ease, transform 0.25s ease;
-  display: flex !important;
-  opacity: 1 !important;
-  transform: none !important;
-  background-color: rgba(229, 0, 0, 0.8) !important;
-
 }
 
 .navbar-item.dropdown:hover .navbar-dropdown {
@@ -748,7 +736,6 @@ h3 {
 
 .navbar-dropdown-link {
   padding: 8px 12px;
-  /* Reduced padding for compactness */
   color: var(--color-light-text);
   font-family: var(--font-heading);
   font-size: 1em;
@@ -758,9 +745,7 @@ h3 {
   width: 100%;
   cursor: pointer;
   white-space: nowrap;
-  /* Prevent wrapping */
   overflow: visible;
-  /* Ensure no clipping */
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
