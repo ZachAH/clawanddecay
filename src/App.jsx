@@ -1,5 +1,5 @@
 // src/App.jsx
-import React from 'react';
+import React, { useState } from 'react';
 // Import routing components
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -21,6 +21,8 @@ import Navbar from './components/navbar'; // Corrected casing to 'Navbar' if you
 
 
 function App() {
+  const [selectedTag, setSelectedTag] = useState("All"); // Lifted state here
+
   return (
     <Router>
       <div className="App">
@@ -45,13 +47,13 @@ function App() {
           </div>
           
           {/* --- NAVBAR NESTED INSIDE THE HEADER --- */}
-          <Navbar /> {/* The Navbar component, its styling will adapt via CSS */}
+          <Navbar selectedTag={selectedTag} onSelectTag={setSelectedTag} /> {/* Pass props */}
         </header>
 
         {/* Main content area where different pages will render based on the route */}
         <main className="app-main">
           <Routes>
-            <Route path="/" element={<ProductGridPage />} />
+            <Route path="/" element={<ProductGridPage selectedTag={selectedTag} />} /> {/* Pass selectedTag */}
             <Route path="/products/:productId" element={<ProductDetailPage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
             <Route path="/our-story" element={<OurStoryPage />} />

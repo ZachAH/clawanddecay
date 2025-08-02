@@ -1,11 +1,11 @@
 // src/pages/ProductGridPage.jsx
 import React from 'react';
-import ProductGrid from '../components/ProductGrid'; // Import your ProductGrid component
+import ProductGrid from '../components/ProductGrid';
 
-function ProductGridPage() {
+function ProductGridPage({ selectedTag = "All" }) {
   return (
     <div>
-      <ProductGrid />
+      <ProductGrid selectedTag={selectedTag} />
     </div>
   );
 }

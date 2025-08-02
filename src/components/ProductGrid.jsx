@@ -9,9 +9,12 @@ function extractTagFromTitle(title) {
   return TAGS.find(tag => tag.toLowerCase() === lastWord) || "Other";
 }
 
-function ProductGrid({ showTagSelector = true }) {
+/**
+ * @param {{ selectedTag?: string }} props
+ * selectedTag comes from parent (e.g., App) and controls filtering.
+ */
+function ProductGrid({ selectedTag = "All" }) {
   const [products, setProducts] = useState([]);
-  const [selectedTag, setSelectedTag] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,7 +29,7 @@ function ProductGrid({ showTagSelector = true }) {
         const data = await response.json();
         const taggedProducts = (data.data || []).map(product => ({
           ...product,
-          tag: extractTagFromTitle(product.title)
+          tag: extractTagFromTitle(product.title),
         }));
         setProducts(taggedProducts);
       } catch (err) {
@@ -43,8 +46,6 @@ function ProductGrid({ showTagSelector = true }) {
   const filteredProducts = useMemo(() => {
     return selectedTag === "All" ? products : products.filter(p => p.tag === selectedTag);
   }, [products, selectedTag]);
-
-  const uniqueTags = ["All", ...new Set(products.map(p => p.tag))];
 
   const firstImageUrl = filteredProducts.length > 0 && filteredProducts[0].images?.[0]?.src;
 
@@ -67,9 +68,7 @@ function ProductGrid({ showTagSelector = true }) {
   return (
     <div className="product-grid-wrapper">
       <Helmet>
-        {firstImageUrl && (
-          <link rel="preload" as="image" href={firstImageUrl} />
-        )}
+        {firstImageUrl && <link rel="preload" as="image" href={firstImageUrl} />}
       </Helmet>
 
       <div className="product-grid-container">
