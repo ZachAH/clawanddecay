@@ -72,7 +72,7 @@ function OurStoryPage() {
         />
       </Helmet>
 
-      <h2>Our Story</h2>
+      <h2 className="shiny-text shiny-text-shadow">Our Story</h2>
 
       {sections.map((sec, i) => (
         <section
@@ -108,7 +108,10 @@ function OurStoryPage() {
           Join the Claw & Decay mailing list for early access, behind-the-scenes, and exclusive
           releases.
         </p>
-        <button onClick={() => window.location.assign('/?newsletter=true')} className="subscribe-btn">
+        <button
+          onClick={() => window.location.assign('/?newsletter=true')}
+          className="subscribe-btn shiny-text-shadow"
+        >
           Join the List
         </button>
       </div>

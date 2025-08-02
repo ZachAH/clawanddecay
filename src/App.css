@@ -846,3 +846,36 @@ h3 {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Shining Gradient Animation */
+@keyframes shine {
+  0% {
+    background-position: -200%;
+  }
+  100% {
+    background-position: 200%;
+  }
+}
+
+.shiny-text {
+  background: linear-gradient(
+    90deg,
+    #d4af37 25%,
+    #fff8d6 50%,
+    #d4af37 75%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: shine 3s linear infinite;
+  font-weight: 700;
+}
+
+/* Add a subtle shadow for extra pop */
+.shiny-text-shadow {
+  text-shadow:
+    0 0 8px #d4af37,
+    0 0 15px #d4af37,
+    0 0 20px #fff8d6;
+}
