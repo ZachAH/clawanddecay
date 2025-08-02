@@ -1,12 +1,6 @@
-.landing-page {
-    --move-x: calc(var(--px, 0) * 10px);
-    --move-y: calc(var(--py, 0) * 10px);
-  }
-  
-  .hero {
+.hero {
     position: relative;
     padding: 120px 20px;
-    background: url('../assets/hero-bg.jpg') center/cover no-repeat;
     color: #fff;
     text-align: center;
     overflow: hidden;
@@ -14,19 +8,43 @@
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    --move-x: calc(var(--px, 0) * 10px);
+    --move-y: calc(var(--py, 0) * 10px);
     transform: translate3d(var(--move-x), var(--move-y), 0);
     transition: transform 0.2s ease-out;
   }
   
-  .hero-title {
-    font-size: 3rem;
-    margin: 0;
-    letter-spacing: 1px;
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+    filter: brightness(0.6);
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
   }
   
   .hero-sub {
-    font-size: 1.1rem;
-    margin: 8px 0 16px;
+    font-size: 1.2rem;
+    margin: 0;
   }
   
   .hero-cta {
@@ -43,104 +61,35 @@
   .hero-cta:hover {
     transform: scale(1.03);
   }
-  
-  .features {
-    display: flex;
-    gap: 20px;
-    padding: 60px 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity .6s ease, transform .6s ease;
-  }
-  .features.revealed {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .feature-item {
-    flex: 1 1 220px;
-    background: rgba(255,255,255,0.05);
-    padding: 24px;
-    border-radius: 6px;
-    text-align: center;
-    min-width: 200px;
-  }
-  
-  .featured-products {
-    padding: 60px 20px;
-    text-align: center;
-  }
-  .product-grid {
-    display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    margin-top: 24px;
-  }
-  
-  .email-signup {
-    background: rgba(0,0,0,0.85);
-    padding: 60px 20px;
-    color: #fff;
-  }
-  .signup-inner {
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .signup-text {
-    flex: 1 1 280px;
-  }
-  .signup-form {
-    flex: 1 1 320px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .input-wrapper {
+
+  .landing-container {
     position: relative;
-    flex: 1 1 220px;
-  }
-  .input-wrapper input {
+    height: 100vh;
     width: 100%;
-    padding: 14px 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 1em;
-    background: #222;
-    color: #fff;
-    outline: none;
+    overflow: hidden;
   }
-  .input-wrapper label {
+  
+  .landing-video {
     position: absolute;
-    left: 12px;
-    top: 12px;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    font-size: 0.9em;
-    color: #bbb;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -1;
   }
-  .input-wrapper input:focus + label,
-  .input-wrapper .filled + label {
-    top: -8px;
-    font-size: 0.65em;
-    background: var(--color-dark-bg);
-    padding: 0 4px;
-    border-radius: 3px;
+  
+  .landing-overlay {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
-  .signup-form button {
-    background: var(--color-accent-red);
-    border: none;
-    padding: 14px 24px;
-    font-family: var(--font-heading);
-    cursor: pointer;
-    color: #000;
-    font-weight: bold;
-    border-radius: 4px;
-    min-width: 120px;
+  
+  .landing-logo {
+    max-width: 350px;
+    width: 80%;
+    filter: drop-shadow(0px 0px 10px rgba(0,0,0,0.8));
   }
   

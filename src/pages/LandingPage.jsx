@@ -1,9 +1,13 @@
 // src/pages/LandingPage.jsx
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import './LandingPage.css'; // create alongside for specific styles
+import './LandingPage.css'; // landing-specific styles
+import landingBgWebm from '../assets/CAD_vid.webm'; // your converted webm
+//import landingBgMp4 from '../assets/landing-bg.mp4'; // fallback mp4 (optional)
+import logoImage from '../assets/clawanddecay-logo.svg'; // or PNG/SVG
 
-// Dummy featured products fetcher; you can replace with your real fetch logic or pass down via props
+// Featured products loader (reuse existing cached-products endpoint)
 async function fetchFeaturedProducts() {
   const res = await fetch('/.netlify/functions/get-cached-products');
   const data = await res.json();
@@ -30,20 +34,22 @@ function useRevealOnScroll(ref, options = {}) {
   }, [ref, options]);
 }
 
-function LandingPage({ selectedTag }) {
+function LandingPage({ selectedTag = 'All' }) {
   const [featured, setFeatured] = useState([]);
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const heroRef = useRef(null);
   const featuresRef = useRef(null);
+  const navigate = useNavigate();
 
   // fetch featured products once
   useEffect(() => {
     fetchFeaturedProducts().then(setFeatured).catch(console.error);
   }, []);
 
-  // Hero mouse parallax
+  // Hero mouse parallax (disabled for reduced motion)
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const el = heroRef.current;
     if (!el) return;
     const handle = (e) => {
@@ -62,21 +68,51 @@ function LandingPage({ selectedTag }) {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    // stub: send to your email list backend
+    // TODO: wire up real email capture / backend
     setSubmitted(true);
+  };
+
+  const handleShopNow = () => {
+    // navigate to merch; preserve tag in query if desired
+    navigate('/merch');
   };
 
   return (
     <div className="landing-page">
       <section className="hero" ref={heroRef}>
+        {/* Background video with fallback */}
+        {!window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
+          <div className="video-wrapper">
+            <video
+              className="hero-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster="/assets/hero-poster.jpg"
+              preload="auto"
+              aria-hidden="true"
+            >
+              <source src={landingBgWebm} type="video/webm" />
+              <source src={landingBgMp4} type="video/mp4" />
+              {/* Fallback: nothing */}
+            </video>
+          </div>
+        )}
+
+        <div className="hero-overlay" />
+
         <div className="hero-content">
-          <h1 className="hero-title">Claw & Decay</h1>
+          <div className="logo-wrapper">
+            <img src={logoImage} alt="Claw and Decay" className="hero-logo" />
+          </div>
           <p className="hero-sub">
             Streetwear with bite. Limited drops. Bold statements.
           </p>
-          <button className="hero-cta">Shop The Drop</button>
+          <button className="hero-cta" onClick={handleShopNow}>
+            Shop The Drop
+          </button>
         </div>
-        <div className="hero-overlay" />
       </section>
 
       <section className="features" ref={featuresRef}>
@@ -86,7 +122,10 @@ function LandingPage({ selectedTag }) {
         </div>
         <div className="feature-item">
           <h2>Limited Editions</h2>
-          <p>Every release is one of a kind. No restocks.</p>
+          <p>
+            Every release is one of a kind. We work with artists in and from the
+            scene to create our products!
+          </p>
         </div>
         <div className="feature-item">
           <h2>Made in Small Batches</h2>
