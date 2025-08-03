@@ -114,22 +114,29 @@ function LandingPage({ selectedTag = 'All' }) {
 
       <section className="features" ref={featuresRef}>
         <div className="feature-item">
-          <h2>For the Misfits & the Loud</h2>
+          <h2>For the Scene & Everyone In It</h2>
           <p>We don’t fit in out there. But in here — lost in the music, shoulder to shoulder with strangers who feel like family — we belong.
-          That feeling, that unity, is what this brand is built on. For the outcasts, the loud, the ones who live for the moments when the music hits and you’re surrounded by like-minded souls — this is your brand.
+            That feeling, that unity, is what this brand is built on. For the outcasts, the loud, the ones who live for the moments when the music hits and you’re surrounded by like-minded souls — this is your brand.
 
-</p>
+          </p>
         </div>
         <div className="feature-item">
           <h2>Premium Materials</h2>
           <p>
-          Comfort without compromise—crafted to last in and out of the PIT...or BAR.🤘
+            Comfort without compromise—crafted to last in and out of the PIT...or BAR.🤘
           </p>
         </div>
         <div className="feature-item">
           <h2>Made From The Ground Up</h2>
           <p>This website and products built with care and passion, straight from the MIDWEST! Every release is one of a kind. We work with artists in and from the
-          scene to create our products! NO AI Here!!</p>
+            scene to create our products! NO AI Here!!</p>
+        </div>
+        <div className="feature-item">
+          <h2>Not Here to Please Everyone</h2>
+          <p>
+            Some of this merch will ruffle feathers and make people uncomfortable — and that’s the point.
+            This is the world we live in, raw and real, and this is our merch. For those who dare to stand out and understand the world is not all roses.
+          </p>
         </div>
       </section>
 
