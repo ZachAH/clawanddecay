@@ -11,6 +11,7 @@ import desktopHeaderImage from './assets/clawanddecay-header.webp';
 import mobileHeaderImage from './assets/clawanddecay-header-mobile.webp';
 import Navbar from './components/navbar';
 import { CartProvider } from './context/CartContext';
+import CartPage from './pages/CartPage';
 
 function App() {
   const [selectedTag, setSelectedTag] = useState('All');
@@ -53,6 +54,7 @@ function App() {
               <Route path="/contact-us" element={<ContactUsPage />} />
               <Route path="/our-story" element={<OurStoryPage />} />
               <Route path="/faq-page" element={<FaqPage />} />
+              <Route path="/cart" element={<CartPage />} />
               {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>
           </main>

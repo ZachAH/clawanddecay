@@ -1,10 +1,14 @@
 // src/components/Navbar.jsx
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+
 
 function Navbar({ selectedTag, onSelectTag }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { cartItems } = useCart();
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const merchTags = [
     "All",
@@ -75,6 +79,9 @@ function Navbar({ selectedTag, onSelectTag }) {
             className={`navbar-link ${location.pathname === '/faq-page' ? 'active-glow' : ''}`}
           >
             FAQ
+          </Link>
+          <Link to="/cart" className="cart-link">
+            Cart ({itemCount})
           </Link>
         </li>
       </ul>

@@ -1,4 +1,3 @@
-// src/context/CartContext.jsx
 import React, { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext();
@@ -11,7 +10,9 @@ export function CartProvider({ children }) {
       const exists = prev.find(item => item.id === product.id);
       if (exists) {
         return prev.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + product.quantity } : item
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + product.quantity }
+            : item
         );
       } else {
         return [...prev, product];
@@ -23,8 +24,19 @@ export function CartProvider({ children }) {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
+  const updateQuantity = (id, quantity) => {
+    if (quantity < 1) return; // ignore invalid qty
+    setCartItems(prev =>
+      prev.map(item => (item.id === id ? { ...item, quantity } : item))
+    );
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart }}>
       {children}
     </CartContext.Provider>
   );
