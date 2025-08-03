@@ -76,9 +76,7 @@ function FaqPage() {
           content="Frequently asked questions about Claw & Decay: shipping, care, returns, drops, and collaborations."
         />
       </Helmet>
-      <div className="app-main-content faq-page">
-        <h1>FAQS</h1>
-      </div>
+      <h1 classname="faq-page">FAQS</h1>
       <div className="faq-container">
         {faqs.map((f, i) => (
           <div key={i} className="faq-item">

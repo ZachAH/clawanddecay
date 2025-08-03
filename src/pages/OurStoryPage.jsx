@@ -73,7 +73,7 @@ function OurStoryPage() {
           />
         </Helmet>
 
-        <h2 className="our-story-section">Our Story</h2>
+        <h2 className="our-story-clean-wrapper">Our Story</h2>
 
         {sections.map((sec, i) => (
           <section
