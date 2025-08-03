@@ -80,9 +80,11 @@ function Navbar({ selectedTag, onSelectTag }) {
           >
             FAQ
           </Link>
-          <Link to="/cart" className="cart-link">
-            Cart ({itemCount})
-          </Link>
+          <li className="navbar-item">
+            <Link to="/cart" className="navbar-link">
+              Cart ({itemCount})
+            </Link>
+          </li>
         </li>
       </ul>
     </nav>
