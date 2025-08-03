@@ -39,7 +39,7 @@ function ProductCard({ product, isFirst = false }) {
 
   // Add to cart handler
   const handleAddToCart = (e) => {
-    e.preventDefault(); // Prevent navigating to product page on button click inside link
+    e.preventDefault(); // Just a safety measure
 
     if (!selectedVariant) {
       alert('Please select a valid variant.');
@@ -55,19 +55,21 @@ function ProductCard({ product, isFirst = false }) {
   };
 
   return (
-    <Link to={`/products/${product.id}`} className="product-card-link relative block p-4 border rounded hover:shadow-md">
-      <img
-        src={primaryImageUrl || FALLBACK_IMAGE_URL}
-        alt={product.title}
-        className="product-card-image w-full h-auto mb-2"
-        loading={isFirst ? 'eager' : 'lazy'}
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = FALLBACK_IMAGE_URL;
-        }}
-      />
-      <h3 className="product-card-title font-semibold text-lg">{product.title}</h3>
-      <p className="product-card-price text-gray-700 mb-2">${displayPrice}</p>
+    <div className="product-card-link relative block p-4 border rounded hover:shadow-md">
+      <Link to={`/products/${product.id}`}>
+        <img
+          src={primaryImageUrl || FALLBACK_IMAGE_URL}
+          alt={product.title}
+          className="product-card-image w-full h-auto mb-2"
+          loading={isFirst ? 'eager' : 'lazy'}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = FALLBACK_IMAGE_URL;
+          }}
+        />
+        <h3 className="product-card-title font-semibold text-lg">{product.title}</h3>
+        <p className="product-card-price text-gray-700 mb-2">${displayPrice}</p>
+      </Link>
 
       {/* Variant Selector (only show if more than one variant) */}
       {enabledVariants.length > 1 && (
@@ -75,7 +77,6 @@ function ProductCard({ product, isFirst = false }) {
           className="mb-2 w-full border rounded px-2 py-1"
           value={selectedVariantId}
           onChange={e => setSelectedVariantId(Number(e.target.value))}
-          onClick={e => e.stopPropagation()} // Prevent Link navigation on dropdown click
         >
           {enabledVariants.map(variant => (
             <option key={variant.id} value={variant.id}>
@@ -89,11 +90,10 @@ function ProductCard({ product, isFirst = false }) {
       <button
         onClick={handleAddToCart}
         className="bg-green-600 hover:bg-green-700 text-white w-full py-2 rounded"
-        onMouseDown={e => e.stopPropagation()} // Prevent Link navigation on button click
       >
         Add to Cart
       </button>
-    </Link>
+    </div>
   );
 }
 
