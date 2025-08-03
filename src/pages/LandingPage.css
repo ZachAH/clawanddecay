@@ -92,3 +92,49 @@
     border-radius: 16px; /* adjust radius as you like */
     overflow: hidden; /* ensure content respects border-radius */
   }
+
+  /* Media query for tablets and smaller desktops */
+@media (max-width: 900px) {
+  .hero {
+    padding: 80px 16px;
+    gap: 8px;
+  }
+
+  .hero-content {
+    max-width: 600px;
+    gap: 12px;
+  }
+
+  .hero-cta {
+    padding: 10px 24px;
+    font-size: 1rem;
+  }
+
+  /* Adjust button-wrapper margins */
+  .button-wrapper {
+    margin: 16px 0 32px 0;
+  }
+}
+
+/* Media query for phones and small tablets */
+@media (max-width: 480px) {
+  .hero {
+    padding: 60px 12px;
+    gap: 6px;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .hero-cta {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
+
+  .button-wrapper {
+    margin: 12px 0 24px 0;
+  }
+}
