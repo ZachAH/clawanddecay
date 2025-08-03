@@ -1,33 +1,25 @@
-// src/pages/ProductDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-// Import your local SVG asset for the fallback image
+import { useCart } from '../context/CartContext'; // Make sure your CartContext exists and provides addToCart
 import ReactSvgFallback from '../assets/react.svg'; // Adjust the path based on your file structure
 
-// Define the fallback image URL using the imported SVG.
-// This ensures that when an image is not available, a local asset is used.
 const FALLBACK_IMAGE_URL = ReactSvgFallback;
-
 const NUM_BLOOD_STREAMS = 20;
 const STREAM_ANIMATION_CYCLE_MS = 4000;
 
-/**
- * ProductDetailPage Component
- * Displays detailed information for a single product, fetched by its ID.
- * Includes product image, description, variants, and a loading animation.
- */
 function ProductDetailPage() {
-  const { productId } = useParams(); // Get the product ID from the URL parameters.
-  const [product, setProduct] = useState(null); // State to store the fetched product data.
-  const [loading, setLoading] = useState(true); // State to manage loading status.
-  const [error, setError] = useState(null); // State to store any error messages.
-  const [currentImage, setCurrentImage] = useState(null); // State to manage the currently displayed main image.
+  const { productId } = useParams();
+  const { addToCart } = useCart();
 
-  // Effect hook to fetch product details when the component mounts or productId changes.
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentImage, setCurrentImage] = useState(null);
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // Fetch product data from the Netlify function by product ID.
         const response = await fetch(`/.netlify/functions/get-product-by-id?id=${productId}`);
 
         if (!response.ok) {
@@ -35,42 +27,63 @@ function ProductDetailPage() {
           throw new Error(errorDetails.message || `HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json(); // Parse the JSON response.
-        setProduct(data); // Set the fetched product data.
+        const data = await response.json();
+        setProduct(data);
 
-        // Set the initial main image to the first product image, or the fallback if none exist.
         if (data.images && data.images.length > 0) {
           setCurrentImage(data.images[0].src);
         } else {
           setCurrentImage(FALLBACK_IMAGE_URL);
         }
 
+        // Set initial selected variant if any enabled variants exist
+        const enabledVariants = data.variants?.filter(v => v.is_enabled) || [];
+        if (enabledVariants.length > 0) {
+          setSelectedVariantId(enabledVariants[0].id);
+        }
+
       } catch (err) {
-        console.error("Failed to fetch single product:", err); // Log any errors during fetching.
-        setError(err.message || "Failed to load product details."); // Set error state.
+        console.error("Failed to fetch single product:", err);
+        setError(err.message || "Failed to load product details.");
       } finally {
-        setLoading(false); // Set loading to false regardless of success or failure.
+        setLoading(false);
       }
     };
 
-    // Only fetch if a productId is available.
     if (productId) {
       fetchProduct();
     } else {
       setLoading(false);
       setError("No product ID provided.");
     }
-  }, [productId]); // Dependency array: re-run effect if productId changes.
+  }, [productId]);
 
-  // Handler for when a thumbnail image is clicked, updates the main displayed image.
   const handleThumbnailClick = (imageUrl) => {
     setCurrentImage(imageUrl);
   };
 
-  // Check if product title includes "tee" (case-insensitive) to conditionally show description.
+  const handleAddToCart = () => {
+    if (!selectedVariantId) {
+      alert("Please select a variant.");
+      return;
+    }
+    const selectedVariant = product.variants.find(v => v.id === selectedVariantId);
+    if (!selectedVariant) {
+      alert("Selected variant not found.");
+      return;
+    }
+
+    addToCart({
+      id: selectedVariant.id,
+      title: `${product.title} - ${selectedVariant.title}`,
+      price: selectedVariant.price,
+      quantity: 1,
+    });
+    alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
+  };
+
   const showTeeDescription = product?.title?.toLowerCase().includes("tee");
 
-  // Render loading state with a blood stream animation.
   if (loading) {
     return (
       <div className="product-detail-page-container">
@@ -94,7 +107,6 @@ function ProductDetailPage() {
     );
   }
 
-  // Render error message if there was an error fetching product details.
   if (error) {
     return (
       <div className="product-detail-page-container">
@@ -103,7 +115,6 @@ function ProductDetailPage() {
     );
   }
 
-  // Render "Product not found" message if no product data is available after loading.
   if (!product) {
     return (
       <div className="product-detail-page-container">
@@ -112,19 +123,18 @@ function ProductDetailPage() {
     );
   }
 
-  // Main product detail page content.
+  const enabledVariants = product.variants.filter(v => v.is_enabled);
+
   return (
     <div className="product-detail-page-container">
       <h1 className="product-detail-title">{product.title}</h1>
 
       <div className="product-detail-image-and-description">
         <div className="product-detail-image-container">
-          {/* Main product image, uses currentImage or fallback. */}
           <img
             src={currentImage || FALLBACK_IMAGE_URL}
             alt={product.title}
             className="product-detail-image"
-            // Error handler for the main image, falls back to FALLBACK_IMAGE_URL.
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = FALLBACK_IMAGE_URL;
@@ -132,7 +142,6 @@ function ProductDetailPage() {
           />
         </div>
 
-        {/* Conditionally display tee-specific description. */}
         {showTeeDescription && (
           <div className="tee-description-anim">
             <h2>COMFORT COLORS 1717</h2>
@@ -143,47 +152,58 @@ function ProductDetailPage() {
         )}
       </div>
 
-      {/* Thumbnail images for products with multiple images. */}
       {product.images && product.images.length > 1 && (
         <div className="thumbnail-container">
           {product.images.map((image, index) => (
             <img
-              key={image.src || index} // Unique key for list rendering.
-              src={image.src || FALLBACK_IMAGE_URL} // Thumbnail image source, with fallback.
+              key={image.src || index}
+              src={image.src || FALLBACK_IMAGE_URL}
               alt={`${product.title} view ${index + 1}`}
-              className={`thumbnail-image ${image.src === currentImage ? 'active' : ''}`} // Active class for the currently selected thumbnail.
-              onClick={() => handleThumbnailClick(image.src)} // Click handler to change main image.
-              // Error handler for thumbnails, falls back to FALLBACK_IMAGE_URL.
+              className={`thumbnail-image ${image.src === currentImage ? 'active' : ''}`}
+              onClick={() => handleThumbnailClick(image.src)}
               onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE_URL; }}
             />
           ))}
         </div>
       )}
 
-      {/* Product description, rendered as HTML if available. */}
       {product.description && (
         <p className="product-detail-description" dangerouslySetInnerHTML={{ __html: product.description }}></p>
       )}
 
-      {/* Product variants display. */}
       <div className="product-detail-variants-container">
         <h3>Available Variants:</h3>
-        {product.variants && product.variants.length > 0 ? (
-          product.variants.filter(variant => variant.is_enabled).length > 0 ? (
-            product.variants
-              .filter(variant => variant.is_enabled)
-              .map(variant => (
-                <div key={variant.id} className="product-detail-variant-item">
-                  <span>{variant.title}</span>
-                  <span className="product-detail-variant-price">${(variant.price / 100).toFixed(2)}</span>
-                </div>
-              ))
-          ) : (
-            <p className="product-detail-message">No enabled variants found for this product.</p>
-          )
-        ) : (
-          <p className="product-detail-message">No variants available for this product.</p>
+
+        {enabledVariants.length > 1 && (
+          <select
+            className="mb-4 w-full border rounded px-3 py-2"
+            value={selectedVariantId}
+            onChange={e => setSelectedVariantId(Number(e.target.value))}
+          >
+            {enabledVariants.map(variant => (
+              <option key={variant.id} value={variant.id}>
+                {variant.title} (${(variant.price / 100).toFixed(2)})
+              </option>
+            ))}
+          </select>
         )}
+
+        {enabledVariants.length === 1 && (
+          <p>
+            {enabledVariants[0].title} - ${(enabledVariants[0].price / 100).toFixed(2)}
+          </p>
+        )}
+
+        {enabledVariants.length === 0 && (
+          <p>No enabled variants available.</p>
+        )}
+
+        <button
+          onClick={handleAddToCart}
+          className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded mt-2 w-full"
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );
