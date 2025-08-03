@@ -52,7 +52,7 @@ function App() {
             <Route path="/contact-us" element={<ContactUsPage />} />
             <Route path="/our-story" element={<OurStoryPage />} />
             <Route path="/faq-page" element={<FaqPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
           </Routes>
         </main>
 
