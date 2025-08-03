@@ -151,13 +151,13 @@ h3 {
 }
 
 .navbar-list {
-  list-style: none;
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  align-items: center; /* Vertical center alignment */
+  gap: 1rem; /* Space between items */
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
+  list-style: none;
 }
 
 .navbar-link {
@@ -167,7 +167,10 @@ h3 {
   text-decoration: none;
   padding: 5px 10px;
   transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
-  display: block;
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+  padding: 0.5rem 1rem;
 }
 
 .navbar-link:hover {
@@ -704,6 +707,8 @@ h3 {
 .navbar-item.dropdown {
   position: relative;
   z-index: 1100; /* ensure it stacks above main content */
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-dropdown {
