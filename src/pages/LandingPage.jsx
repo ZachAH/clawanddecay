@@ -114,19 +114,22 @@ function LandingPage({ selectedTag = 'All' }) {
 
       <section className="features" ref={featuresRef}>
         <div className="feature-item">
-          <h2>Premium Materials</h2>
-          <p>Comfort without compromise—crafted to last in and out of the PIT...or BAR.🤘</p>
+          <h2>For the Misfits & the Loud</h2>
+          <p>We don’t fit in out there. But in here — lost in the music, shoulder to shoulder with strangers who feel like family — we belong.
+          That feeling, that unity, is what this brand is built on. For the outcasts, the loud, the ones who live for the moments when the music hits and you’re surrounded by like-minded souls — this is your brand.
+
+</p>
         </div>
         <div className="feature-item">
-          <h2>Limited Editions</h2>
+          <h2>Premium Materials</h2>
           <p>
-            Every release is one of a kind. We work with artists in and from the
-            scene to create our products! NO AI Here!!
+          Comfort without compromise—crafted to last in and out of the PIT...or BAR.🤘
           </p>
         </div>
         <div className="feature-item">
           <h2>Made From The Ground Up</h2>
-          <p>This website and products built with care and passion, straight from the MIDWEST!</p>
+          <p>This website and products built with care and passion, straight from the MIDWEST! Every release is one of a kind. We work with artists in and from the
+          scene to create our products! NO AI Here!!</p>
         </div>
       </section>
 
