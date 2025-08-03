@@ -134,8 +134,8 @@ function LandingPage({ selectedTag = 'All' }) {
         <div className="feature-item">
           <h2>Not Here to Please Everyone</h2>
           <p>
-            Some of this merch will ruffle feathers and make people uncomfortable — and that’s the point.
-            This is the world we live in, raw and real, and this is our merch. For those who dare to stand out and understand the world is not all roses.
+            Some of this merch will piss people off and make people uncomfortable — and that’s the point.
+            This is the world we live in, raw and real, and this is our merch. For those who dare to stand out and understand the world is not all sunshine and roses.
           </p>
         </div>
       </section>
