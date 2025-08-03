@@ -990,3 +990,38 @@ h3 {
   box-shadow: none !important;
   display: block;
 }
+
+/* Wrapper with no boxed background */
+.faq-page-wrapper {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: none;
+  box-shadow: none;
+  color: var(--color-light-text);
+}
+
+/* Heading override to match contact style */
+.faq-title {
+  font-family: var(--font-heading);
+  color: var(--color-accent-red);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  background: none;
+  padding: 0;
+}
+
+/* If you had any inherited border or background, ensure it's cleared */
+.faq-title {
+  border: none !important;
+}
+
+/* Keep existing FAQ item styling if you want the glow border like contact */
+.faq-item {
+  background: #1f1f1f;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  padding: 16px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+}
