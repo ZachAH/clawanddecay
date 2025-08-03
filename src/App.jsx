@@ -13,6 +13,26 @@ import Navbar from './components/navbar';
 import { CartProvider } from './context/CartContext';
 import CartPage from './pages/CartPage';
 
+// Simple Success Page component
+function SuccessPage() {
+  return (
+    <div className="max-w-3xl mx-auto p-6 text-center">
+      <h1 className="text-3xl font-bold mb-4">Thank you for your order!</h1>
+      <p>Your payment was successful. We’ll send you a confirmation email shortly.</p>
+    </div>
+  );
+}
+
+// Simple Cancel Page component
+function CancelPage() {
+  return (
+    <div className="max-w-3xl mx-auto p-6 text-center">
+      <h1 className="text-3xl font-bold mb-4">Order canceled</h1>
+      <p>Your checkout was canceled. You can continue shopping or try again anytime.</p>
+    </div>
+  );
+}
+
 function App() {
   const [selectedTag, setSelectedTag] = useState('All');
 
@@ -55,6 +75,11 @@ function App() {
               <Route path="/our-story" element={<OurStoryPage />} />
               <Route path="/faq-page" element={<FaqPage />} />
               <Route path="/cart" element={<CartPage />} />
+
+              {/* Added routes for Stripe redirect */}
+              <Route path="/success" element={<SuccessPage />} />
+              <Route path="/cancel" element={<CancelPage />} />
+
               {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>
           </main>

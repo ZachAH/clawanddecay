@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 
 function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
-  const [removingItemId, setRemovingItemId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -20,6 +20,37 @@ function CartPage() {
   const confirmRemove = (id) => {
     if (window.confirm("Are you sure you want to remove this item from your cart?")) {
       removeFromCart(id);
+    }
+  };
+
+  // Handle Stripe checkout via Netlify function
+  const handleCheckout = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cartItems.map(item => ({
+            name: item.title,
+            quantity: item.quantity,
+            price: item.price / 100, // convert cents to dollars for backend
+          })),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url; // redirect to Stripe checkout
+      } else {
+        alert('Failed to create checkout session.');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('An error occurred during checkout.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,13 +92,14 @@ function CartPage() {
 
       <div className="mt-8 text-right">
         <p className="text-xl font-bold">
-          Total: ${ (totalPrice / 100).toFixed(2) }
+          Total: ${(totalPrice / 100).toFixed(2)}
         </p>
         <button
-          onClick={() => alert('Checkout flow coming soon!')}
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg"
+          onClick={handleCheckout}
+          disabled={loading}
+          className={`mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          Proceed to Checkout
+          {loading ? 'Processing...' : 'Proceed to Checkout'}
         </button>
       </div>
 
