@@ -1019,9 +1019,9 @@ h3 {
 /* Keep existing FAQ item styling if you want the glow border like contact */
 .faq-item {
   background: #1f1f1f;
-  border: 1px solid rgba(212, 175, 55, 0.6);
+  /* border: 1px solid rgba(212, 175, 55, 0.6); */
   padding: 16px;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   position: relative;
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+  /* box-shadow: 0 0 30px rgba(212, 175, 55, 0.7); */
 }
