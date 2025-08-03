@@ -857,7 +857,7 @@ h3 {
   }
 }
 
-.shiny-text {
+/* .shiny-text {
   background: linear-gradient(90deg, #D4AF37 0%, #F7E3A1 50%, #D4AF37 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -865,11 +865,11 @@ h3 {
 }
 
 /* outer subtle black glow for legibility */
-.shiny-text-shadow {
+/* .shiny-text-shadow {
   text-shadow:
     0 0 8px rgba(0, 0, 0, 0.9),
     0 0 15px rgba(212, 175, 55, 0.8);
-}
+} */ */
 
 /* glowing container (you can apply to .app-main-content on the story page or wrap inner content)
 .our-story-glow {
@@ -961,4 +961,11 @@ h3 {
   pointer-events: none;
   border-radius: 16px;
   box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.contact-page2 h1 {
+  font-family: var(--font-heading);
+  color: var(--color-accent-red);
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
