@@ -76,7 +76,7 @@ function FaqPage() {
           content="Frequently asked questions about Claw & Decay: shipping, care, returns, drops, and collaborations."
         />
       </Helmet>
-      <div className="app-main-content contact-page2">
+      <div className="app-main-content faq-page">
         <h1>FAQS</h1>
       </div>
       <div className="faq-container">

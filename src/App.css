@@ -963,9 +963,23 @@ h3 {
   box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
-.contact-page2 h1 {
+.our-story-section h1,
+.our-story-section h2 {
+  color: var(--color-accent-red);
+  font-family: var(--font-heading);
+}
+
+
+.faq-page h1 {
   font-family: var(--font-heading);
   color: var(--color-accent-red);
   margin-bottom: 1.5rem;
   text-align: center;
+  
+  /* reset any unwanted box styles */
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  display: block;
 }
