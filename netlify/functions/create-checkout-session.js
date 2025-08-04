@@ -1,25 +1,41 @@
 // netlify/functions/create-checkout-session.js
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const admin = require('firebase-admin');
 
+let stripe; // cached Stripe client
+
+// Initialize Firebase Admin once
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET, // e.g., "your-project-id.appspot.com"
   });
 }
+const bucket = admin.storage().bucket();
 
-const bucket = process.env.FIREBASE_STORAGE_BUCKET;
+// Secret Manager client using same service account credentials
+const secretClient = new SecretManagerServiceClient({
+  credentials: JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT),
+});
+
+// Helper: fetch latest version of the fixed secret name "STRIPE_SECRET_KEY"
+async function accessStripeSecret() {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  const projectId = serviceAccount.project_id;
+  const name = `projects/${projectId}/secrets/STRIPE_SECRET_KEY/versions/latest`;
+  const [version] = await secretClient.accessSecretVersion({ name });
+  return version.payload.data.toString('utf8');
+}
 
 exports.handler = async function(event, context) {
-  // Handle CORS preflight for Netlify
+  // CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',  // restrict in production
+        'Access-Control-Allow-Origin': '*', // tighten in prod
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
@@ -28,8 +44,17 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const { items } = JSON.parse(event.body);
+    // Lazy-init Stripe by fetching the secret named "STRIPE_SECRET_KEY"
+    if (!stripe) {
+      const stripeSecretKey = await accessStripeSecret();
+      if (!stripeSecretKey) {
+        throw new Error('Failed to retrieve Stripe secret from Secret Manager.');
+      }
+      const Stripe = require('stripe');
+      stripe = Stripe(stripeSecretKey);
+    }
 
+    const { items } = JSON.parse(event.body || '{}');
     if (!items || !Array.isArray(items) || items.length === 0) {
       return {
         statusCode: 400,
@@ -38,12 +63,12 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // Download cached products JSON from Firebase Storage
+    // Download cached-products.json from Firebase Storage
     const file = bucket.file('cached-products.json');
     const [raw] = await file.download();
     const productsData = JSON.parse(raw.toString('utf8'));
 
-    // Helper: find variant by id in cached products data
+    // Helper to locate variant
     const findVariantById = (variantId) => {
       for (const product of productsData) {
         if (product.variants && Array.isArray(product.variants)) {
@@ -54,7 +79,7 @@ exports.handler = async function(event, context) {
       return null;
     };
 
-    // Build Stripe line_items array securely
+    // Build secure line items
     const line_items = items.map(({ id, quantity }) => {
       const variant = findVariantById(id);
       if (!variant) throw new Error(`Variant with id ${id} not found`);
@@ -70,7 +95,7 @@ exports.handler = async function(event, context) {
               variant_id: String(variant.id),
             },
           },
-          unit_amount: variant.price,  // assumed in cents
+          unit_amount: variant.price, // assumed in cents
         },
         quantity,
       };
@@ -89,11 +114,10 @@ exports.handler = async function(event, context) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',  // tighten in prod!
+        'Access-Control-Allow-Origin': '*', // tighten in prod
       },
       body: JSON.stringify({ url: session.url }),
     };
-
   } catch (error) {
     console.error('Checkout Session Error:', error);
     return {
