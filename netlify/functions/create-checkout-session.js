@@ -3,24 +3,24 @@
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const admin = require('firebase-admin');
 
-let stripe; // cached Stripe client
+let stripe; // cache Stripe client
 
 // Initialize Firebase Admin once
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET, // e.g., "your-project-id.appspot.com"
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET, // e.g. your-project-id.appspot.com
   });
 }
 const bucket = admin.storage().bucket();
 
-// Secret Manager client using same service account credentials
+// Secret Manager client
 const secretClient = new SecretManagerServiceClient({
   credentials: JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT),
 });
 
-// Helper: fetch latest version of the fixed secret name "STRIPE_SECRET_KEY"
+// Helper: fetch latest version of secret named "STRIPE_SECRET_KEY"
 async function accessStripeSecret() {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   const projectId = serviceAccount.project_id;
@@ -30,12 +30,12 @@ async function accessStripeSecret() {
 }
 
 exports.handler = async function(event, context) {
-  // CORS preflight
+  // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*', // tighten in prod
+        'Access-Control-Allow-Origin': '*', // tighten in production
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
@@ -44,7 +44,7 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    // Lazy-init Stripe by fetching the secret named "STRIPE_SECRET_KEY"
+    // Lazy init Stripe client by fetching secret key once
     if (!stripe) {
       const stripeSecretKey = await accessStripeSecret();
       if (!stripeSecretKey) {
@@ -63,27 +63,39 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // Download cached-products.json from Firebase Storage
+    // Download cached products JSON from Firebase Storage
     const file = bucket.file('cached-products.json');
     const [raw] = await file.download();
     const productsData = JSON.parse(raw.toString('utf8'));
 
-    // Helper to locate variant
+    // If your products are inside productsData.data, adjust here:
+    const products = productsData.data || productsData;
+
+    if (!Array.isArray(products)) {
+      throw new Error('Invalid cached products format: expected array in data field');
+    }
+
+    // Helper to find variant by id (adjust if your structure differs)
     const findVariantById = (variantId) => {
-      for (const product of productsData) {
+      // Normalize variantId to number for comparison (assuming input may be string)
+      const idNum = Number(variantId);
+    
+      for (const product of products) {
         if (product.variants && Array.isArray(product.variants)) {
-          const variant = product.variants.find(v => v.id === variantId);
+          const variant = product.variants.find(v => Number(v.id) === idNum);
           if (variant) return variant;
         }
       }
       return null;
     };
 
-    // Build secure line items
+    // Build Stripe line_items array
     const line_items = items.map(({ id, quantity }) => {
       const variant = findVariantById(id);
       if (!variant) throw new Error(`Variant with id ${id} not found`);
-      if (variant.is_enabled === false) throw new Error(`Variant with id ${id} is disabled`);
+      if (!variant.is_enabled || !variant.is_available) {
+        throw new Error(`Variant with id ${id} is disabled or unavailable`);
+      }
 
       return {
         price_data: {
@@ -95,13 +107,13 @@ exports.handler = async function(event, context) {
               variant_id: String(variant.id),
             },
           },
-          unit_amount: variant.price, // assumed in cents
+          unit_amount: variant.price, // price in cents
         },
         quantity,
       };
     });
 
-    // Create Stripe Checkout session
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
