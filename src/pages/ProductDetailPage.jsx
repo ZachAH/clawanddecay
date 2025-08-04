@@ -1,143 +1,212 @@
-import React, { useState } from 'react';
-import { useCart } from '../context/CartContext';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useCart } from '../context/CartContext'; // Make sure your CartContext exists and provides addToCart
+import ReactSvgFallback from '../assets/react.svg'; // Adjust the path based on your file structure
 
-function CartPage() {
-  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
-  const [loading, setLoading] = useState(false);
+const FALLBACK_IMAGE_URL = ReactSvgFallback;
+const NUM_BLOOD_STREAMS = 20;
+const STREAM_ANIMATION_CYCLE_MS = 4000;
 
-  // Total in cents
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+function ProductDetailPage() {
+  const { productId } = useParams();
+  const { addToCart } = useCart();
 
-  if (cartItems.length === 0) {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentImage, setCurrentImage] = useState(null);
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`/.netlify/functions/get-product-by-id?id=${productId}`);
+
+        if (!response.ok) {
+          const errorDetails = await response.json();
+          throw new Error(errorDetails.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setProduct(data);
+
+        if (data.images && data.images.length > 0) {
+          setCurrentImage(data.images[0].src);
+        } else {
+          setCurrentImage(FALLBACK_IMAGE_URL);
+        }
+
+        // Set initial selected variant if any enabled variants exist
+        const enabledVariants = data.variants?.filter(v => v.is_enabled) || [];
+        if (enabledVariants.length > 0) {
+          setSelectedVariantId(enabledVariants[0].id);
+        }
+
+      } catch (err) {
+        console.error("Failed to fetch single product:", err);
+        setError(err.message || "Failed to load product details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchProduct();
+    } else {
+      setLoading(false);
+      setError("No product ID provided.");
+    }
+  }, [productId]);
+
+  const handleThumbnailClick = (imageUrl) => {
+    setCurrentImage(imageUrl);
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedVariantId) {
+      alert("Please select a variant.");
+      return;
+    }
+    const selectedVariant = product.variants.find(v => v.id === selectedVariantId);
+    if (!selectedVariant) {
+      alert("Selected variant not found.");
+      return;
+    }
+
+    addToCart({
+      id: selectedVariant.id,
+      title: `${product.title} - ${selectedVariant.title}`,
+      price: selectedVariant.price,
+      quantity: 1,
+    });
+    alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
+  };
+
+  const showTeeDescription = product?.title?.toLowerCase().includes("tee");
+
+  if (loading) {
     return (
-      <div className="cart-empty text-center p-10">
-        <h2 className="text-2xl font-semibold mb-2">Your cart is empty.</h2>
-        <p className="text-gray-600">Browse our products and add some cool merch!</p>
+      <div className="product-detail-page-container">
+        <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}>
+          <div className="blood-stream-animation-wrapper">
+            {Array.from({ length: NUM_BLOOD_STREAMS }).map((_, i) => (
+              <div
+                key={i}
+                className="blood-stream-drip"
+                style={{
+                  left: `${(i / NUM_BLOOD_STREAMS) * 90 + 5}%`,
+                  animation: `bloodStreamDrip ${STREAM_ANIMATION_CYCLE_MS / 1000}s linear infinite`,
+                  animationDelay: `${(STREAM_ANIMATION_CYCLE_MS / NUM_BLOOD_STREAMS / 1000) * i}s`,
+                }}
+              ></div>
+            ))}
+          </div>
+          <span style={{ position: 'relative', zIndex: 10 }}>Loading product details...</span>
+        </div>
       </div>
     );
   }
 
-  const confirmRemove = (id) => {
-    if (window.confirm("Are you sure you want to remove this item from your cart?")) {
-      removeFromCart(id);
-    }
-  };
+  if (error) {
+    return (
+      <div className="product-detail-page-container">
+        <p className="product-detail-message">Error: {error}</p>
+      </div>
+    );
+  }
 
-  const handleCheckout = async () => {
-    if (cartItems.length === 0) return;
-    setLoading(true);
-    try {
-      // Only send id and quantity; backend is authoritative for pricing.
-      // Including some metadata for logging/debugging (not used for amount).
-      const response = await fetch('/.netlify/functions/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: cartItems.map(item => ({
-            id: item.id, // must match server's catalog key
-            quantity: item.quantity,
-            metadata: {
-              title: item.title,
-              client_price_cents: item.price,
-              sku: item.sku || '',
-            },
-          })),
-        }),
-      });
+  if (!product) {
+    return (
+      <div className="product-detail-page-container">
+        <p className="product-detail-message">Product not found.</p>
+      </div>
+    );
+  }
 
-      const data = await response.json();
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        console.error('Unexpected response:', data);
-        alert('Failed to create checkout session.');
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      alert('An error occurred during checkout.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const enabledVariants = product.variants.filter(v => v.is_enabled);
 
   return (
-    <div className="cart-page max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
-      <ul className="space-y-4">
-        {cartItems.map(item => (
-          <li
-            key={item.id}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center border p-4 rounded shadow-sm"
-          >
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="text-gray-600">
-                ${(item.price / 100).toFixed(2)} each
-              </p>
-              <p className="mt-1 font-medium">
-                Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
-              </p>
-            </div>
+    <div className="product-detail-page-container">
+      <h1 className="product-detail-title">{product.title}</h1>
 
-            <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-              <div className="flex items-center border rounded">
-                <label htmlFor={`qty-${item.id}`} className="sr-only">
-                  Quantity
-                </label>
-                <input
-                  id={`qty-${item.id}`}
-                  type="number"
-                  min={1}
-                  value={item.quantity}
-                  className="w-16 px-2 py-1 text-center"
-                  onChange={e => {
-                    const val = Number(e.target.value);
-                    if (val >= 1) updateQuantity(item.id, val);
-                  }}
-                  disabled={loading}
-                />
-              </div>
-              <button
-                onClick={() => confirmRemove(item.id)}
-                className="text-red-600 hover:text-red-800 font-semibold"
-                disabled={loading}
-              >
-                Remove
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="product-detail-image-and-description">
+        <div className="product-detail-image-container">
+          <img
+            src={currentImage || FALLBACK_IMAGE_URL}
+            alt={product.title}
+            className="product-detail-image"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = FALLBACK_IMAGE_URL;
+            }}
+          />
+        </div>
 
-      <div className="mt-8 text-right">
-        <p className="text-xl font-bold">
-          Total: ${(totalPrice / 100).toFixed(2)}
-        </p>
-        <button
-          onClick={handleCheckout}
-          disabled={loading || cartItems.length === 0}
-          className={`mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg transition ${
-            loading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        >
-          {loading ? 'Processing...' : 'Proceed to Checkout'}
-        </button>
+        {showTeeDescription && (
+          <div className="tee-description-anim">
+            <h2>COMFORT COLORS 1717</h2>
+            <p>
+              We print exclusively on these tees, widely regarded as the GOAT of T-shirt materials. Celebrated for their durable, high-quality fabric and rich, vintage-inspired colors. Soft, breathable, and built to last.
+            </p>
+          </div>
+        )}
       </div>
 
-      <div className="mt-6 text-center">
+      {product.images && product.images.length > 1 && (
+        <div className="thumbnail-container">
+          {product.images.map((image, index) => (
+            <img
+              key={image.src || index}
+              src={image.src || FALLBACK_IMAGE_URL}
+              alt={`${product.title} view ${index + 1}`}
+              className={`thumbnail-image ${image.src === currentImage ? 'active' : ''}`}
+              onClick={() => handleThumbnailClick(image.src)}
+              onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE_URL; }}
+            />
+          ))}
+        </div>
+      )}
+
+      {product.description && (
+        <p className="product-detail-description" dangerouslySetInnerHTML={{ __html: product.description }}></p>
+      )}
+
+      <div className="product-detail-variants-container">
+        <h3>Available Variants:</h3>
+
+        {enabledVariants.length > 1 && (
+          <select
+            className="mb-4 w-full border rounded px-3 py-2"
+            value={selectedVariantId}
+            onChange={e => setSelectedVariantId(Number(e.target.value))}
+          >
+            {enabledVariants.map(variant => (
+              <option key={variant.id} value={variant.id}>
+                {variant.title} (${(variant.price / 100).toFixed(2)})
+              </option>
+            ))}
+          </select>
+        )}
+
+        {enabledVariants.length === 1 && (
+          <p>
+            {enabledVariants[0].title} - ${(enabledVariants[0].price / 100).toFixed(2)}
+          </p>
+        )}
+
+        {enabledVariants.length === 0 && (
+          <p>No enabled variants available.</p>
+        )}
+
         <button
-          onClick={() => {
-            if (window.confirm('Clear the entire cart?')) clearCart();
-          }}
-          className="text-sm text-gray-500 underline hover:text-gray-700"
-          disabled={loading}
+          onClick={handleAddToCart}
+          className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded mt-2 w-full"
         >
-          Clear Cart
+          Add to Cart
         </button>
       </div>
     </div>
   );
 }
 
-export default CartPage;
+export default ProductDetailPage;
