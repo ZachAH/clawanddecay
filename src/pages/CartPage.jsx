@@ -5,36 +5,43 @@ function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
 
+  // Total in cents
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   if (cartItems.length === 0) {
     return (
       <div className="cart-empty text-center p-10">
-        <h2>Your cart is empty.</h2>
-        <p>Browse our products and add some cool merch!</p>
+        <h2 className="text-2xl font-semibold mb-2">Your cart is empty.</h2>
+        <p className="text-gray-600">Browse our products and add some cool merch!</p>
       </div>
     );
   }
 
-  // Confirm before removing an item
   const confirmRemove = (id) => {
     if (window.confirm("Are you sure you want to remove this item from your cart?")) {
       removeFromCart(id);
     }
   };
 
-  // Handle Stripe checkout via Netlify function
   const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
     setLoading(true);
     try {
+      // Build payload: primary authoritative data should be resolved server-side.
+      // Here we send id + quantity, plus optional metadata for logging/fallback.
       const response = await fetch('/.netlify/functions/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: cartItems.map(item => ({
-            name: item.title,
+            id: item.id, // should correspond to whatever your backend catalog/key is
             quantity: item.quantity,
-            price: item.price / 100, // convert cents to dollars for backend
+            // Optional: include title and price for logging/debugging; backend should not trust price for amount.
+            metadata: {
+              title: item.title,
+              client_price_cents: item.price,
+              sku: item.sku,
+            },
           })),
         }),
       });
@@ -42,8 +49,9 @@ function CartPage() {
       const data = await response.json();
 
       if (data.url) {
-        window.location.href = data.url; // redirect to Stripe checkout
+        window.location.href = data.url;
       } else {
+        console.error('Unexpected response:', data);
         alert('Failed to create checkout session.');
       }
     } catch (error) {
@@ -61,27 +69,40 @@ function CartPage() {
         {cartItems.map(item => (
           <li
             key={item.id}
-            className="flex justify-between items-center border p-4 rounded shadow-sm"
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center border p-4 rounded shadow-sm"
           >
-            <div>
+            <div className="flex-1">
               <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
+              <p className="text-gray-600">
+                ${(item.price / 100).toFixed(2)} each
+              </p>
+              <p className="mt-1 font-medium">
+                Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
+              </p>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <input
-                type="number"
-                min={1}
-                value={item.quantity}
-                className="w-16 border rounded px-2 py-1 text-center"
-                onChange={e => {
-                  const val = Number(e.target.value);
-                  if (val >= 1) updateQuantity(item.id, val);
-                }}
-              />
+            <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+              <div className="flex items-center border rounded">
+                <label htmlFor={`qty-${item.id}`} className="sr-only">
+                  Quantity
+                </label>
+                <input
+                  id={`qty-${item.id}`}
+                  type="number"
+                  min={1}
+                  value={item.quantity}
+                  className="w-16 px-2 py-1 text-center"
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    if (val >= 1) updateQuantity(item.id, val);
+                  }}
+                  disabled={loading}
+                />
+              </div>
               <button
                 onClick={() => confirmRemove(item.id)}
                 className="text-red-600 hover:text-red-800 font-semibold"
+                disabled={loading}
               >
                 Remove
               </button>
@@ -96,8 +117,10 @@ function CartPage() {
         </p>
         <button
           onClick={handleCheckout}
-          disabled={loading}
-          className={`mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={loading || cartItems.length === 0}
+          className={`mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg transition ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
           {loading ? 'Processing...' : 'Proceed to Checkout'}
         </button>
@@ -109,6 +132,7 @@ function CartPage() {
             if (window.confirm('Clear the entire cart?')) clearCart();
           }}
           className="text-sm text-gray-500 underline hover:text-gray-700"
+          disabled={loading}
         >
           Clear Cart
         </button>

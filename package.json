@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prebuild": "node generate-config.js"
   },
   "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.0",
     "@netlify/functions": "^4.1.11",
     "firebase-admin": "^13.4.0",
     "node-fetch": "^3.3.2",
