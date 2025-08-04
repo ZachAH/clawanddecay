@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; // Make sure your CartContext exists and provides addToCart
 import ReactSvgFallback from '../assets/react.svg'; // Adjust the path based on your file structure
 
+//testing
+
 const FALLBACK_IMAGE_URL = ReactSvgFallback;
 const NUM_BLOOD_STREAMS = 20;
 const STREAM_ANIMATION_CYCLE_MS = 4000;
