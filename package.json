@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "prebuild": "node generate-config.js"
+    "preview": "vite preview"  
   },
   "dependencies": {
     "@google-cloud/secret-manager": "^6.1.0",
