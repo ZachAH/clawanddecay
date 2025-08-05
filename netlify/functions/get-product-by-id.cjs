@@ -2,7 +2,7 @@
 
 exports.handler = async function(event, context) {
     try {
-      const PRINTIFY_API_TOKEN = process.env.PRINTIFY_API_TOKEN;
+      const PRINTIFY_API_TOKEN_NEW = process.env.PRINTIFY_API_TOKEN_NEW;
       const PRINTIFY_SHOP_ID = process.env.PRINTIFY_SHOP_ID;
   
       // Extract the product ID from the request path (e.g., /.netlify/functions/get-product-by-id?id=YOUR_PRODUCT_ID)
@@ -16,7 +16,7 @@ exports.handler = async function(event, context) {
         };
       }
   
-      if (!PRINTIFY_API_TOKEN || !PRINTIFY_SHOP_ID) {
+      if (!PRINTIFY_API_TOKEN_NEW || !PRINTIFY_SHOP_ID) {
         console.error("Function Error: Missing environment variables.");
         return {
           statusCode: 500,
@@ -32,7 +32,7 @@ exports.handler = async function(event, context) {
       const response = await fetch(printifyApiUrl, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
+          'Authorization': `Bearer ${PRINTIFY_API_TOKEN_NEW}`,
           'Content-Type': 'application/json'
         }
       });

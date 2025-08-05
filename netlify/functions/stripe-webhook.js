@@ -75,7 +75,7 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
       `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${printifyProductId}.json`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.PRINTIFY_API_TOKEN}`,
+          Authorization: `Bearer ${process.env.PRINTIFY_API_TOKEN_NEW}`,
           'Content-Type': 'application/json',
         },
       }
@@ -137,7 +137,7 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.PRINTIFY_API_TOKEN}`,
+        Authorization: `Bearer ${process.env.PRINTIFY_API_TOKEN_NEW}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(orderData),

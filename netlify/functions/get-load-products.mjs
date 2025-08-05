@@ -17,10 +17,10 @@ const loadProductsHandler = async () => {
   console.log('productLoadHandler started.');
 
   const shopId = process.env.PRINTIFY_SHOP_ID;
-  const apiKey = process.env.PRINTIFY_API_TOKEN;
+  const apiKey = process.env.PRINTIFY_API_TOKEN_NEW;
 
   if (!shopId || !apiKey) {
-    console.error('Missing PRINTIFY_SHOP_ID or PRINTIFY_API_TOKEN.');
+    console.error('Missing PRINTIFY_SHOP_ID or PRINTIFY_API_TOKEN_NEW.');
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Missing API credentials.' }),
@@ -102,5 +102,5 @@ const loadProductsHandler = async () => {
   }
 };
 
-export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
-//export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
+//export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
+export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute

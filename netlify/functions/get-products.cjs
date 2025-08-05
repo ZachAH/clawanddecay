@@ -2,18 +2,18 @@
 
 exports.handler = async function(event, context) {
   try {
-    const PRINTIFY_API_TOKEN = process.env.PRINTIFY_API_TOKEN;
+    const PRINTIFY_API_TOKEN_NEW = process.env.PRINTIFY_API_TOKEN_NEW;
     const PRINTIFY_SHOP_ID = process.env.PRINTIFY_SHOP_ID;
     const FIREBASE_BUCKET_NAME = process.env.FIREBASE_STORAGE_BUCKET;
 
-    if (!PRINTIFY_API_TOKEN || !PRINTIFY_SHOP_ID || !FIREBASE_BUCKET_NAME) {
+    if (!PRINTIFY_API_TOKEN_NEW || !PRINTIFY_SHOP_ID || !FIREBASE_BUCKET_NAME) {
       console.error("Function Error: Missing environment variables.");
       return {
         statusCode: 500,
         body: JSON.stringify({
           message: "Server configuration error: Missing Printify API token, Shop ID, or Firebase bucket env variables.",
           debug: {
-            tokenSet: !!PRINTIFY_API_TOKEN,
+            tokenSet: !!PRINTIFY_API_TOKEN_NEW,
             shopIdSet: !!PRINTIFY_SHOP_ID,
             bucketSet: !!FIREBASE_BUCKET_NAME
           }
@@ -26,7 +26,7 @@ exports.handler = async function(event, context) {
     const productsResponse = await fetch(printifyProductsApiUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
+        'Authorization': `Bearer ${PRINTIFY_API_TOKEN_NEW}`,
         'Content-Type': 'application/json'
       }
     });
@@ -57,7 +57,7 @@ exports.handler = async function(event, context) {
         const mockupResponse = await fetch(printifyMockupApiUrl, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
+            'Authorization': `Bearer ${PRINTIFY_API_TOKEN_NEW}`,
             'Content-Type': 'application/json'
           }
         });
