@@ -64,9 +64,15 @@ const loadProductsHandler = async () => {
       const oldProduct = existingProducts.find(p => p.id === newProduct.id);
       if (!oldProduct) return newProduct;
 
+      // Merge logic:
+      // Preserve oldProduct.images if present (manual URL changes), otherwise keep newProduct.images
       return {
         ...newProduct,
         images: (oldProduct.images && oldProduct.images.length) ? oldProduct.images : newProduct.images,
+
+        // Optionally merge other fields you manually update here
+        // For example, if you have a custom field 'customData' to preserve:
+        // customData: oldProduct.customData || newProduct.customData,
       };
     });
 
@@ -96,29 +102,5 @@ const loadProductsHandler = async () => {
   }
 };
 
-// Scheduled function (runs every 6 hours)
-export const scheduledHandler = schedule('0 */6 * * *', loadProductsHandler);
-
-// Manual HTTP POST trigger function
-export async function handler(event) {
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers: { Allow: 'POST' },
-      body: 'Method Not Allowed. Use POST to trigger the product cache update.',
-    };
-  }
-
-  try {
-    const result = await loadProductsHandler();
-    return {
-      statusCode: 200,
-      body: result.body,
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
-  }
-}
+//export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
+export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
