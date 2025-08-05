@@ -1,5 +1,3 @@
-// netlify/functions/stripe-webhook.js issue resolved?
-
 const path = require('path');
 const fs = require('fs');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
@@ -62,6 +60,8 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
     const printifyProductId = mapping.product_id;
     const printifyVariantId = mapping.variant_option_ids[0];
 
+    console.log(`Mapped variant ID ${variant.id} → product_id=${printifyProductId}, variant_option_id=${printifyVariantId}`);
+
     // Fetch the Printify product to get available print providers
     const productResp = await fetch(
       `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${printifyProductId}.json`,
@@ -83,39 +83,34 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
     if (availableProviders.length === 0) {
       throw new Error(`No print providers available for product ${printifyProductId}`);
     }
+    console.log(`Product ${printifyProductId} has ${availableProviders.length} available print providers.`);
 
-    // // Pick the first provider (can be improved later)
-    // const chosenProvider = availableProviders[0];
-    // console.log(
-    //   `Selected print_provider_id=${chosenProvider.id} for product=${printifyProductId} variant=${printifyVariantId}`
-    // );
-
+    // Determine print provider ID based on variant title
     const providerMap = {
       'LONG-SLEEVE': 99,
       'TEE': 29,
     };
-    
+
+    // Use variant.title (cached product variant's title) to match provider
     let printProviderId = 29; // default fallback
     for (const key of Object.keys(providerMap)) {
-      if (matchedVariant?.productTitle && matchedVariant.productTitle.toUpperCase().includes(key)) {
+      if (variant.title && variant.title.toUpperCase().includes(key)) {
         printProviderId = providerMap[key];
         break;
       }
     }
-    
-    printifyLineItems.push({
-      product_id: printifyProductId,
-      variant_id: printifyVariantId,
-      quantity: variant.quantity,
-      print_provider_id: printProviderId,
-    });
 
-    printifyLineItems.push({
+    console.log(`Assigned print_provider_id=${printProviderId} for variant title: "${variant.title}"`);
+
+    const lineItem = {
       product_id: printifyProductId,
       variant_id: printifyVariantId,
       quantity: variant.quantity,
       print_provider_id: printProviderId,
-    });
+    };
+
+    console.log('Adding line item:', JSON.stringify(lineItem, null, 2));
+    printifyLineItems.push(lineItem);
   }
 
   const orderData = {
@@ -225,7 +220,7 @@ module.exports.handler = async function (event) {
         return null;
       };
 
-      // Build productVariants array: { id, quantity }
+      // Build productVariants array: { id, quantity, title }
       const productVariants = variantIds
         .map(variantId => {
           const variant = findVariantById(variantId);
@@ -244,6 +239,7 @@ module.exports.handler = async function (event) {
           return {
             id: variantId,
             quantity: lineItem?.quantity || 1,
+            title: variant.title,
           };
         })
         .filter(Boolean);
