@@ -1,21 +1,31 @@
 // netlify/functions/stripe-webhook.js
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
-const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
-const admin = require('firebase-admin');
-const fetch = require('node-fetch'); // npm install node-fetch@2 if needed
-const crypto = require('crypto');
-const path = require('path');
-const fs = require('fs');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const variantIdToPrintifyMap = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, 'variant-map.json'), 'utf8')
+);
 
 let stripe; // cached Stripe client
 let signingSecret; // cached webhook signing secret
 
-// Load variant map JSON once, from root folder
-const variantIdToPrintifyMap = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, '../../variant-map.json'), 'utf8')
-);
+// Lazy load imports
+const secretManagerModule = await import('@google-cloud/secret-manager');
+const adminModule = await import('firebase-admin');
+const fetchModule = await import('node-fetch');
+const cryptoModule = await import('crypto');
 
-// Initialize Firebase Admin once
+const { SecretManagerServiceClient } = secretManagerModule;
+const admin = adminModule.default;
+const fetch = fetchModule.default;
+const crypto = cryptoModule.default;
+
+const secretClient = new SecretManagerServiceClient();
+
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
@@ -25,12 +35,6 @@ if (!admin.apps.length) {
 }
 const bucket = admin.storage().bucket();
 
-// Secret Manager client
-const secretClient = new SecretManagerServiceClient({
-  credentials: JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT),
-});
-
-// Helper: fetch secret by name from Google Secret Manager
 async function accessSecret(secretName) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   const projectId = serviceAccount.project_id;
@@ -39,14 +43,12 @@ async function accessSecret(secretName) {
   return version.payload.data.toString('utf8');
 }
 
-// Map your variant ID from Stripe metadata to Printify product/variant IDs
 function mapToPrintifyVariant(variantId) {
   return variantIdToPrintifyMap[variantId] || null;
 }
 
 async function sendOrderToPrintify(session, lineItems, shippingAddress) {
   const printifyLineItems = lineItems.map(item => {
-    // Assuming variantId is in metadata.variant_id inside product_data
     const variantId = item.price_data.product_data.metadata.variant_id;
     const printifyVariant = mapToPrintifyVariant(variantId);
 
@@ -56,7 +58,7 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
 
     return {
       product_id: printifyVariant.product_id,
-      variant_id: parseInt(variantId, 10), // Use the original variant ID as int if needed
+      variant_id: printifyVariant.variant_option_ids[0], // Use the mapped variant id from your JSON
       quantity: item.quantity,
     };
   });
@@ -84,7 +86,7 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
     {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.PRINTIFY_API_TOKEN}`,
+        Authorization: `Bearer ${process.env.PRINTIFY_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(orderData),
@@ -99,7 +101,7 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
   return await response.json();
 }
 
-exports.handler = async function(event, context) {
+export async function handler(event, context) {
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -113,19 +115,17 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    // Lazy init Stripe client and webhook signing secret
     if (!stripe) {
       const stripeSecretKey = await accessSecret('STRIPE_SECRET_KEY');
       if (!stripeSecretKey) throw new Error('Missing STRIPE_SECRET_KEY');
-      const Stripe = require('stripe');
-      stripe = Stripe(stripeSecretKey);
+      const StripeModule = await import('stripe');
+      stripe = StripeModule.default(stripeSecretKey);
     }
     if (!signingSecret) {
       signingSecret = await accessSecret('SIGNING_SECRET');
       if (!signingSecret) throw new Error('Missing SIGNING_SECRET');
     }
 
-    // Verify webhook signature
     const sig = event.headers['stripe-signature'];
     if (!sig) throw new Error('Missing Stripe signature header');
 
@@ -140,23 +140,19 @@ exports.handler = async function(event, context) {
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object;
 
-      // Fetch line items for the session
       const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id);
       const lineItems = lineItemsResponse.data;
 
-      // Shipping info from Stripe session
       const shippingAddress = session.shipping || session.customer_details || {};
       if (!shippingAddress || !shippingAddress.address) {
         throw new Error('No shipping address found in session');
       }
 
-      // Send order to Printify
       try {
         const printifyOrder = await sendOrderToPrintify(session, lineItems, shippingAddress);
         console.log('Printify order created:', printifyOrder.id);
       } catch (printifyError) {
         console.error('Failed to create Printify order:', printifyError);
-        // Optionally: notify admin, retry, or save for manual intervention
       }
     } else {
       console.log(`Unhandled event type: ${stripeEvent.type}`);
@@ -173,4 +169,4 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ error: error.message || 'Internal server error' }),
     };
   }
-};
+}
