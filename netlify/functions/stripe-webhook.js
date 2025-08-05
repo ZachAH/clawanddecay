@@ -89,49 +89,59 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
     }
     console.log(`Product ${printifyProductId} has ${availableProviders.length} available print providers.`);
 
+    // Build line items without print_provider_id
+    const lineItem = {
+      product_id: printifyProductId,
+      variant_id: printifyVariantId,
+      quantity: variant.quantity,
+    };
+    printifyLineItems.push(lineItem);
+
+    // Determine the print provider ID globally (assuming all variants share same provider)
     const providerMap = {
       'LONG-SLEEVE': 99,
       'TEE': 29,
     };
 
-    let printProviderId = 29;
-    for (const key of Object.keys(providerMap)) {
-      if (variant.title && variant.title.toUpperCase().includes(key)) {
-        printProviderId = providerMap[key];
-        break;
+    let printProviderId = 29; // default fallback
+    for (const variant of productVariants) {
+      for (const key of Object.keys(providerMap)) {
+        if (variant.title && variant.title.toUpperCase().includes(key)) {
+          printProviderId = providerMap[key];
+          break;
+        }
       }
+      if (printProviderId) break;
     }
+
+    const orderData = {
+      external_id: session.id,
+      label: `Order ${session.id}`,
+      send_shipping_notification: true,
+      print_provider_id: printProviderId,  // Top-level here
+      line_items: printifyLineItems,
+      shipping_address: {
+        first_name: (shippingAddress?.name || '').split(' ')[0] || 'Customer',
+        last_name: ((shippingAddress?.name || '').split(' ')[1] || ''),
+        address1: shippingAddress?.address?.line1 || '',
+        address2: shippingAddress?.address?.line2 || '',
+        city: shippingAddress?.address?.city || '',
+        region: shippingAddress?.address?.state || '',
+        country: shippingAddress?.address?.country || '',
+        zip: shippingAddress?.address?.postal_code || '',
+        phone: shippingAddress?.phone || '',
+      },
+    };
+
 
     console.log(`Assigned print_provider_id=${printProviderId} for variant title: "${variant.title}"`);
 
-    const lineItem = {
-      product_id: printifyProductId,
-      variant_id: printifyVariantId,
-      quantity: variant.quantity,
-      print_provider_id: printProviderId,
-    };
 
     console.log('Adding line item:', JSON.stringify(lineItem, null, 2));
     printifyLineItems.push(lineItem);
   }
 
-  const orderData = {
-    external_id: session.id,
-    label: `Order ${session.id}`,
-    send_shipping_notification: true,
-    line_items: printifyLineItems,
-    shipping_address: {
-      first_name: (shippingAddress?.name || '').split(' ')[0] || 'Customer',
-      last_name: ((shippingAddress?.name || '').split(' ')[1] || ''),
-      address1: shippingAddress?.address?.line1 || '',
-      address2: shippingAddress?.address?.line2 || '',
-      city: shippingAddress?.address?.city || '',
-      region: shippingAddress?.address?.state || '',
-      country: shippingAddress?.address?.country || '',
-      zip: shippingAddress?.address?.postal_code || '',
-      phone: shippingAddress?.phone || '',
-    },
-  };
+
 
   console.log('📤 Final order payload to Printify:', JSON.stringify(orderData, null, 2));
 
@@ -204,7 +214,7 @@ module.exports.handler = async function (event) {
       console.log('🧾 Stripe session received:', JSON.stringify(session, null, 2));
       console.log('🧾 Stripe metadata (raw):', session.metadata);
 
-      let variantIds = [];
+      const variantIds = JSON.parse(session.metadata.order_variant_ids); // now it's an array
       try {
         variantIds = JSON.parse(session.metadata?.order_variant_ids || '[]');
       } catch (e) {
