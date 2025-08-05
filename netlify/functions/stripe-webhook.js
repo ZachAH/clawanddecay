@@ -38,8 +38,19 @@ function mapToPrintifyVariant(variantId) {
 async function sendOrderToPrintify(session, lineItems, shippingAddress) {
   console.log('Preparing Printify order from Stripe session:', session.id);
 
-  const printifyLineItems = lineItems.map(item => {
-    const variantId = item.price_data.product_data.metadata.variant_id;
+  const printifyLineItems = [];
+
+  for (const item of lineItems) {
+    // Fetch Stripe Price object to get metadata (where variant_id is stored)
+    const priceObj = await stripe.prices.retrieve(item.price.id);
+    const variantId = priceObj.metadata.variant_id;
+
+    console.log(`Fetched variantId from Stripe Price metadata: ${variantId} for price ${item.price.id}`);
+
+    if (!variantId) {
+      throw new Error(`No variant_id metadata found on Price ID ${item.price.id}`);
+    }
+
     const printifyVariant = mapToPrintifyVariant(variantId);
 
     console.log(`Mapping Stripe variantId ${variantId} to Printify variant:`, printifyVariant);
@@ -48,12 +59,12 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
       throw new Error(`No Printify mapping found for variant ID ${variantId}`);
     }
 
-    return {
+    printifyLineItems.push({
       product_id: printifyVariant.product_id,
       variant_id: printifyVariant.variant_option_ids[0],
       quantity: item.quantity,
-    };
-  });
+    });
+  }
 
   const orderData = {
     external_id: session.id,
