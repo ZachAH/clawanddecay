@@ -84,17 +84,37 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
       throw new Error(`No print providers available for product ${printifyProductId}`);
     }
 
-    // Pick the first provider (can be improved later)
-    const chosenProvider = availableProviders[0];
-    console.log(
-      `Selected print_provider_id=${chosenProvider.id} for product=${printifyProductId} variant=${printifyVariantId}`
-    );
+    // // Pick the first provider (can be improved later)
+    // const chosenProvider = availableProviders[0];
+    // console.log(
+    //   `Selected print_provider_id=${chosenProvider.id} for product=${printifyProductId} variant=${printifyVariantId}`
+    // );
+
+    const providerMap = {
+      'LONG-SLEEVE': 99,
+      'TEE': 29,
+    };
+    
+    let printProviderId = 29; // default fallback
+    for (const key of Object.keys(providerMap)) {
+      if (matchedVariant?.productTitle && matchedVariant.productTitle.toUpperCase().includes(key)) {
+        printProviderId = providerMap[key];
+        break;
+      }
+    }
+    
+    printifyLineItems.push({
+      product_id: printifyProductId,
+      variant_id: printifyVariantId,
+      quantity: variant.quantity,
+      print_provider_id: printProviderId,
+    });
 
     printifyLineItems.push({
       product_id: printifyProductId,
       variant_id: printifyVariantId,
       quantity: variant.quantity,
-      print_provider_id: chosenProvider.id,
+      print_provider_id: printProviderId,
     });
   }
 
