@@ -98,6 +98,9 @@ exports.handler = async function (event) {
       };
     });
 
+    // Add variant IDs as JSON metadata string
+    const variantIdsForMetadata = items.map(i => i.id);
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -105,11 +108,13 @@ exports.handler = async function (event) {
         allowed_countries: ['US', 'CA'],
       },
       billing_address_collection: 'required',
-      customer_creation: 'always',
       line_items,
       allow_promotion_codes: true,
       success_url: 'https://clawanddecay.com/success?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://clawanddecay.com/cancel',
+      metadata: {
+        order_variant_ids: JSON.stringify(variantIdsForMetadata),
+      },
     });
 
     return {
