@@ -7,11 +7,8 @@ const admin = require('firebase-admin');
 const fetch = require('node-fetch');
 const crypto = require('crypto');
 const StripeModule = require('stripe');
-
-// Load variant map JSON once from root folder synchronously
-const variantIdToPrintifyMap = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, 'variant-map.json'), 'utf8')
-);
+const variantMapPath = path.join(__dirname, 'variant-map.json');
+const variantIdToPrintifyMap = JSON.parse(fs.readFileSync(variantMapPath, 'utf8'));
 
 // Initialize Firebase Admin once
 if (!admin.apps.length) {
