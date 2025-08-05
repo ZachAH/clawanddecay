@@ -82,14 +82,7 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
       const body = await productResp.text();
       throw new Error(`Failed to fetch Printify product ${printifyProductId}: ${productResp.status} ${body}`);
     }
-
-    const productDetail = await productResp.json();
-    const availableProviders = productDetail.available_print_providers || [];
-    if (availableProviders.length === 0) {
-      throw new Error(`No print providers available for product ${printifyProductId}`);
-    }
-    console.log(`Product ${printifyProductId} has ${availableProviders.length} available print providers.`);
-
+    
     // Determine print provider ID based on variant title
     const providerMap = {
       'LONG-SLEEVE': 99,
