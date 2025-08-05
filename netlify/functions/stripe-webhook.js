@@ -50,6 +50,9 @@ function mapToPrintifyVariant(variantId) {
 async function sendOrderToPrintify(session, productVariants, shippingAddress) {
   console.log('Preparing Printify order from Stripe session:', session.id);
 
+  // Extract phone from shippingAddress with fallback
+  const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000';
+
   const printifyLineItems = [];
 
   // Choose a default or dominant print provider ID for the whole order
@@ -240,12 +243,12 @@ module.exports.handler = async function (event) {
         })
         .filter(Boolean);
 
-      const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000'; // fallback placeholder
-
       const shippingAddress =
         session.shipping ||
         session.customer_details?.shipping ||
         session.customer_details || {};
+
+      const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000'; // fallback placeholder
 
       if (productVariants.length === 0) {
         console.warn('No product variants to send to Printify, skipping order creation');
