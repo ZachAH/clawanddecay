@@ -82,7 +82,7 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
       const body = await productResp.text();
       throw new Error(`Failed to fetch Printify product ${printifyProductId}: ${productResp.status} ${body}`);
     }
-    
+
     // Determine print provider ID based on variant title
     const providerMap = {
       'LONG-SLEEVE': 99,
@@ -123,7 +123,7 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
       region: shippingAddress?.address?.state || '',
       country: shippingAddress?.address?.country || '',
       zip: shippingAddress?.address?.postal_code || '',
-      phone: shippingAddress?.phone || '',
+      phone: phone,
     },
   };
 
@@ -239,6 +239,8 @@ module.exports.handler = async function (event) {
           };
         })
         .filter(Boolean);
+
+      const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000'; // fallback placeholder
 
       const shippingAddress =
         session.shipping ||

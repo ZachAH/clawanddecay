@@ -107,6 +107,9 @@ exports.handler = async function (event) {
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       },
+      phone_number_collection: {
+        enabled: true
+      },
       billing_address_collection: 'required',
       line_items,
       allow_promotion_codes: true,
