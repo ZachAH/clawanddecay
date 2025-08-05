@@ -1,25 +1,16 @@
-// netlify/functions/stripe-webhook.mjs
+// netlify/functions/stripe-webhook.cjs
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs/promises';
+const path = require('path');
+const fs = require('fs');
+const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
+const admin = require('firebase-admin');
+const fetch = require('node-fetch');
+const crypto = require('crypto');
+const StripeModule = require('stripe');
 
-import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
-import admin from 'firebase-admin';
-import fetch from 'node-fetch';
-import crypto from 'crypto';
-import StripeModule from 'stripe';
-
-let stripe; // cached Stripe client
-let signingSecret; // cached webhook signing secret
-
-// Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load variant map JSON once from root folder asynchronously
+// Load variant map JSON once from root folder synchronously
 const variantIdToPrintifyMap = JSON.parse(
-  await fs.readFile(path.resolve(__dirname, 'variant-map.json'), 'utf8')
+  fs.readFileSync(path.resolve(__dirname, 'variant-map.json'), 'utf8')
 );
 
 // Initialize Firebase Admin once
@@ -73,8 +64,8 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
     send_shipping_notification: true,
     line_items: printifyLineItems,
     shipping_address: {
-      first_name: shippingAddress.name?.split(' ')[0] || 'Customer',
-      last_name: shippingAddress.name?.split(' ')[1] || '',
+      first_name: shippingAddress.name ? shippingAddress.name.split(' ')[0] : 'Customer',
+      last_name: shippingAddress.name ? shippingAddress.name.split(' ')[1] || '' : '',
       address1: shippingAddress.address.line1,
       address2: shippingAddress.address.line2 || '',
       city: shippingAddress.address.city,
@@ -105,7 +96,10 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
   return await response.json();
 }
 
-export async function handler(event, context) {
+let stripe; // cached Stripe client
+let signingSecret; // cached webhook signing secret
+
+module.exports.handler = async function(event, context) {
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -172,4 +166,4 @@ export async function handler(event, context) {
       body: JSON.stringify({ error: error.message || 'Internal server error' }),
     };
   }
-}
+};
