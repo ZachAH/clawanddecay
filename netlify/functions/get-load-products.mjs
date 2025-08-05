@@ -96,10 +96,10 @@ const loadProductsHandler = async () => {
   }
 };
 
-// Scheduled function: runs every 6 hours
+// Scheduled function (runs every 6 hours)
 export const scheduledHandler = schedule('0 */6 * * *', loadProductsHandler);
 
-// Manual trigger handler: HTTP endpoint for POST requests
+// Manual HTTP POST trigger function
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
     return {
