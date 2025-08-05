@@ -120,6 +120,7 @@ exports.handler = async function(event, context) {
       line_items,
       success_url: 'https://clawanddecay.com/success?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://clawanddecay.com/cancel',
+      allow_promotion_codes: true, 
     });
 
     return {
