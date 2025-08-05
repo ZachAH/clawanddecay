@@ -36,9 +36,13 @@ function mapToPrintifyVariant(variantId) {
 }
 
 async function sendOrderToPrintify(session, lineItems, shippingAddress) {
+  console.log('Preparing Printify order from Stripe session:', session.id);
+
   const printifyLineItems = lineItems.map(item => {
     const variantId = item.price_data.product_data.metadata.variant_id;
     const printifyVariant = mapToPrintifyVariant(variantId);
+
+    console.log(`Mapping Stripe variantId ${variantId} to Printify variant:`, printifyVariant);
 
     if (!printifyVariant) {
       throw new Error(`No Printify mapping found for variant ID ${variantId}`);
@@ -69,6 +73,8 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
     },
   };
 
+  console.log('Sending order data to Printify:', JSON.stringify(orderData, null, 2));
+
   const response = await fetch(
     `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/orders.json`,
     {
@@ -83,10 +89,13 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
 
   if (!response.ok) {
     const errorBody = await response.text();
+    console.error('Printify API response error:', errorBody);
     throw new Error(`Printify order creation failed: ${response.status} ${errorBody}`);
   }
 
-  return await response.json();
+  const jsonResponse = await response.json();
+  console.log('Printify order creation successful:', jsonResponse);
+  return jsonResponse;
 }
 
 let stripe;
