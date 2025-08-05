@@ -13,7 +13,6 @@ try {
   console.error('Failed to load variant-map.json:', e);
 }
 
-// Initialize Firebase Admin 
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
@@ -34,7 +33,6 @@ async function accessSecret(secretName) {
   return version.payload.data.toString('utf8');
 }
 
-//have to run update manually other failures ensue
 async function getCachedProducts() {
   const bucket = admin.storage().bucket();
   const file = bucket.file('cached-products.json');
@@ -48,12 +46,16 @@ function mapToPrintifyVariant(variantId) {
 }
 
 async function sendOrderToPrintify(session, productVariants, shippingAddress) {
-  console.log('Preparing Printify order from Stripe session:', session.id);
+  console.log('🛠️ [sendOrderToPrintify] Starting with session:', JSON.stringify(session, null, 2));
+  console.log('🛠️ [sendOrderToPrintify] Received productVariants:', JSON.stringify(productVariants, null, 2));
 
   const printifyLineItems = [];
 
   for (const variant of productVariants) {
+    console.log(`🔁 Processing variant: ${JSON.stringify(variant, null, 2)}`);
     const mapping = mapToPrintifyVariant(variant.id);
+    console.log(`📘 Variant mapping result: ${JSON.stringify(mapping, null, 2)}`);
+
     if (!mapping) {
       throw new Error(`No Printify mapping found for variant ID ${variant.id}`);
     }
@@ -63,7 +65,6 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
 
     console.log(`Mapped variant ID ${variant.id} → product_id=${printifyProductId}, variant_option_id=${printifyVariantId}`);
 
-    // Fetch the Printify product to get available print providers
     const productResp = await fetch(
       `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${printifyProductId}.json`,
       {
@@ -80,20 +81,20 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
     }
 
     const productDetail = await productResp.json();
+    console.log('📦 Full product detail response from Printify:', JSON.stringify(productDetail, null, 2));
+
     const availableProviders = productDetail.available_print_providers || [];
     if (availableProviders.length === 0) {
       throw new Error(`No print providers available for product ${printifyProductId}`);
     }
     console.log(`Product ${printifyProductId} has ${availableProviders.length} available print providers.`);
 
-    // Determine print provider ID based on variant title
     const providerMap = {
       'LONG-SLEEVE': 99,
       'TEE': 29,
     };
 
-    // Use variant.title (cached product variant's title) to match provider
-    let printProviderId = 29; // default fallback
+    let printProviderId = 29;
     for (const key of Object.keys(providerMap)) {
       if (variant.title && variant.title.toUpperCase().includes(key)) {
         printProviderId = providerMap[key];
@@ -132,7 +133,7 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
     },
   };
 
-  console.log('Sending order data to Printify:', JSON.stringify(orderData, null, 2));
+  console.log('📤 Final order payload to Printify:', JSON.stringify(orderData, null, 2));
 
   const response = await fetch(
     `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/orders.json`,
@@ -153,7 +154,7 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
   }
 
   const jsonResponse = await response.json();
-  console.log('Printify order creation successful:', jsonResponse);
+  console.log('✅ Printify order creation successful:', jsonResponse);
   return jsonResponse;
 }
 
@@ -173,6 +174,9 @@ module.exports.handler = async function (event) {
     };
   }
 
+  console.log('⚡ Incoming webhook request body:', event.body);
+  console.log('⚡ Incoming headers:', JSON.stringify(event.headers, null, 2));
+
   try {
     if (!stripe) {
       const stripeSecretKey = await accessSecret('STRIPE_SECRET_KEY');
@@ -183,20 +187,23 @@ module.exports.handler = async function (event) {
     }
 
     const sig = event.headers['stripe-signature'];
+    console.log('🔐 Stripe Signature:', sig);
     if (!sig) throw new Error('Missing Stripe signature header');
 
     let stripeEvent;
     try {
       stripeEvent = stripe.webhooks.constructEvent(event.body, sig, signingSecret);
+      console.log('✅ Stripe event constructed successfully:', stripeEvent.type);
     } catch (err) {
-      console.error('Webhook signature verification failed:', err.message);
+      console.error('❌ Webhook signature verification failed:', err.message);
       return { statusCode: 400, body: `Webhook Error: ${err.message}` };
     }
 
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object;
+      console.log('🧾 Stripe session received:', JSON.stringify(session, null, 2));
+      console.log('🧾 Stripe metadata (raw):', session.metadata);
 
-      // Pull variant IDs that you attached in the session metadata
       let variantIds = [];
       try {
         variantIds = JSON.parse(session.metadata?.order_variant_ids || '[]');
@@ -204,11 +211,11 @@ module.exports.handler = async function (event) {
         console.warn('Failed to parse variant IDs from session metadata:', e);
       }
 
-      // Get line items to potentially cross-check quantities / fallback
       const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id);
       const lineItems = lineItemsResponse.data;
+      console.log('📦 Stripe line items:', JSON.stringify(lineItems, null, 2));
+      console.log('📦 Variant IDs from metadata:', variantIds);
 
-      // Load cached products to resolve variant details
       const products = await getCachedProducts();
       const findVariantById = (variantId) => {
         const idNum = Number(variantId);
@@ -221,22 +228,26 @@ module.exports.handler = async function (event) {
         return null;
       };
 
-      // Build productVariants array: { id, quantity, title }
       const productVariants = variantIds
         .map(variantId => {
+          console.log(`🔍 Looking up variant ID: ${variantId}`);
           const variant = findVariantById(variantId);
           if (!variant) {
-            console.warn(`Variant ID ${variantId} not found in cached products`);
+            console.warn(`⚠️ Variant ID ${variantId} not found in cached products`);
             return null;
           }
 
-          // Try to read quantity from Stripe line items via metadata or description fallback
           const lineItem = lineItems.find(item => {
             return (
               item.price_data?.product_data?.metadata?.variant_id === String(variantId) ||
               item.description?.includes(variant.title)
             );
           });
+          if (!lineItem) {
+            console.warn(`⚠️ Line item not found for variant: ${variantId}`);
+          }
+          console.log(`✅ Mapped variant (${variantId}) with title: "${variant.title}" and quantity: ${lineItem?.quantity || 1}`);
+
           return {
             id: variantId,
             quantity: lineItem?.quantity || 1,
@@ -249,6 +260,8 @@ module.exports.handler = async function (event) {
         session.shipping ||
         session.customer_details?.shipping ||
         session.customer_details || {};
+
+      console.log('📮 Shipping address resolved:', JSON.stringify(shippingAddress, null, 2));
 
       if (productVariants.length === 0) {
         console.warn('No product variants to send to Printify, skipping order creation');
