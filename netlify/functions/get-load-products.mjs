@@ -102,5 +102,5 @@ const loadProductsHandler = async () => {
   }
 };
 
-//export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
-export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
+export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
+//export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
