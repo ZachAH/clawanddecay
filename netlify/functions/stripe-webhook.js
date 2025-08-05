@@ -13,7 +13,7 @@ try {
   console.error('Failed to load variant-map.json:', e);
 }
 
-// Initialize Firebase Admin
+// Initialize Firebase Admin 
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
@@ -34,6 +34,7 @@ async function accessSecret(secretName) {
   return version.payload.data.toString('utf8');
 }
 
+//have to run update manually other failures ensue
 async function getCachedProducts() {
   const bucket = admin.storage().bucket();
   const file = bucket.file('cached-products.json');
