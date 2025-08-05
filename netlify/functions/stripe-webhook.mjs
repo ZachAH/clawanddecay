@@ -1,31 +1,28 @@
-// netlify/functions/stripe-webhook.js
+// netlify/functions/stripe-webhook.mjs
+
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
+import fs from 'fs/promises';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const variantIdToPrintifyMap = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, 'variant-map.json'), 'utf8')
-);
+import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+import admin from 'firebase-admin';
+import fetch from 'node-fetch';
+import crypto from 'crypto';
+import StripeModule from 'stripe';
 
 let stripe; // cached Stripe client
 let signingSecret; // cached webhook signing secret
 
-// Lazy load imports
-const secretManagerModule = await import('@google-cloud/secret-manager');
-const adminModule = await import('firebase-admin');
-const fetchModule = await import('node-fetch');
-const cryptoModule = await import('crypto');
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const { SecretManagerServiceClient } = secretManagerModule;
-const admin = adminModule.default;
-const fetch = fetchModule.default;
-const crypto = cryptoModule.default;
+// Load variant map JSON once from root folder asynchronously
+const variantIdToPrintifyMap = JSON.parse(
+  await fs.readFile(path.resolve(__dirname, 'variant-map.json'), 'utf8')
+);
 
-const secretClient = new SecretManagerServiceClient();
-
+// Initialize Firebase Admin once
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
@@ -35,6 +32,12 @@ if (!admin.apps.length) {
 }
 const bucket = admin.storage().bucket();
 
+// Secret Manager client
+const secretClient = new SecretManagerServiceClient({
+  credentials: JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT),
+});
+
+// Helper: fetch secret by name from Google Secret Manager
 async function accessSecret(secretName) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   const projectId = serviceAccount.project_id;
@@ -43,6 +46,7 @@ async function accessSecret(secretName) {
   return version.payload.data.toString('utf8');
 }
 
+// Map your variant ID from Stripe metadata to Printify product/variant IDs
 function mapToPrintifyVariant(variantId) {
   return variantIdToPrintifyMap[variantId] || null;
 }
@@ -58,7 +62,7 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
 
     return {
       product_id: printifyVariant.product_id,
-      variant_id: printifyVariant.variant_option_ids[0], // Use the mapped variant id from your JSON
+      variant_id: printifyVariant.variant_option_ids[0],
       quantity: item.quantity,
     };
   });
@@ -118,8 +122,7 @@ export async function handler(event, context) {
     if (!stripe) {
       const stripeSecretKey = await accessSecret('STRIPE_SECRET_KEY');
       if (!stripeSecretKey) throw new Error('Missing STRIPE_SECRET_KEY');
-      const StripeModule = await import('stripe');
-      stripe = StripeModule.default(stripeSecretKey);
+      stripe = StripeModule(stripeSecretKey);
     }
     if (!signingSecret) {
       signingSecret = await accessSecret('SIGNING_SECRET');
