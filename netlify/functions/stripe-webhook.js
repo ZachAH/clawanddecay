@@ -1,16 +1,16 @@
-// netlify/functions/stripe-webhook.cjs
+// netlify/functions/stripe-webhook.js
 
 const path = require('path');
 const fs = require('fs');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const admin = require('firebase-admin');
 const fetch = require('node-fetch');
-const crypto = require('crypto');
 const StripeModule = require('stripe');
+
 const variantMapPath = path.join(__dirname, 'variant-map.json');
 const variantIdToPrintifyMap = JSON.parse(fs.readFileSync(variantMapPath, 'utf8'));
 
-// Initialize Firebase Admin once
+// Initialize Firebase Admin
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
@@ -18,14 +18,11 @@ if (!admin.apps.length) {
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   });
 }
-const bucket = admin.storage().bucket();
 
-// Secret Manager client
 const secretClient = new SecretManagerServiceClient({
   credentials: JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT),
 });
 
-// Helper: fetch secret by name from Google Secret Manager
 async function accessSecret(secretName) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   const projectId = serviceAccount.project_id;
@@ -34,7 +31,6 @@ async function accessSecret(secretName) {
   return version.payload.data.toString('utf8');
 }
 
-// Map your variant ID from Stripe metadata to Printify product/variant IDs
 function mapToPrintifyVariant(variantId) {
   return variantIdToPrintifyMap[variantId] || null;
 }
@@ -61,15 +57,15 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
     send_shipping_notification: true,
     line_items: printifyLineItems,
     shipping_address: {
-      first_name: shippingAddress.name ? shippingAddress.name.split(' ')[0] : 'Customer',
-      last_name: shippingAddress.name ? shippingAddress.name.split(' ')[1] || '' : '',
-      address1: shippingAddress.address.line1,
-      address2: shippingAddress.address.line2 || '',
-      city: shippingAddress.address.city,
-      region: shippingAddress.address.state,
-      country: shippingAddress.address.country,
-      zip: shippingAddress.address.postal_code,
-      phone: shippingAddress.phone || '',
+      first_name: shippingAddress?.name?.split(' ')[0] || 'Customer',
+      last_name: shippingAddress?.name?.split(' ')[1] || '',
+      address1: shippingAddress?.address?.line1 || '',
+      address2: shippingAddress?.address?.line2 || '',
+      city: shippingAddress?.address?.city || '',
+      region: shippingAddress?.address?.state || '',
+      country: shippingAddress?.address?.country || '',
+      zip: shippingAddress?.address?.postal_code || '',
+      phone: shippingAddress?.phone || '',
     },
   };
 
@@ -93,10 +89,10 @@ async function sendOrderToPrintify(session, lineItems, shippingAddress) {
   return await response.json();
 }
 
-let stripe; // cached Stripe client
-let signingSecret; // cached webhook signing secret
+let stripe;
+let signingSecret;
 
-module.exports.handler = async function(event, context) {
+module.exports.handler = async function (event) {
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -112,12 +108,10 @@ module.exports.handler = async function(event, context) {
   try {
     if (!stripe) {
       const stripeSecretKey = await accessSecret('STRIPE_SECRET_KEY');
-      if (!stripeSecretKey) throw new Error('Missing STRIPE_SECRET_KEY');
       stripe = StripeModule(stripeSecretKey);
     }
     if (!signingSecret) {
       signingSecret = await accessSecret('SIGNING_SECRET');
-      if (!signingSecret) throw new Error('Missing SIGNING_SECRET');
     }
 
     const sig = event.headers['stripe-signature'];
@@ -137,16 +131,16 @@ module.exports.handler = async function(event, context) {
       const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id);
       const lineItems = lineItemsResponse.data;
 
-      const shippingAddress = session.shipping || session.customer_details || {};
-      if (!shippingAddress || !shippingAddress.address) {
-        throw new Error('No shipping address found in session');
-      }
+      const shippingAddress =
+        session.shipping ||
+        session.customer_details?.shipping ||
+        {};
 
       try {
         const printifyOrder = await sendOrderToPrintify(session, lineItems, shippingAddress);
-        console.log('Printify order created:', printifyOrder.id);
+        console.log('✅ Printify order created:', printifyOrder.id);
       } catch (printifyError) {
-        console.error('Failed to create Printify order:', printifyError);
+        console.error('❌ Failed to create Printify order:', printifyError);
       }
     } else {
       console.log(`Unhandled event type: ${stripeEvent.type}`);
