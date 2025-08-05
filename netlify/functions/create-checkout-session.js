@@ -94,7 +94,7 @@ exports.handler = async function (event) {
           },
           unit_amount: variant.price,
         },
-        quantity,
+        quantity: Number(quantity),
       };
     });
 
