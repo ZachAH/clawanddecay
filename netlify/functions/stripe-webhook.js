@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const admin = require('firebase-admin');
-const fetch = require('node-fetch');
 const StripeModule = require('stripe');
 
 const variantMapPath = path.join(__dirname, 'variant-map.json');
@@ -44,6 +43,10 @@ function mapToPrintifyVariant(variantId) {
 }
 
 async function sendOrderToPrintify(session, productVariants, shippingAddress) {
+  if (typeof fetch !== 'function') {
+    throw new Error('fetch is not available in this environment');
+  }
+
   // Map your variant info to Printify line items
   const printifyLineItems = productVariants.map(variant => {
     const printifyVariant = mapToPrintifyVariant(variant.id);
@@ -177,8 +180,6 @@ module.exports.handler = async function (event) {
         }
         // Find quantity from Stripe line items by comparing with variant ID in metadata (fallback to 1)
         const lineItem = lineItems.find(item => {
-          // item.price_data.product_data.metadata.variant_id may not exist on ephemeral prices,
-          // so fallback to matching by name or other heuristic if necessary.
           return item.price?.product_metadata?.variant_id === String(variantId) ||
                  item.description?.includes(variant.title) ||
                  false;
