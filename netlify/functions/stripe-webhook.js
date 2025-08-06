@@ -52,6 +52,8 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
 
   // Extract phone from shippingAddress with fallback
   const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000';
+  const email = shippingAddress?.email || session.customer_details?.email ||'';
+
 
   const printifyLineItems = [];
 
@@ -114,19 +116,20 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
   const orderData = {
     external_id: session.id,
     label: `Order ${session.id}`,
+    shipping_method: 1, // Added shipping_method as per your Postman request
     send_shipping_notification: true,
-    print_provider_id: printProviderId,  // <-- print_provider_id at top level here
     line_items: printifyLineItems,
-    shipping_address: {
+    address_to: { // Renamed shipping_address to address_to
       first_name: (shippingAddress?.name || '').split(' ')[0] || 'Customer',
       last_name: ((shippingAddress?.name || '').split(' ')[1] || ''),
+      email: email, // Added email as per your Postman request
+      phone: phone, // Added phone as per your Postman request
+      country: shippingAddress?.address?.country || '',
+      region: shippingAddress?.address?.state || '',
       address1: shippingAddress?.address?.line1 || '',
       address2: shippingAddress?.address?.line2 || '',
       city: shippingAddress?.address?.city || '',
-      region: shippingAddress?.address?.state || '',
-      country: shippingAddress?.address?.country || '',
       zip: shippingAddress?.address?.postal_code || '',
-      phone: phone,
     },
   };
 
