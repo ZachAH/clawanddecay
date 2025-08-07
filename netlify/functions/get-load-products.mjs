@@ -54,25 +54,22 @@ const loadProductsHandler = async () => {
     }
 
     const freshData = await response.json();
-    const freshProducts = freshData.data || [];
+    const freshProducts = (freshData.data || []).filter(product => product.variants?.some(variant => variant.is_enabled));
     console.log(`Fetched ${freshProducts.length} fresh products.`);
 
     // 3. Merge fresh data with existing cached data, preserving manual changes
-    const existingProducts = existingData.data || [];
-
     const mergedProducts = freshProducts.map(newProduct => {
       const oldProduct = existingProducts.find(p => p.id === newProduct.id);
-      if (!oldProduct) return newProduct;
-
-      // Merge logic:
-      // Preserve oldProduct.images if present (manual URL changes), otherwise keep newProduct.images
+    
+      // ✅ Filter variants: keep only enabled ones
+      const enabledVariants = newProduct.variants?.filter(variant => variant.is_enabled) || [];
+    
       return {
         ...newProduct,
-        images: (oldProduct.images && oldProduct.images.length) ? oldProduct.images : newProduct.images,
-
-        // Optionally merge other fields you manually update here
-        // For example, if you have a custom field 'customData' to preserve:
-        // customData: oldProduct.customData || newProduct.customData,
+        variants: enabledVariants,
+        images: (oldProduct?.images?.length) ? oldProduct.images : newProduct.images,
+    
+        // Preserve other custom fields here if needed
       };
     });
 
@@ -102,5 +99,5 @@ const loadProductsHandler = async () => {
   }
 };
 
-export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
-//export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
+//export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
+export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
