@@ -42,6 +42,9 @@ const loadProductsHandler = async () => {
       existingData = {};
     }
 
+    // ✅ Declare existingProducts before using it
+    const existingProducts = existingData.data || [];
+
     // 2. Fetch fresh data from Printify API
     console.log(`Fetching fresh data from Printify API for shopId: ${shopId}`);
     const response = await fetch(`https://api.printify.com/v1/shops/${shopId}/products.json`, {
@@ -57,25 +60,25 @@ const loadProductsHandler = async () => {
     const freshProducts = (freshData.data || []).filter(product => product.variants?.some(variant => variant.is_enabled));
     console.log(`Fetched ${freshProducts.length} fresh products.`);
 
-    // 3. Merge fresh data with existing cached data, preserving manual changes
+
+    // ✅ Merge fresh with existing, and filter variants inside
     const mergedProducts = freshProducts.map(newProduct => {
       const oldProduct = existingProducts.find(p => p.id === newProduct.id);
-    
-      // ✅ Filter variants: keep only enabled ones
       const enabledVariants = newProduct.variants?.filter(variant => variant.is_enabled) || [];
-    
+
       return {
         ...newProduct,
         variants: enabledVariants,
         images: (oldProduct?.images?.length) ? oldProduct.images : newProduct.images,
-    
-        // Preserve other custom fields here if needed
       };
     });
 
+    // Optional: filter out any product with 0 remaining variants
+    const cleanedProducts = mergedProducts.filter(product => product.variants.length > 0);
+
     const mergedData = {
       ...freshData,
-      data: mergedProducts,
+      data: cleanedProducts,
     };
 
     // 4. Save merged data back to Firebase Storage
