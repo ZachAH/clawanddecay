@@ -22,15 +22,16 @@ function ProductCard({ product, isFirst = false }) {
     displayPrice = (minPrice / 100).toFixed(2);
   }
 
-  const primaryImageUrl = product.images && product.images.length > 0
-    ? product.images[0].src
-    : null;
+  const primaryImageUrl =
+    product.images?.find(img => img.src.includes('pfy-prod-products-mockup-media'))?.src ||
+    product.images?.[0]?.src ||
+    FALLBACK_IMAGE_URL;
 
   return (
     <Link to={`/products/${product.id}`} className="product-card-link">
       <div className="product-card">
         <img
-          src={primaryImageUrl || FALLBACK_IMAGE_URL}
+          src={primaryImageUrl}
           alt={product.title}
           className="product-card-image"
           loading={isFirst ? 'eager' : 'lazy'} // Conditional loading
