@@ -18,7 +18,7 @@ function ProductDetailPage({ setLoading }) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true); // Tell App we're loading
+        setLoading(true);  // Start global loading spinner
         const response = await fetch(`/.netlify/functions/get-product-by-id?id=${productId}`);
 
         if (!response.ok) {
@@ -55,7 +55,7 @@ function ProductDetailPage({ setLoading }) {
         setError(err.message || "Failed to load product details.");
         setProduct(null);
       } finally {
-        setLoading(false); // Done loading
+        setLoading(false); // Stop global loading spinner
       }
     };
 
@@ -93,8 +93,6 @@ function ProductDetailPage({ setLoading }) {
   };
 
   const showTeeDescription = product?.title?.toLowerCase().includes("tee");
-
-  // No loading UI here — handled in App.jsx
 
   if (error) {
     return (
