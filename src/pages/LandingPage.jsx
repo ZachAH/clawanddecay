@@ -9,7 +9,7 @@ import landingBgWebm from '../assets/CAD_vid.webm'; // your converted webm
 async function fetchFeaturedProducts() {
   const res = await fetch('/.netlify/functions/get-cached-products');
   const data = await res.json();
-  const products = (data.data || []).slice(0, 3); // top 6
+  const products = (data.data || []).slice(11, 13); // top 6
   return products;
 }
 
