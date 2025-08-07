@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ProductGridPage from './pages/ProductGridPage';
@@ -58,18 +58,7 @@ function CancelPage() {
 
 function App() {
   const [selectedTag, setSelectedTag] = useState('All');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); // adjust as needed or tie to actual load logic
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <RockHandsLoader />;
-  }
+  const [loading, setLoading] = useState(false); // Loading state here
 
   return (
     <Router>
@@ -94,6 +83,30 @@ function App() {
           </header>
 
           <main className="app-main">
+            {/* Show loading spinner when loading is true */}
+            {loading && (
+              <div className="loading-overlay">
+                {/* Your cool loading animation here, e.g., the rock hands or just text */}
+                <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}>
+                  <div className="rock-hands-fall-wrapper">
+                    {Array.from({ length: 20 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="rock-hand"
+                        style={{
+                          left: `${(i / 20) * 90 + 5}%`,
+                          animationDelay: `${(4000 / 20 / 1000) * i}s`,
+                        }}
+                      >
+                        🤘
+                      </div>
+                    ))}
+                  </div>
+                  <span style={{ position: 'relative', zIndex: 10 }}>Loading...</span>
+                </div>
+              </div>
+            )}
+
             <Routes>
               <Route path="/" element={<LandingPage selectedTag={selectedTag} />} />
               <Route
@@ -105,11 +118,14 @@ function App() {
                   />
                 }
               />
-              <Route path="/products/:productId" element={<ProductDetailPage />} />
+              {/* Pass setLoading prop to ProductDetailPage */}
+              <Route path="/products/:productId" element={<ProductDetailPage setLoading={setLoading} />} />
               <Route path="/contact-us" element={<ContactUsPage />} />
               <Route path="/our-story" element={<OurStoryPage />} />
               <Route path="/faq-page" element={<FaqPage />} />
               <Route path="/cart" element={<CartPage />} />
+
+              {/* Stripe redirect routes */}
               <Route path="/success" element={<SuccessPage />} />
               <Route path="/cancel" element={<CancelPage />} />
             </Routes>

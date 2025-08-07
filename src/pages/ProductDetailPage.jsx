@@ -4,16 +4,13 @@ import { useCart } from '../context/CartContext';
 import ReactSvgFallback from '../assets/react.svg';
 
 const FALLBACK_IMAGE_URL = ReactSvgFallback;
-const NUM_BLOOD_STREAMS = 20;
-const STREAM_ANIMATION_CYCLE_MS = 4000;
 
-function ProductDetailPage() {
+function ProductDetailPage({ setLoading }) {
   const { productId } = useParams();
   const { addToCart } = useCart();
 
   const [product, setProduct] = useState(null);
   const [enabledVariants, setEnabledVariants] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
@@ -21,6 +18,7 @@ function ProductDetailPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        setLoading(true); // Tell App we're loading
         const response = await fetch(`/.netlify/functions/get-product-by-id?id=${productId}`);
 
         if (!response.ok) {
@@ -51,21 +49,24 @@ function ProductDetailPage() {
           setSelectedVariantId(sortedEnabled[0].id);
         }
 
+        setError(null);
       } catch (err) {
         console.error("Failed to fetch single product:", err);
         setError(err.message || "Failed to load product details.");
+        setProduct(null);
       } finally {
-        setLoading(false);
+        setLoading(false); // Done loading
       }
     };
 
     if (productId) {
       fetchProduct();
     } else {
-      setLoading(false);
       setError("No product ID provided.");
+      setProduct(null);
+      setLoading(false);
     }
-  }, [productId]);
+  }, [productId, setLoading]);
 
   const handleThumbnailClick = (imageUrl) => {
     setCurrentImage(imageUrl);
@@ -93,29 +94,7 @@ function ProductDetailPage() {
 
   const showTeeDescription = product?.title?.toLowerCase().includes("tee");
 
-  if (loading) {
-    return (
-      <div className="product-detail-page-container">
-        <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}>
-          <div className="rock-hands-fall-wrapper">
-            {Array.from({ length: NUM_BLOOD_STREAMS }).map((_, i) => (
-              <div
-                key={i}
-                className="rock-hand"
-                style={{
-                  left: `${(i / NUM_BLOOD_STREAMS) * 90 + 5}%`,
-                  animationDelay: `${(STREAM_ANIMATION_CYCLE_MS / NUM_BLOOD_STREAMS / 1000) * i}s`,
-                }}
-              >
-                🤘
-              </div>
-            ))}
-          </div>
-          <span style={{ position: 'relative', zIndex: 10 }}>Loading product details...</span>
-        </div>
-      </div>
-    );
-  }
+  // No loading UI here — handled in App.jsx
 
   if (error) {
     return (
