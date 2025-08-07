@@ -13,6 +13,13 @@ if (!getApps().length) {
 
 const bucket = getStorage().bucket();
 
+// Product IDs to exclude completely
+const EXCLUDED_PRODUCT_IDS = [
+  '6892909bbe2bf49f2005a4cc',
+  '6892915a18389fe78d00abed',
+  '68929096be2bf49f2005a4c7',
+];
+
 const loadProductsHandler = async () => {
   console.log('productLoadHandler started.');
 
@@ -42,7 +49,6 @@ const loadProductsHandler = async () => {
       existingData = {};
     }
 
-    // ✅ Declare existingProducts before using it
     const existingProducts = existingData.data || [];
 
     // 2. Fetch fresh data from Printify API
@@ -57,11 +63,15 @@ const loadProductsHandler = async () => {
     }
 
     const freshData = await response.json();
-    const freshProducts = (freshData.data || []).filter(product => product.variants?.some(variant => variant.is_enabled));
-    console.log(`Fetched ${freshProducts.length} fresh products.`);
 
+    // Filter out excluded products and keep only enabled variants
+    const freshProducts = (freshData.data || [])
+      .filter(product => product.variants?.some(variant => variant.is_enabled))
+      .filter(product => !EXCLUDED_PRODUCT_IDS.includes(product.id));
 
-    // ✅ Merge fresh with existing, and filter variants inside
+    console.log(`Fetched ${freshProducts.length} fresh products after excluding.`);
+
+    // 3. Merge fresh with existing, and filter variants inside
     const mergedProducts = freshProducts.map(newProduct => {
       const oldProduct = existingProducts.find(p => p.id === newProduct.id);
       const enabledVariants = newProduct.variants?.filter(variant => variant.is_enabled) || [];
@@ -102,5 +112,5 @@ const loadProductsHandler = async () => {
   }
 };
 
-export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
-//export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
+//export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
+export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
