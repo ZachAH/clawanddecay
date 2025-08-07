@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useCart } from '../context/CartContext'; // Make sure your CartContext exists and provides addToCart
-import ReactSvgFallback from '../assets/react.svg'; // Adjust the path based on your file structure
-
-//testing
+import { useCart } from '../context/CartContext';
+import ReactSvgFallback from '../assets/react.svg';
 
 const FALLBACK_IMAGE_URL = ReactSvgFallback;
 const NUM_BLOOD_STREAMS = 20;
@@ -14,6 +12,7 @@ function ProductDetailPage() {
   const { addToCart } = useCart();
 
   const [product, setProduct] = useState(null);
+  const [enabledVariants, setEnabledVariants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
@@ -38,10 +37,18 @@ function ProductDetailPage() {
           setCurrentImage(FALLBACK_IMAGE_URL);
         }
 
-        // Set initial selected variant if any enabled variants exist
-        const enabledVariants = data.variants?.filter(v => v.is_enabled) || [];
-        if (enabledVariants.length > 0) {
-          setSelectedVariantId(enabledVariants[0].id);
+        const sizeOrder = ['XS', 'S', 'Small', 'M', 'Medium', 'L', 'Large', 'XL', '2XL', '3XL', '4XL'];
+
+        const sortedEnabled = (data.variants?.filter(v => v.is_enabled) || []).sort((a, b) => {
+          const aIndex = sizeOrder.findIndex(size => a.title.includes(size));
+          const bIndex = sizeOrder.findIndex(size => b.title.includes(size));
+          return (aIndex === -1 ? sizeOrder.length : aIndex) - (bIndex === -1 ? sizeOrder.length : bIndex);
+        });
+
+        setEnabledVariants(sortedEnabled);
+
+        if (sortedEnabled.length > 0) {
+          setSelectedVariantId(sortedEnabled[0].id);
         }
 
       } catch (err) {
@@ -69,7 +76,7 @@ function ProductDetailPage() {
       alert("Please select a variant.");
       return;
     }
-    const selectedVariant = product.variants.find(v => v.id === selectedVariantId);
+    const selectedVariant = enabledVariants.find(v => v.id === selectedVariantId);
     if (!selectedVariant) {
       alert("Selected variant not found.");
       return;
@@ -90,17 +97,18 @@ function ProductDetailPage() {
     return (
       <div className="product-detail-page-container">
         <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}>
-          <div className="blood-stream-animation-wrapper">
+          <div className="rock-hands-fall-wrapper">
             {Array.from({ length: NUM_BLOOD_STREAMS }).map((_, i) => (
               <div
                 key={i}
-                className="blood-stream-drip"
+                className="rock-hand"
                 style={{
                   left: `${(i / NUM_BLOOD_STREAMS) * 90 + 5}%`,
-                  animation: `bloodStreamDrip ${STREAM_ANIMATION_CYCLE_MS / 1000}s linear infinite`,
                   animationDelay: `${(STREAM_ANIMATION_CYCLE_MS / NUM_BLOOD_STREAMS / 1000) * i}s`,
                 }}
-              ></div>
+              >
+                🤘
+              </div>
             ))}
           </div>
           <span style={{ position: 'relative', zIndex: 10 }}>Loading product details...</span>
@@ -124,8 +132,6 @@ function ProductDetailPage() {
       </div>
     );
   }
-
-  const enabledVariants = product.variants.filter(v => v.is_enabled);
 
   return (
     <div className="product-detail-page-container">
