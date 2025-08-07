@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 
 function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
 
-  // Total in cents
+  // Local state to handle quantity input
+  const [quantities, setQuantities] = useState(() =>
+    Object.fromEntries(cartItems.map(item => [item.id, item.quantity]))
+  );
+
+  // Keep quantities in sync with cart updates
+  useEffect(() => {
+    setQuantities(Object.fromEntries(cartItems.map(item => [item.id, item.quantity])));
+  }, [cartItems]);
+
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   if (cartItems.length === 0) {
@@ -27,16 +36,13 @@ function CartPage() {
     if (cartItems.length === 0) return;
     setLoading(true);
     try {
-      // Build payload: primary authoritative data should be resolved server-side.
-      // Here we send id + quantity, plus optional metadata for logging/fallback.
       const response = await fetch('/.netlify/functions/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: cartItems.map(item => ({
-            id: item.id, // should correspond to whatever your backend catalog/key is
+            id: item.id,
             quantity: item.quantity,
-            // Optional: include title and price for logging/debugging; backend should not trust price for amount.
             metadata: {
               title: item.title,
               client_price_cents: item.price,
@@ -73,9 +79,7 @@ function CartPage() {
           >
             <div className="flex-1">
               <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="text-gray-600">
-                ${(item.price / 100).toFixed(2)} each
-              </p>
+              <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
               <p className="mt-1 font-medium">
                 Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
               </p>
@@ -83,18 +87,21 @@ function CartPage() {
 
             <div className="flex items-center space-x-4 mt-4 sm:mt-0">
               <div className="flex items-center border rounded">
-                <label htmlFor={`qty-${item.id}`} className="sr-only">
-                  Quantity
-                </label>
+                <label htmlFor={`qty-${item.id}`} className="sr-only">Quantity</label>
                 <input
                   id={`qty-${item.id}`}
                   type="number"
                   min={1}
-                  value={item.quantity}
+                  value={quantities[item.id] ?? item.quantity}
                   className="w-16 px-2 py-1 text-center"
                   onChange={e => {
-                    const val = Number(e.target.value);
-                    if (val >= 1) updateQuantity(item.id, val);
+                    const val = e.target.value;
+                    setQuantities(q => ({ ...q, [item.id]: val }));
+
+                    const parsed = Number(val);
+                    if (parsed >= 1 && Number.isInteger(parsed)) {
+                      updateQuantity(item.id, parsed);
+                    }
                   }}
                   disabled={loading}
                 />

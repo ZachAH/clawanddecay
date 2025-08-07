@@ -88,6 +88,7 @@ function ProductDetailPage({ setLoading }) {
       title: `${product.title} - ${selectedVariant.title}`,
       price: selectedVariant.price,
       quantity: 1,
+      image: currentImage || FALLBACK_IMAGE_URL
     });
     alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
   };
