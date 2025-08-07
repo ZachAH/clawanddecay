@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ProductGridPage from './pages/ProductGridPage';
@@ -12,6 +12,29 @@ import mobileHeaderImage from './assets/clawanddecay-header-mobile.webp';
 import Navbar from './components/navbar';
 import { CartProvider } from './context/CartContext';
 import CartPage from './pages/CartPage';
+
+// Rock hands loader component
+function RockHandsLoader() {
+  const numHands = 15;
+  const hands = Array.from({ length: numHands }).map((_, i) => {
+    const left = Math.floor(Math.random() * 100); // random horizontal position
+    const delay = Math.random() * 2; // random stagger
+    return (
+      <div
+        key={i}
+        className="hand"
+        style={{
+          left: `${left}%`,
+          animationDelay: `${delay}s`,
+        }}
+      >
+        🤘
+      </div>
+    );
+  });
+
+  return <div className="loading-screen">{hands}</div>;
+}
 
 // Simple Success Page component
 function SuccessPage() {
@@ -35,6 +58,18 @@ function CancelPage() {
 
 function App() {
   const [selectedTag, setSelectedTag] = useState('All');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // adjust as needed or tie to actual load logic
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <RockHandsLoader />;
+  }
 
   return (
     <Router>
@@ -75,12 +110,8 @@ function App() {
               <Route path="/our-story" element={<OurStoryPage />} />
               <Route path="/faq-page" element={<FaqPage />} />
               <Route path="/cart" element={<CartPage />} />
-
-              {/* Added routes for Stripe redirect */}
               <Route path="/success" element={<SuccessPage />} />
               <Route path="/cancel" element={<CancelPage />} />
-
-              {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>
           </main>
 
