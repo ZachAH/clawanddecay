@@ -16,7 +16,6 @@ function ProductDetailPage({ setLoading }) {
   const [selectedVariantId, setSelectedVariantId] = useState(null);
 
   useEffect(() => {
-    // This effect runs whenever productId changes, ensuring a fresh start.
     const fetchProduct = async () => {
       // Reset all state for the new product
       setProduct(null);
@@ -43,11 +42,9 @@ function ProductDetailPage({ setLoading }) {
         const data = await response.json();
         setProduct(data);
 
-        // Set the current image
         const mainImage = (data.images && data.images.length > 0) ? data.images[0].src : FALLBACK_IMAGE_URL;
         setCurrentImage(mainImage);
 
-        // Sort and filter enabled variants
         const sizeOrder = ['XS', 'S', 'Small', 'M', 'Medium', 'L', 'Large', 'XL', '2XL', '3XL', '4XL'];
         const sortedEnabled = (data.variants?.filter(v => v.is_enabled) || []).sort((a, b) => {
           const aIndex = sizeOrder.findIndex(size => a.title.includes(size));
@@ -57,11 +54,10 @@ function ProductDetailPage({ setLoading }) {
 
         setEnabledVariants(sortedEnabled);
         
-        // Automatically select the first enabled variant
+        // This is a key change: always set the selected variant to the first one available
         if (sortedEnabled.length > 0) {
           setSelectedVariantId(sortedEnabled[0].id);
         } else {
-          // If no enabled variants, ensure selectedVariantId is null
           setSelectedVariantId(null);
         }
 
@@ -74,7 +70,7 @@ function ProductDetailPage({ setLoading }) {
     };
 
     fetchProduct();
-  }, [productId, setLoading]); // Depend on productId to re-run on page navigation
+  }, [productId, setLoading]);
 
   const handleThumbnailClick = (imageUrl) => {
     setCurrentImage(imageUrl);
@@ -88,10 +84,8 @@ function ProductDetailPage({ setLoading }) {
       return;
     }
 
-    // Now, we find the variant from the enabledVariants array using the latest selectedVariantId.
     const selectedVariant = enabledVariants.find(v => v.id === selectedVariantId);
     if (!selectedVariant) {
-      // This is an important check in case a variant is somehow missing.
       alert("Selected variant not found.");
       return;
     }
@@ -105,11 +99,15 @@ function ProductDetailPage({ setLoading }) {
     });
 
     alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
+
+    // After adding to cart, you can optionally reset the selected variant.
+    // This is not necessary for a fix, but can be good UX.
+    // setSelectedVariantId(enabledVariants[0]?.id || null);
   };
 
   const showTeeDescription = product?.title?.toLowerCase().includes("tee");
 
-  // --- Render logic remains the same ---
+  // ... (rest of your return JSX) ...
   if (error) {
     return (
       <div className="product-detail-page-container">
@@ -178,7 +176,7 @@ function ProductDetailPage({ setLoading }) {
         {enabledVariants.length > 1 && (
           <select
             className="mb-4 w-full border rounded px-3 py-2"
-            value={selectedVariantId || ''} // Use empty string for null
+            value={selectedVariantId || ''}
             onChange={e => setSelectedVariantId(Number(e.target.value))}
           >
             {enabledVariants.map(variant => (
