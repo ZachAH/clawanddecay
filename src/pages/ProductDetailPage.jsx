@@ -81,12 +81,17 @@ function ProductDetailPage({ setLoading }) {
   };
 
   const handleAddToCart = () => {
+    // We get the selectedVariantId directly from the state, which is now
+    // correctly being updated by the useEffect hook.
     if (!selectedVariantId) {
       alert("Please select a variant.");
       return;
     }
+
+    // Now, we find the variant from the enabledVariants array using the latest selectedVariantId.
     const selectedVariant = enabledVariants.find(v => v.id === selectedVariantId);
     if (!selectedVariant) {
+      // This is an important check in case a variant is somehow missing.
       alert("Selected variant not found.");
       return;
     }
@@ -98,6 +103,7 @@ function ProductDetailPage({ setLoading }) {
       quantity: 1,
       image: currentImage || FALLBACK_IMAGE_URL
     });
+
     alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
   };
 
