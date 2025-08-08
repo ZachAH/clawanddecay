@@ -121,6 +121,9 @@ exports.handler = async function (event) {
       automatic_tax: {
         enabled: true,
       },
+      tax_id_collection: {
+        enabled: true,
+      },
     });
 
     return {
