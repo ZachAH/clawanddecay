@@ -118,6 +118,9 @@ exports.handler = async function (event) {
       metadata: {
         order_variant_ids: JSON.stringify(variantIdsForMetadata),
       },
+      automatic_tax: {
+        enabled: true,
+      },
     });
 
     return {
