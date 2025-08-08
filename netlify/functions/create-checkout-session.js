@@ -93,6 +93,7 @@ exports.handler = async function (event) {
             },
           },
           unit_amount: variant.price,
+          tax_behavior: 'exclusive',
         },
         quantity: Number(quantity),
       };
