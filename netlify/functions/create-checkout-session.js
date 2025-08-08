@@ -64,22 +64,22 @@ exports.handler = async function (event) {
     const productsData = JSON.parse(raw.toString('utf8'));
     const products = productsData.data || productsData;
 
-    const findVariantById = (variantId) => {
+    // --- UPDATED LOGIC HERE ---
+    const findVariantByProductAndVariantId = (productId, variantId) => {
+      const product = products.find(p => p.id === productId);
+      if (!product) return null;
+      
       const idNum = Number(variantId);
-      for (const product of products) {
-        if (product.variants) {
-          const variant = product.variants.find(v => Number(v.id) === idNum);
-          if (variant) return variant;
-        }
-      }
-      return null;
+      return product.variants.find(v => Number(v.id) === idNum);
     };
 
-    const line_items = items.map(({ id, quantity }) => {
-      const variant = findVariantById(id);
-      if (!variant) throw new Error(`Variant ${id} not found`);
+    const line_items = items.map(({ productId, variantId, quantity }) => {
+      const variant = findVariantByProductAndVariantId(productId, variantId);
+      if (!variant) {
+        throw new Error(`Variant ${variantId} for product ${productId} not found`);
+      }
       if (!variant.is_enabled || !variant.is_available) {
-        throw new Error(`Variant ${id} is unavailable`);
+        throw new Error(`Variant ${variantId} is unavailable`);
       }
 
       return {
@@ -90,6 +90,7 @@ exports.handler = async function (event) {
             metadata: {
               sku: variant.sku || '',
               variant_id: String(variant.id),
+              product_id: productId, // Include product ID in metadata for clarity
             },
           },
           unit_amount: variant.price,
@@ -99,11 +100,12 @@ exports.handler = async function (event) {
       };
     });
 
+    // --- ADDED A CONSOLE LOG FOR THE NEW ITEM STRUCTURE ---
+    console.log('Received these items from the frontend:', JSON.stringify(items, null, 2));
     console.log('Sending to Stripe with these line items:', JSON.stringify(line_items, null, 2));
 
-
-    // Add variant IDs as JSON metadata string
-    const variantIdsForMetadata = items.map(i => i.id);
+    // Add variant IDs as JSON metadata string. Modified to capture both IDs.
+    const orderItemsForMetadata = items.map(i => ({ productId: i.productId, variantId: i.variantId }));
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -120,7 +122,6 @@ exports.handler = async function (event) {
               currency: 'usd',
             },
             display_name: 'Standard Shipping',
-            // optional delivery estimate to display to customer
             delivery_estimate: {
               minimum: {
                 unit: 'business_day',
@@ -143,7 +144,7 @@ exports.handler = async function (event) {
       success_url: 'https://clawanddecay.com/success?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://clawanddecay.com/cancel',
       metadata: {
-        order_variant_ids: JSON.stringify(variantIdsForMetadata),
+        order_items: JSON.stringify(orderItemsForMetadata),
       },
       automatic_tax: {
         enabled: true,
