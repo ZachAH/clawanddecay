@@ -89,10 +89,11 @@ function ProductDetailPage({ setLoading }) {
       alert("Selected variant or product details are missing. Please try again.");
       return;
     }
-
+    
+    // --- UPDATED LOGIC HERE ---
     addToCart({
-      cartItemId: `${selectedVariant.id}-${product.title}`, // Ensures uniqueness
-      id: selectedVariant.id,
+      productId: product.id, // Pass the product ID
+      variantId: selectedVariant.id, // Pass the variant ID
       title: `${product.title} - ${selectedVariant.title}`,
       price: selectedVariant.price,
       quantity: 1,

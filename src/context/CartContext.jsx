@@ -7,28 +7,37 @@ export function CartProvider({ children }) {
 
   const addToCart = (product) => {
     setCartItems(prev => {
-      const exists = prev.find(item => item.cartItemId === product.cartItemId);
+      // Use variantId as the unique identifier for cart items
+      const exists = prev.find(item => item.variantId === product.variantId);
   
       if (exists) {
         return prev.map(item =>
-          item.cartItemId === product.cartItemId
+          item.variantId === product.variantId
             ? { ...item, quantity: item.quantity + product.quantity }
             : item
         );
       } else {
-        return [...prev, product];
+        // Ensure that the product object added to the cart
+        // explicitly includes productId and variantId
+        return [...prev, {
+          ...product,
+          productId: product.productId,
+          variantId: product.variantId,
+        }];
       }
     });
   };
   
-  const removeFromCart = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+  // Use variantId for removal
+  const removeFromCart = (variantId) => {
+    setCartItems(prev => prev.filter(item => item.variantId !== variantId));
   };
   
-  const updateQuantity = (cartItemId, quantity) => {
+  // Use variantId for quantity update
+  const updateQuantity = (variantId, quantity) => {
     setCartItems(prevItems =>
       prevItems.map(item =>
-        item.cartItemId === cartItemId ? { ...item, quantity } : item
+        item.variantId === variantId ? { ...item, quantity } : item
       )
     );
   };
