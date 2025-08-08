@@ -103,7 +103,7 @@ function OurStoryPage() {
           </ul>
         </div>
 
-        <div className="callout-newsletter" ref={newsletterRef}>
+        {/* <div className="callout-newsletter" ref={newsletterRef}>
           <h3>Stay in the Loop 🤘</h3>
           <p>
             Join the Claw & Decay mailing list for early access, behind-the-scenes, and exclusive
@@ -115,7 +115,7 @@ function OurStoryPage() {
           >
             Join the List
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
