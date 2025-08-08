@@ -28,20 +28,17 @@ function CartPage() {
     if (cartItems.length === 0) return;
     setLoading(true);
     try {
+      // --- UPDATED LOGIC HERE ---
+      const items = cartItems.map(item => ({
+        productId: item.productId, // Assuming this is stored in your cart item object
+        variantId: item.variantId, // Assuming this is stored in your cart item object
+        quantity: item.quantity,
+      }));
+
       const response = await fetch('/.netlify/functions/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: cartItems.map(item => ({
-            id: item.id,
-            quantity: item.quantity,
-            metadata: {
-              title: item.title,
-              client_price_cents: item.price,
-              sku: item.sku,
-            },
-          })),
-        }),
+        body: JSON.stringify({ items }),
       });
 
       const data = await response.json();
