@@ -92,13 +92,30 @@ function CartPage() {
               <div className="cart-item-controls">
                 <input
                   type="number"
-                  min={1}
-                  value={item.quantity}
-                  onChange={e => {
-                    const val = Number(e.target.value);
-                    if (val >= 1) updateQuantity(item.id, val);
+                  min="1"
+                  value={item.quantity === 0 ? '' : item.quantity}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    // Allow empty string for editing
+                    if (value === '') {
+                      updateQuantity(item, 0);
+                      return;
+                    }
+
+                    const parsed = parseInt(value, 10);
+
+                    // Update only if valid and >= 1
+                    if (!isNaN(parsed) && parsed >= 1) {
+                      updateQuantity(item, parsed);
+                    }
                   }}
-                  disabled={loading}
+                  style={{
+                    width: '60px',
+                    marginRight: '10px',
+                    padding: '5px',
+                    textAlign: 'center',
+                  }}
                 />
                 <button onClick={() => confirmRemove(item.id)} disabled={loading}>
                   Remove
