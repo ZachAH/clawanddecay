@@ -99,6 +99,9 @@ exports.handler = async function (event) {
       };
     });
 
+    console.log('Sending to Stripe with these line items:', JSON.stringify(line_items, null, 2));
+
+
     // Add variant IDs as JSON metadata string
     const variantIdsForMetadata = items.map(i => i.id);
 
