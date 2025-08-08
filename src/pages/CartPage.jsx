@@ -5,22 +5,22 @@ function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
 
-  // Local state for input values per item id
+  // Local state for input values per item.cartItemId
   const [inputValues, setInputValues] = useState({});
 
   // Initialize or update inputValues when cartItems change
   useEffect(() => {
     const initialValues = Object.fromEntries(
-      cartItems.map(item => [item.id, item.quantity.toString()])
+      cartItems.map(item => [item.cartItemId, item.quantity.toString()])
     );
     setInputValues(initialValues);
   }, [cartItems]);
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const confirmRemove = (id) => {
+  const confirmRemove = (cartItemId) => {
     if (window.confirm("Are you sure you want to remove this item from your cart?")) {
-      removeFromCart(id);
+      removeFromCart(cartItemId);
     }
   };
 
@@ -73,7 +73,7 @@ function CartPage() {
       <h1>Your Cart</h1>
       <ul className="cart-list">
         {cartItems.map(item => (
-          <li key={item.id} className="cart-item">
+          <li key={item.cartItemId} className="cart-item">
             {item.image && (
               <img
                 src={item.image}
@@ -97,23 +97,26 @@ function CartPage() {
                 <input
                   type="number"
                   min="1"
-                  value={inputValues[item.id] || ''}
+                  value={inputValues[item.cartItemId] || ''}
                   onChange={(e) => {
                     const val = e.target.value;
-                    // Update local input value (allow empty string)
-                    setInputValues(prev => ({ ...prev, [item.id]: val }));
+                    setInputValues(prev => ({
+                      ...prev,
+                      [item.cartItemId]: val,
+                    }));
                   }}
                   onBlur={() => {
-                    const val = inputValues[item.id];
+                    const val = inputValues[item.cartItemId];
                     const parsed = parseInt(val, 10);
 
                     if (!val || isNaN(parsed) || parsed < 1) {
-                      // Reset to 1 if invalid or empty
-                      setInputValues(prev => ({ ...prev, [item.id]: '1' }));
-                      updateQuantity(item.id, 1);
+                      setInputValues(prev => ({
+                        ...prev,
+                        [item.cartItemId]: '1',
+                      }));
+                      updateQuantity(item.cartItemId, 1);
                     } else {
-                      // Valid number, update quantity
-                      updateQuantity(item.id, parsed);
+                      updateQuantity(item.cartItemId, parsed);
                     }
                   }}
                   style={{
@@ -124,7 +127,7 @@ function CartPage() {
                   }}
                   disabled={loading}
                 />
-                <button onClick={() => confirmRemove(item.id)} disabled={loading}>
+                <button onClick={() => confirmRemove(item.cartItemId)} disabled={loading}>
                   Remove
                 </button>
               </div>
