@@ -16,6 +16,7 @@ function ProductDetailPage({ setLoading }) {
   const [selectedVariantId, setSelectedVariantId] = useState(null);
 
   useEffect(() => {
+    // This effect runs whenever productId changes, ensuring a fresh start.
     const fetchProduct = async () => {
       // Reset all state for the new product
       setProduct(null);
@@ -26,6 +27,7 @@ function ProductDetailPage({ setLoading }) {
 
       if (!productId) {
         setError("No product ID provided.");
+        setLoading(false);
         return;
       }
 
@@ -54,7 +56,6 @@ function ProductDetailPage({ setLoading }) {
 
         setEnabledVariants(sortedEnabled);
         
-        // This is a key change: always set the selected variant to the first one available
         if (sortedEnabled.length > 0) {
           setSelectedVariantId(sortedEnabled[0].id);
         } else {
@@ -77,16 +78,15 @@ function ProductDetailPage({ setLoading }) {
   };
 
   const handleAddToCart = () => {
-    // We get the selectedVariantId directly from the state, which is now
-    // correctly being updated by the useEffect hook.
+    // Ensure we are using the most current state values here.
     if (!selectedVariantId) {
       alert("Please select a variant.");
       return;
     }
 
     const selectedVariant = enabledVariants.find(v => v.id === selectedVariantId);
-    if (!selectedVariant) {
-      alert("Selected variant not found.");
+    if (!selectedVariant || !product) {
+      alert("Selected variant or product details are missing. Please try again.");
       return;
     }
 
@@ -99,15 +99,11 @@ function ProductDetailPage({ setLoading }) {
     });
 
     alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
-
-    // After adding to cart, you can optionally reset the selected variant.
-    // This is not necessary for a fix, but can be good UX.
-    // setSelectedVariantId(enabledVariants[0]?.id || null);
   };
 
   const showTeeDescription = product?.title?.toLowerCase().includes("tee");
 
-  // ... (rest of your return JSX) ...
+  // --- Render logic remains the same ---
   if (error) {
     return (
       <div className="product-detail-page-container">
