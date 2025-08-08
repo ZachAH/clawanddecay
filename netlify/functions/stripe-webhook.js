@@ -62,13 +62,13 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
   let printProviderId = 29; // Default fallback
 
   for (const variant of productVariants) {
-    const mapping = mapToPrintifyVariant(variant.id);
+    const mapping = mapToPrintifyVariant(variant.variantId);
     if (!mapping) {
-      throw new Error(`No Printify mapping found for variant ID ${variant.id}`);
+      throw new Error(`No Printify mapping found for variant ID ${variant.variantId}`);
     }
 
     const printifyProductId = mapping.product_id;
-    const printifyVariantId = Number(variant.id);
+    const printifyVariantId = Number(variant.variantId);
 
     //console.log(`Mapped variant ID ${variant.id} → product_id=${printifyProductId}, variant_option_id=${printifyVariantId}`);
 
@@ -197,51 +197,55 @@ module.exports.handler = async function (event) {
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object;
 
-      // Pull variant IDs that you attached in the session metadata
-      let variantIds = [];
+      // --- UPDATED LOGIC HERE ---
+      let orderItems = [];
       try {
-        variantIds = JSON.parse(session.metadata?.order_variant_ids || '[]');
+        orderItems = JSON.parse(session.metadata?.order_items || '[]');
       } catch (e) {
-        console.warn('Failed to parse variant IDs from session metadata:', e);
+        console.warn('Failed to parse order items from session metadata:', e);
       }
-
-      // Get line items to potentially cross-check quantities / fallback
-      const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id);
-      const lineItems = lineItemsResponse.data;
 
       // Load cached products to resolve variant details
       const products = await getCachedProducts();
-      const findVariantById = (variantId) => {
+
+      // New function to find product and variant
+      const findProductAndVariant = (productId, variantId) => {
+        const product = products.find(p => p.id === productId);
+        if (!product) return null;
+        
         const idNum = Number(variantId);
-        for (const product of products) {
-          if (product.variants) {
-            const variant = product.variants.find(v => Number(v.id) === idNum);
-            if (variant) return variant;
-          }
-        }
-        return null;
+        const variant = product.variants.find(v => Number(v.id) === idNum);
+        if (!variant) return null;
+
+        return { product, variant };
       };
 
-      // Build productVariants array: { id, quantity, title }
-      const productVariants = variantIds
-        .map(variantId => {
-          const variant = findVariantById(variantId);
-          if (!variant) {
-            console.warn(`Variant ID ${variantId} not found in cached products`);
+      // Build productVariants array
+      const productVariants = orderItems
+        .map(({ productId, variantId }) => {
+          const productAndVariant = findProductAndVariant(productId, variantId);
+          if (!productAndVariant) {
+            console.warn(`Variant ID ${variantId} for product ${productId} not found in cached products`);
             return null;
           }
 
-          // Try to read quantity from Stripe line items via metadata or description fallback
-          const lineItem = lineItems.find(item => {
+          const { product, variant } = productAndVariant;
+
+          // Get line items from Stripe to get the correct quantity
+          const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id);
+          const lineItem = lineItemsResponse.data.find(item => {
+            // Find the correct line item using the unique IDs in metadata
             return (
-              item.price_data?.product_data?.metadata?.variant_id === String(variantId) ||
-              item.description?.includes(variant.title)
+              item.price.product === product.id && // Assuming your checkout session function now uses product IDs
+              item.price.metadata?.variant_id === String(variant.id)
             );
           });
+
           return {
-            id: variantId,
+            productId: product.id,
+            variantId: variant.id,
             quantity: lineItem?.quantity || 1,
-            title: variant.title,
+            title: product.title, // Use the product's title for Printify order prep
           };
         })
         .filter(Boolean);
