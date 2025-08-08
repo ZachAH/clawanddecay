@@ -91,6 +91,7 @@ function ProductDetailPage({ setLoading }) {
     }
 
     addToCart({
+      cartItemId: `${selectedVariant.id}-${product.title}`, // Ensures uniqueness
       id: selectedVariant.id,
       title: `${product.title} - ${selectedVariant.title}`,
       price: selectedVariant.price,

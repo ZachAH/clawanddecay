@@ -7,10 +7,11 @@ export function CartProvider({ children }) {
 
   const addToCart = (product) => {
     setCartItems(prev => {
-      const exists = prev.find(item => item.id === product.id);
+      const exists = prev.find(item => item.cartItemId === product.cartItemId);
+  
       if (exists) {
         return prev.map(item =>
-          item.id === product.id
+          item.cartItemId === product.cartItemId
             ? { ...item, quantity: item.quantity + product.quantity }
             : item
         );
@@ -19,15 +20,17 @@ export function CartProvider({ children }) {
       }
     });
   };
-
+  
   const removeFromCart = (id) => {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
-
+  
   const updateQuantity = (id, quantity) => {
-    if (quantity < 1) return; // ignore invalid qty
+    if (quantity < 1) return;
     setCartItems(prev =>
-      prev.map(item => (item.id === id ? { ...item, quantity } : item))
+      prev.map(item =>
+        item.id === id ? { ...item, quantity } : item
+      )
     );
   };
 
