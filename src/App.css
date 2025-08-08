@@ -178,6 +178,13 @@ h3 {
   transform: translateY(-2px);
 }
 
+/* New Media Query for smaller screens */
+@media (max-width: 462px) {
+  .navbar-list {
+    flex-direction: column; /* Stack items vertically */
+    gap: 0.5rem; /* Reduce gap for vertical stacking */
+  }
+
 /* --- Main Content --- */
 .app-main-content {
   padding: 20px;
