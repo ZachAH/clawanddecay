@@ -5,15 +5,14 @@ function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
 
-  // Local state to handle quantity input
-  const [quantities, setQuantities] = useState(() =>
-    Object.fromEntries(cartItems.map(item => [item.id, item.quantity]))
-  );
-
   // Keep quantities in sync with cart updates
   useEffect(() => {
     setQuantities(Object.fromEntries(cartItems.map(item => [item.id, item.quantity])));
   }, [cartItems]);
+
+  const [quantities, setQuantities] = useState(() =>
+    Object.fromEntries(cartItems.map(item => [item.id, item.quantity]))
+  );
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -75,39 +74,34 @@ function CartPage() {
         {cartItems.map(item => (
           <li
             key={item.id}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center border p-4 rounded shadow-sm"
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border p-4 rounded shadow-sm"
           >
-            {/* Image Section */}
+            {/* Product Image */}
             {item.image && (
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-24 h-24 object-cover rounded mr-4 mb-4 sm:mb-0"
+                className="w-24 h-24 object-contain rounded"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = '/fallback.png'; // Optional: local fallback
+                  e.target.src = '/fallback.png';
                 }}
               />
             )}
 
-            {/* Product Info and Controls */}
-            <div className="flex-1">
+            {/* Product Info */}
+            <div className="flex-1 w-full">
               <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="text-gray-600">
-                ${(item.price / 100).toFixed(2)} each
-              </p>
+              <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
               <p className="mt-1 font-medium">
                 Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
               </p>
             </div>
 
-            <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+            {/* Quantity and Remove */}
+            <div className="flex flex-col sm:items-end gap-2">
               <div className="flex items-center border rounded">
-                <label htmlFor={`qty-${item.id}`} className="sr-only">
-                  Quantity
-                </label>
                 <input
-                  id={`qty-${item.id}`}
                   type="number"
                   min={1}
                   value={item.quantity}
@@ -121,7 +115,7 @@ function CartPage() {
               </div>
               <button
                 onClick={() => confirmRemove(item.id)}
-                className="text-red-600 hover:text-red-800 font-semibold"
+                className="text-red-600 hover:text-red-800 font-semibold text-sm"
                 disabled={loading}
               >
                 Remove
@@ -131,7 +125,7 @@ function CartPage() {
         ))}
       </ul>
 
-
+      {/* Total & Checkout */}
       <div className="mt-8 text-right">
         <p className="text-xl font-bold">
           Total: ${(totalPrice / 100).toFixed(2)}
@@ -139,13 +133,15 @@ function CartPage() {
         <button
           onClick={handleCheckout}
           disabled={loading || cartItems.length === 0}
-          className={`mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg transition ${loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+          className={`mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg transition ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
           {loading ? 'Processing...' : 'Proceed to Checkout'}
         </button>
       </div>
 
+      {/* Clear Cart */}
       <div className="mt-6 text-center">
         <button
           onClick={() => {

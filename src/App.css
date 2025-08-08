@@ -1082,3 +1082,18 @@ h3 {
     opacity: 0;
   }
 }
+
+.cart-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cart-item img {
+  width: 100px; /* or whatever size fits your design */
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
