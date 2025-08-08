@@ -4,23 +4,20 @@ import { useCart } from '../context/CartContext';
 function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
-
-  // Local state for input values per item.cartItemId
   const [inputValues, setInputValues] = useState({});
 
-  // Initialize or update inputValues when cartItems change
   useEffect(() => {
     const initialValues = Object.fromEntries(
-      cartItems.map(item => [item.cartItemId, item.quantity.toString()])
+      cartItems.map(item => [item.uniqueKey, item.quantity.toString()])
     );
     setInputValues(initialValues);
   }, [cartItems]);
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const confirmRemove = (cartItemId) => {
+  const confirmRemove = (uniqueKey) => {
     if (window.confirm("Are you sure you want to remove this item from your cart?")) {
-      removeFromCart(cartItemId);
+      removeFromCart(uniqueKey);
     }
   };
 
@@ -28,10 +25,9 @@ function CartPage() {
     if (cartItems.length === 0) return;
     setLoading(true);
     try {
-      // --- UPDATED LOGIC HERE ---
       const items = cartItems.map(item => ({
-        productId: item.productId, // Assuming this is stored in your cart item object
-        variantId: item.variantId, // Assuming this is stored in your cart item object
+        productId: item.productId,
+        variantId: item.variantId,
         quantity: item.quantity,
       }));
 
@@ -70,11 +66,11 @@ function CartPage() {
       <h1>Your Cart</h1>
       <ul className="cart-list">
         {cartItems.map(item => (
-          <li key={item.cartItemId} className="cart-item">
-            {item.image && (
+          <li key={item.uniqueKey} className="cart-item">
+            {item.image_url && (
               <img
-                src={item.image}
-                alt={item.title}
+                src={item.image_url}
+                alt={item.product_title}
                 className="cart-item-image"
                 onError={(e) => {
                   e.target.onerror = null;
@@ -85,7 +81,7 @@ function CartPage() {
 
             <div className="cart-item-details">
               <div>
-                <h3>{item.title}</h3>
+                <h3>{item.product_title} - {item.variant_title}</h3>
                 <p>${(item.price / 100).toFixed(2)} each</p>
                 <p>Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}</p>
               </div>
@@ -94,26 +90,26 @@ function CartPage() {
                 <input
                   type="number"
                   min="1"
-                  value={inputValues[item.cartItemId] || ''}
+                  value={inputValues[item.uniqueKey] || ''}
                   onChange={(e) => {
                     const val = e.target.value;
                     setInputValues(prev => ({
                       ...prev,
-                      [item.cartItemId]: val,
+                      [item.uniqueKey]: val,
                     }));
                   }}
                   onBlur={() => {
-                    const val = inputValues[item.cartItemId];
+                    const val = inputValues[item.uniqueKey];
                     const parsed = parseInt(val, 10);
 
                     if (!val || isNaN(parsed) || parsed < 1) {
                       setInputValues(prev => ({
                         ...prev,
-                        [item.cartItemId]: '1',
+                        [item.uniqueKey]: '1',
                       }));
-                      updateQuantity(item.cartItemId, 1);
+                      updateQuantity(item.uniqueKey, 1);
                     } else {
-                      updateQuantity(item.cartItemId, parsed);
+                      updateQuantity(item.uniqueKey, parsed);
                     }
                   }}
                   style={{
@@ -124,7 +120,7 @@ function CartPage() {
                   }}
                   disabled={loading}
                 />
-                <button onClick={() => confirmRemove(item.cartItemId)} disabled={loading}>
+                <button onClick={() => confirmRemove(item.uniqueKey)} disabled={loading}>
                   Remove
                 </button>
               </div>
