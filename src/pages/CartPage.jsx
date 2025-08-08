@@ -4,7 +4,6 @@ import { useCart } from '../context/CartContext';
 function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
-
   const [quantities, setQuantities] = useState(() =>
     Object.fromEntries(cartItems.map(item => [item.id, item.quantity]))
   );
@@ -58,66 +57,50 @@ function CartPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="text-center p-10">
-        <h2 className="text-2xl font-semibold mb-2">Your cart is empty.</h2>
-        <p className="text-gray-600">Browse our products and add some cool merch!</p>
+      <div className="cart-empty">
+        <h2>Your cart is empty.</h2>
+        <p>Browse our products and add some cool merch!</p>
       </div>
     );
   }
 
   return (
-    <div className="cart-page max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
-      <ul className="space-y-6">
+    <div className="cart-page">
+      <h1>Your Cart</h1>
+      <ul className="cart-list">
         {cartItems.map(item => (
-          <li
-            key={item.id}
-            className="flex flex-col sm:flex-row gap-4 border p-4 rounded-lg shadow-sm bg-white"
-          >
-            {/* Product Image */}
+          <li key={item.id} className="cart-item">
             {item.image && (
-              <div className="flex-shrink-0">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-24 h-24 sm:w-32 sm:h-32 object-contain border rounded"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = '/fallback.png';
-                  }}
-                />
-              </div>
+              <img
+                src={item.image}
+                alt={item.title}
+                className="cart-item-image"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/fallback.png';
+                }}
+              />
             )}
 
-            {/* Product Info and Controls */}
-            <div className="flex-1 flex flex-col justify-between">
+            <div className="cart-item-details">
               <div>
-                <h3 className="text-lg font-semibold">{item.title}</h3>
-                <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
-                <p className="mt-1 font-medium">
-                  Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
-                </p>
+                <h3>{item.title}</h3>
+                <p>${(item.price / 100).toFixed(2)} each</p>
+                <p>Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}</p>
               </div>
 
-              <div className="mt-4 flex items-center justify-between sm:justify-start sm:gap-6">
-                <div className="flex items-center border rounded">
-                  <input
-                    type="number"
-                    min={1}
-                    value={item.quantity}
-                    className="w-16 px-2 py-1 text-center"
-                    onChange={e => {
-                      const val = Number(e.target.value);
-                      if (val >= 1) updateQuantity(item.id, val);
-                    }}
-                    disabled={loading}
-                  />
-                </div>
-                <button
-                  onClick={() => confirmRemove(item.id)}
-                  className="text-red-600 hover:text-red-800 font-semibold text-sm"
+              <div className="cart-item-controls">
+                <input
+                  type="number"
+                  min={1}
+                  value={item.quantity}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    if (val >= 1) updateQuantity(item.id, val);
+                  }}
                   disabled={loading}
-                >
+                />
+                <button onClick={() => confirmRemove(item.id)} disabled={loading}>
                   Remove
                 </button>
               </div>
@@ -126,29 +109,21 @@ function CartPage() {
         ))}
       </ul>
 
-      {/* Total and Checkout */}
-      <div className="mt-10 text-right">
-        <p className="text-xl font-bold">
-          Total: ${(totalPrice / 100).toFixed(2)}
-        </p>
+      <div className="cart-total">
+        <p>Total: ${(totalPrice / 100).toFixed(2)}</p>
         <button
           onClick={handleCheckout}
           disabled={loading || cartItems.length === 0}
-          className={`mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg transition ${
-            loading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
         >
           {loading ? 'Processing...' : 'Proceed to Checkout'}
         </button>
       </div>
 
-      {/* Clear Cart */}
-      <div className="mt-6 text-center">
+      <div className="cart-clear">
         <button
           onClick={() => {
             if (window.confirm('Clear the entire cart?')) clearCart();
           }}
-          className="text-sm text-gray-500 underline hover:text-gray-700"
           disabled={loading}
         >
           Clear Cart
