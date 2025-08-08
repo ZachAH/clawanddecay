@@ -7,37 +7,31 @@ export function CartProvider({ children }) {
 
   const addToCart = (product) => {
     setCartItems(prev => {
-      // Use variantId as the unique identifier for cart items
-      const exists = prev.find(item => item.variantId === product.variantId);
+      // Create a truly unique key from both IDs
+      const uniqueKey = `${product.productId}-${product.variantId}`;
+      const exists = prev.find(item => item.uniqueKey === uniqueKey);
   
       if (exists) {
         return prev.map(item =>
-          item.variantId === product.variantId
+          item.uniqueKey === uniqueKey
             ? { ...item, quantity: item.quantity + product.quantity }
             : item
         );
       } else {
-        // Ensure that the product object added to the cart
-        // explicitly includes productId and variantId
-        return [...prev, {
-          ...product,
-          productId: product.productId,
-          variantId: product.variantId,
-        }];
+        // Add the new item with its unique key
+        return [...prev, { ...product, uniqueKey }];
       }
     });
   };
   
-  // Use variantId for removal
-  const removeFromCart = (variantId) => {
-    setCartItems(prev => prev.filter(item => item.variantId !== variantId));
+  const removeFromCart = (uniqueKey) => {
+    setCartItems(prev => prev.filter(item => item.uniqueKey !== uniqueKey));
   };
   
-  // Use variantId for quantity update
-  const updateQuantity = (variantId, quantity) => {
+  const updateQuantity = (uniqueKey, quantity) => {
     setCartItems(prevItems =>
       prevItems.map(item =>
-        item.variantId === variantId ? { ...item, quantity } : item
+        item.uniqueKey === uniqueKey ? { ...item, quantity } : item
       )
     );
   };

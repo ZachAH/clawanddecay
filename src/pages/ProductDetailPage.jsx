@@ -92,12 +92,13 @@ function ProductDetailPage({ setLoading }) {
     
     // --- UPDATED LOGIC HERE ---
     addToCart({
-      productId: product.id, // Pass the product ID
-      variantId: selectedVariant.id, // Pass the variant ID
-      title: `${product.title} - ${selectedVariant.title}`,
+      productId: product.id,
+      variantId: selectedVariant.id,
+      product_title: product.title,
+      variant_title: selectedVariant.title,
       price: selectedVariant.price,
       quantity: 1,
-      image: currentImage || FALLBACK_IMAGE_URL
+      image_url: currentImage || FALLBACK_IMAGE_URL
     });
 
     alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
