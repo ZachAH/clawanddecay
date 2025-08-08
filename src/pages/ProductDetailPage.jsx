@@ -16,9 +16,23 @@ function ProductDetailPage({ setLoading }) {
   const [selectedVariantId, setSelectedVariantId] = useState(null);
 
   useEffect(() => {
+    // This effect runs whenever productId changes, ensuring a fresh start.
     const fetchProduct = async () => {
+      // Reset all state for the new product
+      setProduct(null);
+      setEnabledVariants([]);
+      setError(null);
+      setCurrentImage(null);
+      setSelectedVariantId(null);
+
+      if (!productId) {
+        setError("No product ID provided.");
+        return;
+      }
+
+      setLoading(true);
+
       try {
-        setLoading(true);  // Start global loading spinner
         const response = await fetch(`/.netlify/functions/get-product-by-id?id=${productId}`);
 
         if (!response.ok) {
@@ -29,14 +43,12 @@ function ProductDetailPage({ setLoading }) {
         const data = await response.json();
         setProduct(data);
 
-        if (data.images && data.images.length > 0) {
-          setCurrentImage(data.images[0].src);
-        } else {
-          setCurrentImage(FALLBACK_IMAGE_URL);
-        }
+        // Set the current image
+        const mainImage = (data.images && data.images.length > 0) ? data.images[0].src : FALLBACK_IMAGE_URL;
+        setCurrentImage(mainImage);
 
+        // Sort and filter enabled variants
         const sizeOrder = ['XS', 'S', 'Small', 'M', 'Medium', 'L', 'Large', 'XL', '2XL', '3XL', '4XL'];
-
         const sortedEnabled = (data.variants?.filter(v => v.is_enabled) || []).sort((a, b) => {
           const aIndex = sizeOrder.findIndex(size => a.title.includes(size));
           const bIndex = sizeOrder.findIndex(size => b.title.includes(size));
@@ -44,29 +56,25 @@ function ProductDetailPage({ setLoading }) {
         });
 
         setEnabledVariants(sortedEnabled);
-
+        
+        // Automatically select the first enabled variant
         if (sortedEnabled.length > 0) {
           setSelectedVariantId(sortedEnabled[0].id);
+        } else {
+          // If no enabled variants, ensure selectedVariantId is null
+          setSelectedVariantId(null);
         }
 
-        setError(null);
       } catch (err) {
         console.error("Failed to fetch single product:", err);
         setError(err.message || "Failed to load product details.");
-        setProduct(null);
       } finally {
-        setLoading(false); // Stop global loading spinner
+        setLoading(false);
       }
     };
 
-    if (productId) {
-      fetchProduct();
-    } else {
-      setError("No product ID provided.");
-      setProduct(null);
-      setLoading(false);
-    }
-  }, [productId, setLoading]);
+    fetchProduct();
+  }, [productId, setLoading]); // Depend on productId to re-run on page navigation
 
   const handleThumbnailClick = (imageUrl) => {
     setCurrentImage(imageUrl);
@@ -95,6 +103,7 @@ function ProductDetailPage({ setLoading }) {
 
   const showTeeDescription = product?.title?.toLowerCase().includes("tee");
 
+  // --- Render logic remains the same ---
   if (error) {
     return (
       <div className="product-detail-page-container">
@@ -163,7 +172,7 @@ function ProductDetailPage({ setLoading }) {
         {enabledVariants.length > 1 && (
           <select
             className="mb-4 w-full border rounded px-3 py-2"
-            value={selectedVariantId}
+            value={selectedVariantId || ''} // Use empty string for null
             onChange={e => setSelectedVariantId(Number(e.target.value))}
           >
             {enabledVariants.map(variant => (
