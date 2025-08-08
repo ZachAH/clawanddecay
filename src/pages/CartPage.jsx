@@ -77,9 +77,25 @@ function CartPage() {
             key={item.id}
             className="flex flex-col sm:flex-row justify-between items-start sm:items-center border p-4 rounded shadow-sm"
           >
+            {/* Image Section */}
+            {item.image && (
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-24 h-24 object-cover rounded mr-4 mb-4 sm:mb-0"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/fallback.png'; // Optional: local fallback
+                }}
+              />
+            )}
+
+            {/* Product Info and Controls */}
             <div className="flex-1">
               <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
+              <p className="text-gray-600">
+                ${(item.price / 100).toFixed(2)} each
+              </p>
               <p className="mt-1 font-medium">
                 Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
               </p>
@@ -87,21 +103,18 @@ function CartPage() {
 
             <div className="flex items-center space-x-4 mt-4 sm:mt-0">
               <div className="flex items-center border rounded">
-                <label htmlFor={`qty-${item.id}`} className="sr-only">Quantity</label>
+                <label htmlFor={`qty-${item.id}`} className="sr-only">
+                  Quantity
+                </label>
                 <input
                   id={`qty-${item.id}`}
                   type="number"
                   min={1}
-                  value={quantities[item.id] ?? item.quantity}
+                  value={item.quantity}
                   className="w-16 px-2 py-1 text-center"
                   onChange={e => {
-                    const val = e.target.value;
-                    setQuantities(q => ({ ...q, [item.id]: val }));
-
-                    const parsed = Number(val);
-                    if (parsed >= 1 && Number.isInteger(parsed)) {
-                      updateQuantity(item.id, parsed);
-                    }
+                    const val = Number(e.target.value);
+                    if (val >= 1) updateQuantity(item.id, val);
                   }}
                   disabled={loading}
                 />
@@ -118,6 +131,7 @@ function CartPage() {
         ))}
       </ul>
 
+
       <div className="mt-8 text-right">
         <p className="text-xl font-bold">
           Total: ${(totalPrice / 100).toFixed(2)}
@@ -125,9 +139,8 @@ function CartPage() {
         <button
           onClick={handleCheckout}
           disabled={loading || cartItems.length === 0}
-          className={`mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg transition ${
-            loading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+          className={`mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded shadow-lg transition ${loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
         >
           {loading ? 'Processing...' : 'Proceed to Checkout'}
         </button>
