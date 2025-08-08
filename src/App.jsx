@@ -118,11 +118,8 @@ function App() {
                   />
                 }
               />
-              {/* This is the key change to fix the stale state bug */}
-              <Route
-                path="/products/:productId"
-                element={<ProductDetailPage setLoading={setLoading} key={location.pathname} />}
-              />
+              {/* Pass setLoading prop to ProductDetailPage */}
+              <Route path="/products/:productId" element={<ProductDetailPage setLoading={setLoading} />} />
               <Route path="/contact-us" element={<ContactUsPage />} />
               <Route path="/our-story" element={<OurStoryPage />} />
               <Route path="/faq-page" element={<FaqPage />} />
