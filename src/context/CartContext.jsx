@@ -25,14 +25,14 @@ export function CartProvider({ children }) {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
   
-  const updateQuantity = (id, quantity) => {
-    if (quantity < 1) return;
-    setCartItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, quantity } : item
+  const updateQuantity = (cartItemId, quantity) => {
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.cartItemId === cartItemId ? { ...item, quantity } : item
       )
     );
   };
+  
 
   const clearCart = () => {
     setCartItems([]);
