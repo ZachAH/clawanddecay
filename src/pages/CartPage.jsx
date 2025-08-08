@@ -5,25 +5,15 @@ function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
 
-  // Keep quantities in sync with cart updates
-  useEffect(() => {
-    setQuantities(Object.fromEntries(cartItems.map(item => [item.id, item.quantity])));
-  }, [cartItems]);
-
   const [quantities, setQuantities] = useState(() =>
     Object.fromEntries(cartItems.map(item => [item.id, item.quantity]))
   );
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  useEffect(() => {
+    setQuantities(Object.fromEntries(cartItems.map(item => [item.id, item.quantity])));
+  }, [cartItems]);
 
-  if (cartItems.length === 0) {
-    return (
-      <div className="cart-empty text-center p-10">
-        <h2 className="text-2xl font-semibold mb-2">Your cart is empty.</h2>
-        <p className="text-gray-600">Browse our products and add some cool merch!</p>
-      </div>
-    );
-  }
+  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const confirmRemove = (id) => {
     if (window.confirm("Are you sure you want to remove this item from your cart?")) {
@@ -52,7 +42,6 @@ function CartPage() {
       });
 
       const data = await response.json();
-
       if (data.url) {
         window.location.href = data.url;
       } else {
@@ -67,66 +56,78 @@ function CartPage() {
     }
   };
 
+  if (cartItems.length === 0) {
+    return (
+      <div className="text-center p-10">
+        <h2 className="text-2xl font-semibold mb-2">Your cart is empty.</h2>
+        <p className="text-gray-600">Browse our products and add some cool merch!</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="cart-page max-w-3xl mx-auto p-6">
+    <div className="cart-page max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
-      <ul className="space-y-4">
+      <ul className="space-y-6">
         {cartItems.map(item => (
           <li
             key={item.id}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border p-4 rounded shadow-sm"
+            className="flex flex-col sm:flex-row gap-4 border p-4 rounded-lg shadow-sm bg-white"
           >
             {/* Product Image */}
             {item.image && (
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-24 h-24 object-contain rounded"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = '/fallback.png';
-                }}
-              />
-            )}
-
-            {/* Product Info */}
-            <div className="flex-1 w-full">
-              <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
-              <p className="mt-1 font-medium">
-                Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
-              </p>
-            </div>
-
-            {/* Quantity and Remove */}
-            <div className="flex flex-col sm:items-end gap-2">
-              <div className="flex items-center border rounded">
-                <input
-                  type="number"
-                  min={1}
-                  value={item.quantity}
-                  className="w-16 px-2 py-1 text-center"
-                  onChange={e => {
-                    const val = Number(e.target.value);
-                    if (val >= 1) updateQuantity(item.id, val);
+              <div className="flex-shrink-0">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-24 h-24 sm:w-32 sm:h-32 object-contain border rounded"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/fallback.png';
                   }}
-                  disabled={loading}
                 />
               </div>
-              <button
-                onClick={() => confirmRemove(item.id)}
-                className="text-red-600 hover:text-red-800 font-semibold text-sm"
-                disabled={loading}
-              >
-                Remove
-              </button>
+            )}
+
+            {/* Product Info and Controls */}
+            <div className="flex-1 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">{item.title}</h3>
+                <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
+                <p className="mt-1 font-medium">
+                  Subtotal: ${((item.price * item.quantity) / 100).toFixed(2)}
+                </p>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between sm:justify-start sm:gap-6">
+                <div className="flex items-center border rounded">
+                  <input
+                    type="number"
+                    min={1}
+                    value={item.quantity}
+                    className="w-16 px-2 py-1 text-center"
+                    onChange={e => {
+                      const val = Number(e.target.value);
+                      if (val >= 1) updateQuantity(item.id, val);
+                    }}
+                    disabled={loading}
+                  />
+                </div>
+                <button
+                  onClick={() => confirmRemove(item.id)}
+                  className="text-red-600 hover:text-red-800 font-semibold text-sm"
+                  disabled={loading}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           </li>
         ))}
       </ul>
 
-      {/* Total & Checkout */}
-      <div className="mt-8 text-right">
+      {/* Total and Checkout */}
+      <div className="mt-10 text-right">
         <p className="text-xl font-bold">
           Total: ${(totalPrice / 100).toFixed(2)}
         </p>
