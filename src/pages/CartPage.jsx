@@ -97,17 +97,21 @@ function CartPage() {
                   onChange={(e) => {
                     const value = e.target.value;
 
-                    // Allow empty string for editing
+                    // Allow clearing the input while typing
                     if (value === '') {
-                      updateQuantity(item, 0);
+                      updateQuantity(item.id, 0);
                       return;
                     }
 
                     const parsed = parseInt(value, 10);
 
-                    // Update only if valid and >= 1
                     if (!isNaN(parsed) && parsed >= 1) {
-                      updateQuantity(item, parsed);
+                      updateQuantity(item.id, parsed);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    if (e.target.value === '' || parseInt(e.target.value, 10) < 1) {
+                      updateQuantity(item.id, 1); // Reset to 1 if left blank or invalid
                     }
                   }}
                   style={{
@@ -117,6 +121,7 @@ function CartPage() {
                     textAlign: 'center',
                   }}
                 />
+
                 <button onClick={() => confirmRemove(item.id)} disabled={loading}>
                   Remove
                 </button>
