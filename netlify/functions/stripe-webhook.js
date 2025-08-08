@@ -161,6 +161,78 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
 let stripe;
 let signingSecret;
 
+// New async function to handle the checkout session logic
+async function handleCheckoutSessionCompleted(session) {
+    let orderItems = [];
+    try {
+        orderItems = JSON.parse(session.metadata?.order_items || '[]');
+    } catch (e) {
+        console.warn('Failed to parse order items from session metadata:', e);
+    }
+
+    const products = await getCachedProducts();
+
+    const findProductAndVariant = (productId, variantId) => {
+        const product = products.find(p => p.id === productId);
+        if (!product) return null;
+        
+        const idNum = Number(variantId);
+        const variant = product.variants.find(v => Number(v.id) === idNum);
+        if (!variant) return null;
+
+        return { product, variant };
+    };
+
+    const productVariants = await Promise.all(orderItems.map(async ({ productId, variantId }) => {
+        const productAndVariant = findProductAndVariant(productId, variantId);
+        if (!productAndVariant) {
+            console.warn(`Variant ID ${variantId} for product ${productId} not found in cached products`);
+            return null;
+        }
+
+        const { product, variant } = productAndVariant;
+        
+        // You still need to list line items to get the quantity,
+        // even though the other data is now in metadata.
+        const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id, {
+            expand: ['data.price.product'],
+        });
+        const lineItem = lineItemsResponse.data.find(item => {
+            // Match based on product ID and variant ID from metadata
+            return (
+                item.price.product === product.id &&
+                item.price.metadata?.variant_id === String(variant.id)
+            );
+        });
+
+        return {
+            productId: product.id,
+            variantId: variant.id,
+            quantity: lineItem?.quantity || 1,
+            title: product.title,
+        };
+    }));
+
+    const shippingAddress =
+        session.shipping ||
+        session.customer_details?.shipping ||
+        session.customer_details || {};
+
+    const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000';
+
+    if (productVariants.length === 0) {
+        console.warn('No product variants to send to Printify, skipping order creation');
+    } else {
+        try {
+            const printifyOrder = await sendOrderToPrintify(session, productVariants.filter(Boolean), shippingAddress);
+            console.log('✅ Printify order created:', printifyOrder.id);
+        } catch (printifyError) {
+            console.error('❌ Failed to create Printify order:', printifyError);
+        }
+    }
+}
+
+
 module.exports.handler = async function (event) {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -196,77 +268,7 @@ module.exports.handler = async function (event) {
 
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object;
-
-      // --- UPDATED LOGIC HERE ---
-      let orderItems = [];
-      try {
-        orderItems = JSON.parse(session.metadata?.order_items || '[]');
-      } catch (e) {
-        console.warn('Failed to parse order items from session metadata:', e);
-      }
-
-      // Load cached products to resolve variant details
-      const products = await getCachedProducts();
-
-      // New function to find product and variant
-      const findProductAndVariant = (productId, variantId) => {
-        const product = products.find(p => p.id === productId);
-        if (!product) return null;
-        
-        const idNum = Number(variantId);
-        const variant = product.variants.find(v => Number(v.id) === idNum);
-        if (!variant) return null;
-
-        return { product, variant };
-      };
-
-      // Build productVariants array
-      const productVariants = orderItems
-        .map(({ productId, variantId }) => {
-          const productAndVariant = findProductAndVariant(productId, variantId);
-          if (!productAndVariant) {
-            console.warn(`Variant ID ${variantId} for product ${productId} not found in cached products`);
-            return null;
-          }
-
-          const { product, variant } = productAndVariant;
-
-          // Get line items from Stripe to get the correct quantity
-          const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id);
-          const lineItem = lineItemsResponse.data.find(item => {
-            // Find the correct line item using the unique IDs in metadata
-            return (
-              item.price.product === product.id && // Assuming your checkout session function now uses product IDs
-              item.price.metadata?.variant_id === String(variant.id)
-            );
-          });
-
-          return {
-            productId: product.id,
-            variantId: variant.id,
-            quantity: lineItem?.quantity || 1,
-            title: product.title, // Use the product's title for Printify order prep
-          };
-        })
-        .filter(Boolean);
-
-      const shippingAddress =
-        session.shipping ||
-        session.customer_details?.shipping ||
-        session.customer_details || {};
-
-      const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000'; // fallback placeholder
-
-      if (productVariants.length === 0) {
-        console.warn('No product variants to send to Printify, skipping order creation');
-      } else {
-        try {
-          const printifyOrder = await sendOrderToPrintify(session, productVariants, shippingAddress);
-          console.log('✅ Printify order created:', printifyOrder.id);
-        } catch (printifyError) {
-          console.error('❌ Failed to create Printify order:', printifyError);
-        }
-      }
+      await handleCheckoutSessionCompleted(session);
     } else {
       console.log(`Unhandled event type: ${stripeEvent.type}`);
     }
