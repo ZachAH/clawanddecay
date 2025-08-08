@@ -55,7 +55,7 @@ function ProductDetailPage({ setLoading }) {
         });
 
         setEnabledVariants(sortedEnabled);
-        
+
         if (sortedEnabled.length > 0) {
           setSelectedVariantId(sortedEnabled[0].id);
         } else {
@@ -102,7 +102,9 @@ function ProductDetailPage({ setLoading }) {
     alert(`Added ${product.title} - ${selectedVariant.title} to cart.`);
   };
 
-  const showTeeDescription = product?.title?.toLowerCase().includes("tee");
+  const title = product?.title?.toLowerCase() || "";
+  const showTeeDescription = title.includes("tee");
+  const showLongSleeveDescription = title.includes("long-sleeve");
 
   // --- Render logic remains the same ---
   if (error) {
@@ -146,6 +148,15 @@ function ProductDetailPage({ setLoading }) {
             </p>
           </div>
         )}
+        {showLongSleeveDescription && (
+          <div className="tee-description-anim">
+            <h2>COMFORT COLORS 6014</h2>
+            <p>
+              We print exclusively on these long sleeves, the heavyweight champions of comfort. Crafted with ultra-soft, garment-dyed cotton for a lived-in feel and timeless look. Built to last, with rich colors and a relaxed fit that wears even better over time.
+            </p>
+          </div>
+        )}
+
       </div>
 
       {product.images && product.images.length > 1 && (
