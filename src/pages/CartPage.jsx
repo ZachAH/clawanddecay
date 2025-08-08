@@ -4,12 +4,16 @@ import { useCart } from '../context/CartContext';
 function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
-  const [quantities, setQuantities] = useState(() =>
-    Object.fromEntries(cartItems.map(item => [item.id, item.quantity]))
-  );
 
+  // Local state for input values per item id
+  const [inputValues, setInputValues] = useState({});
+
+  // Initialize or update inputValues when cartItems change
   useEffect(() => {
-    setQuantities(Object.fromEntries(cartItems.map(item => [item.id, item.quantity])));
+    const initialValues = Object.fromEntries(
+      cartItems.map(item => [item.id, item.quantity.toString()])
+    );
+    setInputValues(initialValues);
   }, [cartItems]);
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -93,25 +97,23 @@ function CartPage() {
                 <input
                   type="number"
                   min="1"
-                  value={item.quantity === 0 ? '' : item.quantity}
+                  value={inputValues[item.id] || ''}
                   onChange={(e) => {
-                    const value = e.target.value;
-
-                    // Allow clearing the input while typing
-                    if (value === '') {
-                      updateQuantity(item.id, 0);
-                      return;
-                    }
-
-                    const parsed = parseInt(value, 10);
-
-                    if (!isNaN(parsed) && parsed >= 1) {
-                      updateQuantity(item.id, parsed);
-                    }
+                    const val = e.target.value;
+                    // Update local input value (allow empty string)
+                    setInputValues(prev => ({ ...prev, [item.id]: val }));
                   }}
-                  onBlur={(e) => {
-                    if (e.target.value === '' || parseInt(e.target.value, 10) < 1) {
-                      updateQuantity(item.id, 1); // Reset to 1 if left blank or invalid
+                  onBlur={() => {
+                    const val = inputValues[item.id];
+                    const parsed = parseInt(val, 10);
+
+                    if (!val || isNaN(parsed) || parsed < 1) {
+                      // Reset to 1 if invalid or empty
+                      setInputValues(prev => ({ ...prev, [item.id]: '1' }));
+                      updateQuantity(item.id, 1);
+                    } else {
+                      // Valid number, update quantity
+                      updateQuantity(item.id, parsed);
                     }
                   }}
                   style={{
@@ -120,8 +122,8 @@ function CartPage() {
                     padding: '5px',
                     textAlign: 'center',
                   }}
+                  disabled={loading}
                 />
-
                 <button onClick={() => confirmRemove(item.id)} disabled={loading}>
                   Remove
                 </button>
@@ -133,10 +135,7 @@ function CartPage() {
 
       <div className="cart-total">
         <p>Total: ${(totalPrice / 100).toFixed(2)}</p>
-        <button
-          onClick={handleCheckout}
-          disabled={loading || cartItems.length === 0}
-        >
+        <button onClick={handleCheckout} disabled={loading || cartItems.length === 0}>
           {loading ? 'Processing...' : 'Proceed to Checkout'}
         </button>
       </div>
