@@ -28,6 +28,42 @@ async function accessStripeSecret() {
   return version.payload.data.toString('utf8');
 }
 
+// Function to calculate dynamic shipping costs
+function calculateDynamicShipping(cartItems, products) {
+  if (cartItems.length === 0) return 0;
+
+  let totalShipping = 0;
+  let highestBaseShipping = 0;
+
+  // Find all available shipping rates and additional item rates
+  const shippingRates = cartItems.map(item => {
+    const product = products.find(p => p.id === item.productId);
+    if (!product) return null;
+
+    // Assuming your cached data has a shipping object with these properties
+    const shipping = product.print_details[0]?.shipping;
+    return shipping ? {
+        base: shipping.cost,
+        additional: shipping.additional_item_cost
+      } : null;
+  }).filter(Boolean);
+
+  if (shippingRates.length === 0) return 0;
+
+  // Sort by base cost to find the highest
+  shippingRates.sort((a, b) => b.base - a.base);
+  
+  // Highest base shipping is for the first item
+  highestBaseShipping = shippingRates[0].base;
+
+  // Add the additional item cost for all other items
+  totalShipping = shippingRates.slice(1).reduce((sum, rate) => sum + rate.additional, highestBaseShipping);
+
+  // Printify's shipping costs are often in cents, ensure consistency
+  // Convert cents to dollars for the final output
+  return totalShipping;
+}
+
 exports.handler = async function (event) {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -64,7 +100,6 @@ exports.handler = async function (event) {
     const productsData = JSON.parse(raw.toString('utf8'));
     const products = productsData.data || productsData;
 
-    // Modified to return both the product and variant
     const findProductAndVariant = (productId, variantId) => {
       const product = products.find(p => p.id === productId);
       if (!product) return null;
@@ -88,15 +123,13 @@ exports.handler = async function (event) {
         throw new Error(`Variant ${variantId} is unavailable`);
       }
 
-      // --- THE FIX IS HERE ---
-      // Combine the product and variant titles for a descriptive name
       const itemName = `${product.title} - ${variant.title}`;
 
       return {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: itemName, // Now using the full, descriptive name
+            name: itemName,
             metadata: {
               sku: variant.sku || '',
               variant_id: String(variant.id),
@@ -110,8 +143,11 @@ exports.handler = async function (event) {
       };
     });
 
-    console.log('Received these items from the frontend:', JSON.stringify(items, null, 2));
+    // --- Dynamic shipping calculation added here ---
+    const dynamicShippingCost = calculateDynamicShipping(items, products);
+    
     console.log('Sending to Stripe with these line items:', JSON.stringify(line_items, null, 2));
+    console.log('Calculated dynamic shipping cost:', dynamicShippingCost);
 
     const orderItemsForMetadata = items.map(i => ({ productId: i.productId, variantId: i.variantId }));
 
@@ -126,7 +162,7 @@ exports.handler = async function (event) {
           shipping_rate_data: {
             type: 'fixed_amount',
             fixed_amount: {
-              amount: 475, // $4.75 in cents
+              amount: dynamicShippingCost, // Use the dynamically calculated cost
               currency: 'usd',
             },
             display_name: 'Standard Shipping',
