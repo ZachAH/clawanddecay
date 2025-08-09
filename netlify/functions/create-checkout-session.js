@@ -32,32 +32,35 @@ async function accessStripeSecret() {
 function calculateDynamicShipping(cartItems, products) {
   if (cartItems.length === 0) return 0;
 
-  let totalShipping = 0;
-  let highestBaseShipping = 0;
+  const rates = [];
 
-  // Find all available shipping rates and additional item rates
-  const shippingRates = cartItems.map(item => {
+  for (const item of cartItems) {
     const product = products.find(p => p.id === item.productId);
-    if (!product) return null;
-
-    // Assuming your cached data has a shipping object with these properties
-    const shipping = product.print_details[0]?.shipping;
-    return shipping ? {
-        base: shipping.cost,
-        additional: shipping.additional_item_cost
-      } : null;
-  }).filter(Boolean);
-
-  if (shippingRates.length === 0) return 0;
+    
+    // Fallback to a common T-shirt shipping provider if product data is missing
+    if (product && product.print_details && product.print_details.length > 0) {
+        const shipping = product.print_details[0]?.shipping;
+        if (shipping) {
+            rates.push({
+                base: shipping.cost,
+                additional: shipping.additional_item_cost
+            });
+            continue; // Move to the next item
+        }
+    }
+    
+    // This is the fallback if no shipping details are found in the product data
+    console.log(`Warning: No shipping rates found for product ${item.productId}. Using a default fallback rate.`);
+    const fallbackBaseRate = 475; // $4.75
+    const fallbackAdditionalRate = 250; // $2.50
+    rates.push({ base: fallbackBaseRate, additional: fallbackAdditionalRate });
+  }
 
   // Sort by base cost to find the highest
-  shippingRates.sort((a, b) => b.base - a.base);
+  rates.sort((a, b) => b.base - a.base);
   
-  // Highest base shipping is for the first item
-  highestBaseShipping = shippingRates[0].base;
-
-  // Add the additional item cost for all other items
-  totalShipping = shippingRates.slice(1).reduce((sum, rate) => sum + rate.additional, highestBaseShipping);
+  const highestBaseShipping = rates[0].base;
+  const totalShipping = rates.slice(1).reduce((sum, rate) => sum + rate.additional, highestBaseShipping);
 
   // Return the total shipping in cents
   return totalShipping;
