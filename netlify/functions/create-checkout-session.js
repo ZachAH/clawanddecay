@@ -59,8 +59,7 @@ function calculateDynamicShipping(cartItems, products) {
   // Add the additional item cost for all other items
   totalShipping = shippingRates.slice(1).reduce((sum, rate) => sum + rate.additional, highestBaseShipping);
 
-  // Printify's shipping costs are often in cents, ensure consistency
-  // Convert cents to dollars for the final output
+  // Return the total shipping in cents
   return totalShipping;
 }
 
@@ -143,7 +142,6 @@ exports.handler = async function (event) {
       };
     });
 
-    // --- Dynamic shipping calculation added here ---
     const dynamicShippingCost = calculateDynamicShipping(items, products);
     
     console.log('Sending to Stripe with these line items:', JSON.stringify(line_items, null, 2));
