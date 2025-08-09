@@ -5,13 +5,7 @@ const admin = require('firebase-admin');
 const fetch = require('node-fetch');
 const StripeModule = require('stripe');
 
-const variantMapPath = path.join(__dirname, 'variant-map.json');
-let variantIdToPrintifyMap = {};
-try {
-  variantIdToPrintifyMap = JSON.parse(fs.readFileSync(variantMapPath, 'utf8'));
-} catch (e) {
-  console.error('Failed to load variant-map.json:', e);
-}
+// --- Removed old variant-map.json logic ---
 
 // Initialize Firebase Admin 
 if (!admin.apps.length) {
@@ -43,87 +37,46 @@ async function getCachedProducts() {
   return productsData.data || productsData;
 }
 
-function mapToPrintifyVariant(variantId) {
-  return variantIdToPrintifyMap[variantId] || null;
-}
+// --- Removed mapToPrintifyVariant function ---
 
-async function sendOrderToPrintify(session, productVariants, shippingAddress) {
+async function sendOrderToPrintify(session, productVariants, shippingAddress, cachedProducts) {
   console.log('Preparing Printify order from Stripe session:', session.id);
 
-  // Extract phone from shippingAddress with fallback
   const phone = shippingAddress?.phone || session.customer_details?.phone || '000-000-0000';
-  const email = shippingAddress?.email || session.customer_details?.email ||'';
-
+  const email = shippingAddress?.email || session.customer_details?.email || '';
 
   const printifyLineItems = [];
 
-  // Choose a default or dominant print provider ID for the whole order
-  // For example, use the first variant's provider as a default
-  let printProviderId = 29; // Default fallback
-
-  for (const variant of productVariants) {
-    const mapping = mapToPrintifyVariant(variant.variantId);
-    if (!mapping) {
-      throw new Error(`No Printify mapping found for variant ID ${variant.variantId}`);
+  for (const item of productVariants) {
+    const product = cachedProducts.find(p => p.id === item.productId);
+    if (!product) {
+      throw new Error(`Product with ID ${item.productId} not found in cached data.`);
     }
 
-    const printifyProductId = mapping.product_id;
-    const printifyVariantId = Number(variant.variantId);
-
-    //console.log(`Mapped variant ID ${variant.id} → product_id=${printifyProductId}, variant_option_id=${printifyVariantId}`);
-
-    // Fetch product to get available print providers
-    const productResp = await fetch(
-      `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${printifyProductId}.json`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.PRINTIFY_API_TOKEN_NEW}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    if (!productResp.ok) {
-      const body = await productResp.text();
-      throw new Error(`Failed to fetch Printify product ${printifyProductId}: ${productResp.status} ${body}`);
-    }
-
-    // Determine print provider ID based on variant title
-    const providerMap = {
-      'LONG-SLEEVE': 99,
-      'TEE': 29,
-    };
-
-    for (const key of Object.keys(providerMap)) {
-      if (variant.title && variant.title.toUpperCase().includes(key)) {
-        printProviderId = providerMap[key];
-        break;
-      }
-    }
-    console.log(`Assigned print_provider_id=${printProviderId} for variant title: "${variant.title}"`);
-
-    // Add line item WITHOUT print_provider_id here
+    const printifyProductId = product.id; // Use the product ID directly as the Printify product ID
+    const printifyVariantId = Number(item.variantId);
+    
     const lineItem = {
       product_id: printifyProductId,
       variant_id: printifyVariantId,
-      quantity: variant.quantity,
+      quantity: item.quantity,
     };
-
+    
     console.log('Adding line item:', JSON.stringify(lineItem, null, 2));
     printifyLineItems.push(lineItem);
   }
-
+    
   const orderData = {
     external_id: session.id,
     label: `Order ${session.id}`,
-    shipping_method: 1, // Added shipping_method as per your Postman request
+    shipping_method: 1,
     send_shipping_notification: true,
     line_items: printifyLineItems,
-    address_to: { // Renamed shipping_address to address_to
+    address_to: {
       first_name: (shippingAddress?.name || '').split(' ')[0] || 'Customer',
       last_name: ((shippingAddress?.name || '').split(' ')[1] || ''),
-      email: email, // Added email as per your Postman request
-      phone: phone, // Added phone as per your Postman request
+      email: email,
+      phone: phone,
       country: shippingAddress?.address?.country || '',
       region: shippingAddress?.address?.state || '',
       address1: shippingAddress?.address?.line1 || '',
@@ -161,7 +114,6 @@ async function sendOrderToPrintify(session, productVariants, shippingAddress) {
 let stripe;
 let signingSecret;
 
-// New async function to handle the checkout session logic
 async function handleCheckoutSessionCompleted(session) {
     let orderItems = [];
     try {
@@ -192,13 +144,10 @@ async function handleCheckoutSessionCompleted(session) {
 
         const { product, variant } = productAndVariant;
         
-        // You still need to list line items to get the quantity,
-        // even though the other data is now in metadata.
         const lineItemsResponse = await stripe.checkout.sessions.listLineItems(session.id, {
             expand: ['data.price.product'],
         });
         const lineItem = lineItemsResponse.data.find(item => {
-            // Match based on product ID and variant ID from metadata
             return (
                 item.price.product === product.id &&
                 item.price.metadata?.variant_id === String(variant.id)
@@ -224,7 +173,7 @@ async function handleCheckoutSessionCompleted(session) {
         console.warn('No product variants to send to Printify, skipping order creation');
     } else {
         try {
-            const printifyOrder = await sendOrderToPrintify(session, productVariants.filter(Boolean), shippingAddress);
+            const printifyOrder = await sendOrderToPrintify(session, productVariants.filter(Boolean), shippingAddress, products);
             console.log('✅ Printify order created:', printifyOrder.id);
         } catch (printifyError) {
             console.error('❌ Failed to create Printify order:', printifyError);
