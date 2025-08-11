@@ -15,9 +15,10 @@ const links = [
 
 const sitemap = new SitemapStream({ hostname: 'https://clawanddecay.com' });
 
+// This line is key: it writes the file to the public directory
 streamToPromise(sitemap).then((data) =>
-  fs.writeFileSync('./public/sitemap.xml', data.toString())
-);
+    fs.writeFileSync('./public/sitemap.xml', data.toString())
+  );
 
 links.forEach(link => sitemap.write(link));
 sitemap.end();
