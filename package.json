@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "sitemap": "node sitemap-generator.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -20,6 +21,7 @@
     "react-router-dom": "^7.6.3",
     "react-virtualized-auto-sizer": "^1.0.26",
     "react-window": "^1.8.11",
+    "sitemap": "^8.0.0",
     "stripe": "^18.4.0"
   },
   "devDependencies": {
