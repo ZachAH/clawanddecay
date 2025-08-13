@@ -1195,3 +1195,14 @@ h3 {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.footer-logo {
+  width: 40px;  /* default mobile size */
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .footer-logo {
+    width: 60px;  /* larger desktop size */
+  }
+}
