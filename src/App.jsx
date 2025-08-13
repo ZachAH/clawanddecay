@@ -131,9 +131,38 @@ function App() {
             </Routes>
           </main>
 
-          <footer className="app-footer">
-            <p>&copy; {new Date().getFullYear()} Claw and Decay. All rights reserved.</p>
-          </footer>
+          <footer className="app-footer flex flex-col items-center gap-2 p-6 bg-black text-white">
+  <p>&copy; {new Date().getFullYear()} Claw and Decay. All rights reserved.</p>
+
+  <div className="footer-logos flex gap-4 mt-2">
+    <img
+      src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg"
+      alt="React"
+      className="h-6 w-6"
+    />
+    <img
+      src="https://raw.githubusercontent.com/devicons/devicon/master/icons/stripe/stripe-original.svg"
+      alt="Stripe"
+      className="h-6 w-6"
+    />
+    <img
+      src="https://raw.githubusercontent.com/devicons/devicon/master/icons/firebase/firebase-plain.svg"
+      alt="Firebase"
+      className="h-6 w-6"
+    />
+    <img
+      src="https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg"
+      alt="Netlify"
+      className="h-6 w-6"
+    />
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg"
+      alt="JSX/JavaScript"
+      className="h-6 w-6"
+    />
+  </div>
+</footer>
+
         </div>
       </CartProvider>
     </Router>
