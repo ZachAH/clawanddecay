@@ -1206,3 +1206,16 @@ h3 {
     width: 60px;  /* larger desktop size */
   }
 }
+
+.footer-logo {
+  width: 20vw;      /* relative to viewport width, scales on mobile */
+  max-width: 60px;  /* prevents them from getting huge on desktop */
+  min-width: 30px;  /* ensures they don’t get too tiny on small phones */
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .footer-logo {
+    width: auto;    /* let max-width control desktop size */
+  }
+}
