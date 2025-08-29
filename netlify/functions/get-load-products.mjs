@@ -112,5 +112,13 @@ const loadProductsHandler = async () => {
   }
 };
 
-export const handler = schedule('0 */6 * * *', loadProductsHandler); // runs every 6 hours
+export const handler = schedule('0 2 * * *', loadProductsHandler); // runs once a day at 2:00 AM UTC
 //export const handler = schedule('* * * * *', loadProductsHandler); // for testing every minute
+// * * * * *
+// | | | | |
+// | | | | +-- day of week (0-6, Sunday=0)
+// | | | +---- month (1-12)
+// | | +------ day of month (1-31)
+// | +-------- hour (0-23)
+// +---------- minute (0-59)
+
