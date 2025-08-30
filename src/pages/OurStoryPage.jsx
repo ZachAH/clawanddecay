@@ -95,10 +95,10 @@ function OurStoryPage() {
               for supporting local artists.
             </li>
             <li>
-              <strong>2024:</strong> Collaboration with local artists & expansion of community.
+              <strong>2025:</strong> Collaboration with local artists & creating the merch!
             </li>
             <li>
-              <strong>2025:</strong> Refining sustainable production and evolving the drop experience.
+              <strong>2025:</strong> Deployed Website and here we are!
             </li>
           </ul>
         </div>
