@@ -13,6 +13,8 @@ import Navbar from './components/navbar';
 import { CartProvider } from './context/CartContext';
 import CartPage from './pages/CartPage';
 import stripeLogo from './assets/stripe.png'
+import Chatbot from './components/chatbot'
+
 
 // Rock hands loader component
 function RockHandsLoader() {
@@ -143,6 +145,7 @@ function App() {
               <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" alt="JSX/JavaScript" className="footer-logo" />
             </div>
           </footer>
+          <Chatbot />
         </div>
       </CartProvider>
     </Router>

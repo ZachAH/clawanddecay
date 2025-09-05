@@ -1,0 +1,131 @@
+/* src/Chatbot.css */
+
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.chatbot-toggle-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chatbot-window {
+  width: 320px;
+  height: 450px;
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chatbot-header {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* Prevents the header from shrinking */
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.chatbot-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* 🔑 This prevents flexbox from letting it overflow */
+}
+
+.message-bubble {
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 80%;
+  margin-bottom: 8px;
+  word-wrap: break-word;
+}
+
+.message-bubble.user {
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
+}
+
+.message-bubble.bot {
+  background-color: #e4e6eb;
+  color: #333;
+  align-self: flex-start;
+}
+
+.chatbot-input-form {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background-color: white;
+  flex-shrink: 0;
+}
+
+.chatbot-input-form input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  margin-right: 8px;
+}
+
+.chatbot-input-form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.topic-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;  /* don’t shrink */
+  max-height: 120px; /* optional: cap height if too many buttons */
+  overflow-y: auto; /* optional: scroll inside topic buttons if needed */
+}
+
+.topic-btn {
+  background-color: #e4e6eb;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.topic-btn:hover {
+  background-color: #d1d3d8;
+}
