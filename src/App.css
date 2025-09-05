@@ -1219,14 +1219,28 @@ h3 {
   }
 }
 
-@media (min-width: 1200px) {
+/* Existing rule for smaller desktops */
+@media (min-width: 1200px) and (max-width: 1439px) {
   .app-header,
   .app-main,
   .app-footer {
-    max-width: 1400px; /* Adjust this value as you like */
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
     padding-left: 40px;
     padding-right: 40px;
+  }
+}
+
+/* Rule for large desktop monitors (e.g., 27-inch) */
+@media (min-width: 1440px) {
+  .app-header,
+  .app-main,
+  .app-footer {
+    max-width: 1600px; /* Limits the content width */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 60px; /* A bit more padding for large screens */
+    padding-right: 60px;
   }
 }
