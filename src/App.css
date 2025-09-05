@@ -13,24 +13,6 @@
   font-display: swap;
 }
 
-/* Base font size */
-html {
-  font-size: 16px;
-}
-
-/* Heading sizes */
-h1 {
-  font-size: 2.5rem; /* 40px */
-}
-
-h2 {
-  font-size: 1.75rem; /* 28px */
-}
-
-h3 {
-  font-size: 1.25rem; /* 20px */
-}
-
 /* --- Global CSS Variables (Colors & Fonts) --- */
 :root {
   --color-dark-bg: #1A1A1A;
@@ -1234,5 +1216,17 @@ h3 {
 @media (min-width: 768px) {
   .footer-logo {
     width: auto;    /* let max-width control desktop size */
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-header,
+  .app-main,
+  .app-footer {
+    max-width: 1400px; /* Adjust this value as you like */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
