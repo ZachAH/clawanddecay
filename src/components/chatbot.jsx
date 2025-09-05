@@ -1,6 +1,6 @@
 // src/Chatbot.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import './Chatbot.css'; 
+import './chatbot.css'; 
 
 // Define your Q&A data with keywords and a user-friendly title
 const faqData = [
