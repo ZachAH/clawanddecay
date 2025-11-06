@@ -51,8 +51,8 @@ function calculateDynamicShipping(cartItems, products) {
     
     // This is the fallback if no shipping details are found in the product data
     console.log(`Warning: No shipping rates found for product ${item.productId}. Using a default fallback rate.`);
-    const fallbackBaseRate = 475; // $4.75
-    const fallbackAdditionalRate = 250; // $2.50
+    const fallbackBaseRate = 5.99; // $5.99
+    const fallbackAdditionalRate = 3.00; // $3.00
     rates.push({ base: fallbackBaseRate, additional: fallbackAdditionalRate });
   }
 
