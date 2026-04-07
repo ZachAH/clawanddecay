@@ -3,9 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: dark;
+  color: #F5F1E8;
+  background-color: #0B0B0E;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,12 +15,13 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #F2D67A;
   text-decoration: inherit;
+  transition: color 0.25s ease;
 }
 
 a:hover {
-  color: #535bf2;
+  color: #D4AF37;
 }
 
 h1 {
@@ -29,39 +30,52 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
+  border-radius: 999px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  padding: 0.7em 1.4em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #14141A;
+  color: #F5F1E8;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.3s ease, transform 0.3s ease, background 0.3s ease;
 }
 
 button:hover {
-  border-color: #646cff;
+  border-color: rgba(212, 175, 55, 0.6);
 }
 
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid rgba(212, 175, 55, 0.7);
+  outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
+/* Custom scrollbar (premium touch) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
 
-  a:hover {
-    color: #747bff;
-  }
+::-webkit-scrollbar-track {
+  background: #0B0B0E;
+}
 
-  button {
-    background-color: #f9f9f9;
-  }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8C6F1F, #D4AF37);
+  border-radius: 999px;
+  border: 2px solid #0B0B0E;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #D4AF37, #F2D67A);
+}
+
+/* Text selection */
+::selection {
+  background: rgba(212, 175, 55, 0.35);
+  color: #fff;
 }
 
 /* ============================================
@@ -69,17 +83,15 @@ button:focus-visible {
 ============================================ */
 @media (min-width: 1024px) {
 
-  /* Cap max-width on all main content */
   .container,
   main,
   section {
-    max-width: 1400px;
+    max-width: 1440px;
     margin: 0 auto;
     padding-left: 40px;
     padding-right: 40px;
   }
 
-  /* NAVIGATION DESKTOP FIXES */
   nav,
   .navbar,
   .navbar-container {
@@ -93,13 +105,11 @@ button:focus-visible {
     gap: 40px;
   }
 
-  /* Reduce logo size so header isn't huge */
   .site-logo {
     width: 220px;
     max-width: 100%;
   }
 
-  /* HERO SECTION DESKTOP */
   .hero {
     min-height: 80vh;
     padding-top: 80px;
@@ -110,10 +120,9 @@ button:focus-visible {
     object-position: center;
   }
 
-  /* HEADINGS readability improvement */
   h1,
   h2,
   h3 {
-    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 0 24px rgba(0, 0, 0, 0.85);
   }
 }
