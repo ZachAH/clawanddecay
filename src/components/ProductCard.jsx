@@ -28,21 +28,32 @@ function ProductCard({ product, isFirst = false }) {
     FALLBACK_IMAGE_URL;
 
   return (
-    <Link to={`/products/${product.id}`} className="product-card-link">
-      <div className="product-card">
+    <Link
+      to={`/products/${product.id}`}
+      className="product-card-link"
+      role="listitem"
+      aria-label={`${product.title}, ${displayPrice !== 'N/A' ? `from $${displayPrice}` : 'view details'}`}
+    >
+      <article className="product-card">
         <img
           src={primaryImageUrl}
-          alt={product.title}
+          alt={`${product.title} — Claw & Decay product photo`}
           className="product-card-image"
-          loading={isFirst ? 'eager' : 'lazy'} // Conditional loading
+          loading={isFirst ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchpriority={isFirst ? 'high' : 'auto'}
+          width="300"
+          height="300"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = FALLBACK_IMAGE_URL;
           }}
         />
         <h3 className="product-card-title">{product.title}</h3>
-        <p className="product-card-price">${displayPrice}</p>
-      </div>
+        <p className="product-card-price" aria-label={`Price from ${displayPrice} dollars`}>
+          ${displayPrice}
+        </p>
+      </article>
     </Link>
   );
 }

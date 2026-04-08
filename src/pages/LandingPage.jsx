@@ -1,6 +1,7 @@
 // src/pages/LandingPage.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import ProductCard from '../components/ProductCard';
 import './LandingPage.css'; // landing-specific styles
 import landingBgWebm from '../assets/CAD_vid.webm'; // your converted webm
@@ -77,10 +78,23 @@ function LandingPage({ selectedTag = 'All' }) {
 
   return (
     <div className="landing-page">
-      <section className="hero" ref={heroRef}>
+      <Helmet>
+        <title>Claw &amp; Decay — Alternative Streetwear &amp; Limited Drops</title>
+        <meta
+          name="description"
+          content="Claw & Decay is an alternative streetwear brand for the metal, punk, and outcast scenes. Premium tees, hoodies, and limited drops crafted in small batches with local artists from Milwaukee, WI."
+        />
+        <link rel="canonical" href="https://clawanddecay.com/" />
+        <meta property="og:title" content="Claw & Decay — Alternative Streetwear & Limited Drops" />
+        <meta property="og:description" content="Premium alternative streetwear for the bold and the outcast. Limited drops, small-batch quality." />
+        <meta property="og:url" content="https://clawanddecay.com/" />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
+      <section className="hero" ref={heroRef} aria-label="Featured collection hero">
         {/* Background video only (no fallback mp4) */}
         {!window.matchMedia('(prefers-reduced-motion: reduce)').matches && (
-          <div className="video-wrapper">
+          <div className="video-wrapper" aria-hidden="true">
             <video
               className="hero-video"
               autoPlay
@@ -90,6 +104,7 @@ function LandingPage({ selectedTag = 'All' }) {
               poster="/assets/hero-poster.jpg" // optional poster image
               preload="auto"
               aria-hidden="true"
+              tabIndex="-1"
             >
               <source src={landingBgWebm} type="video/webm" />
               {/* No mp4 fallback */}
@@ -107,12 +122,17 @@ function LandingPage({ selectedTag = 'All' }) {
 
       {/* New container for button below the video */}
       <div className="button-wrapper">
-        <button className="hero-cta" onClick={handleShopNow}>
+        <button
+          type="button"
+          className="hero-cta"
+          onClick={handleShopNow}
+          aria-label="Shop the latest drop"
+        >
           Shop The Drop
         </button>
       </div>
 
-      <section className="features" ref={featuresRef}>
+      <section className="features" ref={featuresRef} aria-label="Why Claw and Decay">
         <div className="feature-item">
           <h2>For the Scene & Everyone In It</h2>
           <p>We don’t fit in out there. But in here — lost in the music, shoulder to shoulder with strangers who feel like family — we belong.
@@ -140,9 +160,9 @@ function LandingPage({ selectedTag = 'All' }) {
         </div>
       </section>
 
-      <section className="featured-products">
-        <h2>Featured Drops</h2>
-        <div className="product-grid">
+      <section className="featured-products" aria-labelledby="featured-heading">
+        <h2 id="featured-heading">Featured Drops</h2>
+        <div className="product-grid" role="list" aria-label="Featured products">
           {featured.map((product, idx) => (
             <ProductCard
               key={product.id}

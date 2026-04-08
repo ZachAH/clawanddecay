@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { useCart } from '../context/CartContext';
 
 function CartPage() {
@@ -54,24 +55,40 @@ function CartPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="cart-empty">
-        <h2>Your cart is empty.</h2>
-        <p>Browse our products and add some cool merch!</p>
-      </div>
+      <>
+        <Helmet>
+          <title>Your Cart — Claw &amp; Decay</title>
+          <meta name="description" content="Your Claw & Decay shopping cart." />
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+        <section className="cart-empty" aria-labelledby="empty-cart-heading">
+          <h2 id="empty-cart-heading">Your cart is empty.</h2>
+          <p>Browse our products and add some cool merch!</p>
+        </section>
+      </>
     );
   }
 
   return (
-    <div className="cart-page">
-      <h1>Your Cart</h1>
-      <ul className="cart-list">
+    <section className="cart-page" aria-labelledby="cart-heading">
+      <Helmet>
+        <title>Your Cart — Claw &amp; Decay</title>
+        <meta name="description" content="Review and check out the items in your Claw & Decay cart." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+
+      <h1 id="cart-heading">Your Cart</h1>
+      <ul className="cart-list" aria-label="Items in your cart">
         {cartItems.map(item => (
           <li key={item.uniqueKey} className="cart-item">
             {item.image_url && (
               <img
                 src={item.image_url}
-                alt={item.product_title}
+                alt={`${item.product_title} — ${item.variant_title}`}
                 className="cart-item-image"
+                loading="lazy"
+                width="120"
+                height="120"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = '/fallback.png';
@@ -87,9 +104,15 @@ function CartPage() {
               </div>
 
               <div className="cart-item-controls">
+                <label htmlFor={`qty-${item.uniqueKey}`} className="visually-hidden">
+                  Quantity for {item.product_title} {item.variant_title}
+                </label>
                 <input
+                  id={`qty-${item.uniqueKey}`}
                   type="number"
                   min="1"
+                  inputMode="numeric"
+                  aria-label={`Quantity for ${item.product_title} ${item.variant_title}`}
                   value={inputValues[item.uniqueKey] || ''}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -112,15 +135,14 @@ function CartPage() {
                       updateQuantity(item.uniqueKey, parsed);
                     }
                   }}
-                  style={{
-                    width: '60px',
-                    marginRight: '10px',
-                    padding: '5px',
-                    textAlign: 'center',
-                  }}
                   disabled={loading}
                 />
-                <button onClick={() => confirmRemove(item.uniqueKey)} disabled={loading}>
+                <button
+                  type="button"
+                  onClick={() => confirmRemove(item.uniqueKey)}
+                  disabled={loading}
+                  aria-label={`Remove ${item.product_title} ${item.variant_title} from cart`}
+                >
                   Remove
                 </button>
               </div>
@@ -129,24 +151,31 @@ function CartPage() {
         ))}
       </ul>
 
-      <div className="cart-total">
+      <div className="cart-total" aria-live="polite">
         <p>Total: ${(totalPrice / 100).toFixed(2)}</p>
-        <button onClick={handleCheckout} disabled={loading || cartItems.length === 0}>
+        <button
+          type="button"
+          onClick={handleCheckout}
+          disabled={loading || cartItems.length === 0}
+          aria-busy={loading}
+        >
           {loading ? 'Processing...' : 'Proceed to Checkout'}
         </button>
       </div>
 
       <div className="cart-clear">
         <button
+          type="button"
           onClick={() => {
             if (window.confirm('Clear the entire cart?')) clearCart();
           }}
           disabled={loading}
+          aria-label="Clear all items from cart"
         >
           Clear Cart
         </button>
       </div>
-    </div>
+    </section>
   );
 }
 

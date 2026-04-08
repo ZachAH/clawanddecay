@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { useCart } from '../context/CartContext';
 import ReactSvgFallback from '../assets/react.svg';
 
@@ -125,16 +126,72 @@ function ProductDetailPage({ setLoading }) {
     );
   }
 
+  // Strip HTML for meta description
+  const plainDescription = (product.description || '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 160);
+
+  // Build product structured data
+  const lowestPrice = enabledVariants.length
+    ? (Math.min(...enabledVariants.map(v => v.price)) / 100).toFixed(2)
+    : null;
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.title,
+    "description": plainDescription || `${product.title} from Claw & Decay.`,
+    "image": currentImage || FALLBACK_IMAGE_URL,
+    "brand": {
+      "@type": "Brand",
+      "name": "Claw & Decay"
+    },
+    ...(lowestPrice && {
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "USD",
+        "price": lowestPrice,
+        "availability": enabledVariants.length > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+        "url": typeof window !== 'undefined' ? window.location.href : ''
+      }
+    })
+  };
+
   return (
-    <div className="product-detail-page-container">
-      <h1 className="product-detail-title">{product.title}</h1>
+    <article className="product-detail-page-container" aria-labelledby="product-title">
+      <Helmet>
+        <title>{product.title} — Claw &amp; Decay</title>
+        <meta
+          name="description"
+          content={plainDescription || `${product.title} — alternative streetwear from Claw & Decay.`}
+        />
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={`${product.title} — Claw & Decay`} />
+        <meta property="og:description" content={plainDescription || `${product.title} from Claw & Decay.`} />
+        <meta property="og:image" content={currentImage || FALLBACK_IMAGE_URL} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product.title} — Claw & Decay`} />
+        <meta name="twitter:image" content={currentImage || FALLBACK_IMAGE_URL} />
+        <script type="application/ld+json">
+          {JSON.stringify(productJsonLd)}
+        </script>
+      </Helmet>
+
+      <h1 id="product-title" className="product-detail-title">{product.title}</h1>
 
       <div className="product-detail-image-and-description">
         <div className="product-detail-image-container">
           <img
             src={currentImage || FALLBACK_IMAGE_URL}
-            alt={product.title}
+            alt={`${product.title} — Claw & Decay product photo`}
             className="product-detail-image"
+            width="600"
+            height="600"
+            fetchpriority="high"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = FALLBACK_IMAGE_URL;
@@ -162,16 +219,27 @@ function ProductDetailPage({ setLoading }) {
       </div>
 
       {product.images && product.images.length > 1 && (
-        <div className="thumbnail-container">
+        <div className="thumbnail-container" role="list" aria-label="Product image gallery">
           {product.images.map((image, index) => (
-            <img
+            <button
               key={image.src || index}
-              src={image.src || FALLBACK_IMAGE_URL}
-              alt={`${product.title} view ${index + 1}`}
-              className={`thumbnail-image ${image.src === currentImage ? 'active' : ''}`}
+              type="button"
               onClick={() => handleThumbnailClick(image.src)}
-              onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE_URL; }}
-            />
+              aria-label={`View image ${index + 1} of ${product.title}`}
+              aria-pressed={image.src === currentImage}
+              className="thumbnail-button"
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+            >
+              <img
+                src={image.src || FALLBACK_IMAGE_URL}
+                alt={`${product.title} — view ${index + 1}`}
+                className={`thumbnail-image ${image.src === currentImage ? 'active' : ''}`}
+                loading="lazy"
+                width="86"
+                height="86"
+                onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE_URL; }}
+              />
+            </button>
           ))}
         </div>
       )}
@@ -181,20 +249,27 @@ function ProductDetailPage({ setLoading }) {
       )}
 
       <div className="product-detail-variants-container">
-        <h3>Available Variants:</h3>
+        <h2>Available Variants</h2>
 
         {enabledVariants.length > 1 && (
-          <select
-            className="mb-4 w-full border rounded px-3 py-2"
-            value={selectedVariantId || ''}
-            onChange={e => setSelectedVariantId(Number(e.target.value))}
-          >
-            {enabledVariants.map(variant => (
-              <option key={variant.id} value={variant.id}>
-                {variant.title} (${(variant.price / 100).toFixed(2)})
-              </option>
-            ))}
-          </select>
+          <>
+            <label htmlFor="variant-select" className="visually-hidden">
+              Choose a variant
+            </label>
+            <select
+              id="variant-select"
+              className="mb-4 w-full border rounded px-3 py-2"
+              value={selectedVariantId || ''}
+              onChange={e => setSelectedVariantId(Number(e.target.value))}
+              aria-label="Choose a product variant"
+            >
+              {enabledVariants.map(variant => (
+                <option key={variant.id} value={variant.id}>
+                  {variant.title} (${(variant.price / 100).toFixed(2)})
+                </option>
+              ))}
+            </select>
+          </>
         )}
 
         {enabledVariants.length === 1 && (
@@ -208,13 +283,15 @@ function ProductDetailPage({ setLoading }) {
         )}
 
         <button
+          type="button"
           onClick={handleAddToCart}
           className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded mt-2 w-full"
+          aria-label={`Add ${product.title} to cart`}
         >
           Add to Cart
         </button>
       </div>
-    </div>
+    </article>
   );
 }
 

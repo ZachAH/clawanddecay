@@ -66,11 +66,16 @@ function OurStoryPage() {
     <div className="glow-card">
       <div className="our-story-glow">
         <Helmet>
-          <title>Our Story — Claw & Decay</title>
+          <title>Our Story — Claw &amp; Decay</title>
           <meta
             name="description"
-            content="Discover the origin, mission, and culture behind Claw & Decay. Streetwear crafted in small batches for bold statements."
+            content="Discover the origin, mission, and culture behind Claw & Decay. Alternative streetwear crafted in small batches for the bold and the outcast."
           />
+          <link rel="canonical" href="https://clawanddecay.com/our-story" />
+          <meta property="og:title" content="Our Story — Claw & Decay" />
+          <meta property="og:description" content="The origin, mission, and culture behind Claw & Decay." />
+          <meta property="og:url" content="https://clawanddecay.com/our-story" />
+          <meta property="og:type" content="article" />
         </Helmet>
 
         <h2 className="our-story-clean-wrapper">Our Story</h2>

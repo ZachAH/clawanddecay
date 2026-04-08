@@ -2,40 +2,116 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="././public/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Claw And Decay Clothing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#07070B" />
+    <meta name="color-scheme" content="dark" />
 
+    <!-- ============ Primary SEO ============ -->
+    <title>Claw & Decay — Alternative Streetwear & Limited Drops</title>
+    <meta
+      name="description"
+      content="Claw & Decay is an alternative streetwear brand for the metal, punk, and outcast scenes. Premium tees, hoodies, and limited drops crafted in small batches with local artists from Milwaukee, WI."
+    />
+    <meta
+      name="keywords"
+      content="claw and decay, alternative clothing, metal merch, punk streetwear, band tees, hoodies, premium tees, limited drops, alternative fashion, milwaukee streetwear"
+    />
+    <meta name="author" content="Claw & Decay" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://clawanddecay.com/" />
+
+    <!-- Google site verification (existing) -->
     <meta name="google-site-verification" content="LL69-P15dzMxcRSYudYNAF-aoH1sAAlnzJ_suONbM7w" />
 
-    <!-- Preload critical images -->
-    <link 
-      rel="preload" 
-      as="image" 
-      href=/src/assets/bloodstained-background.webp
-      type="image/webp" 
+    <!-- ============ Open Graph (Facebook, Discord, iMessage) ============ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Claw & Decay" />
+    <meta property="og:title" content="Claw & Decay — Alternative Streetwear & Limited Drops" />
+    <meta
+      property="og:description"
+      content="Premium alternative streetwear for the bold and the outcast. Limited drops, small-batch quality, designs you won't find anywhere else."
     />
-    <link 
-      rel="preload" 
-      as="image" 
-      href=/src/assets/clawanddecay-header-mobile.webp
-      type="image/webp" 
+    <meta property="og:url" content="https://clawanddecay.com/" />
+    <meta property="og:image" content="https://clawanddecay.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Claw & Decay — Alternative Streetwear" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- ============ Twitter / X ============ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Claw & Decay — Alternative Streetwear & Limited Drops" />
+    <meta
+      name="twitter:description"
+      content="Premium alternative streetwear for the bold and the outcast. Limited drops, small-batch quality."
     />
-    <link 
-      rel="preload" 
-      as="image" 
-      href=src/assets/clawanddecay-header.webp
-      type="image/webp" 
+    <meta name="twitter:image" content="https://clawanddecay.com/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Claw & Decay — Alternative Streetwear" />
+
+    <!-- ============ Favicons / PWA ============ -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.ico" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- ============ Performance hints ============ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+    <!-- Preload critical font -->
+    <link
+      rel="preload"
+      href="/src/assets/fonts/NIGHTCROW.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
-    <link 
-    rel="preload" 
-    as="image" 
-    href=src/assets/grunge-border.webp
-    type="image/webp" 
-  />
-  <link rel="preload" href="/assets/fonts/NIGHTCROW.woff2" as="font" type="font/woff2" crossorigin>
+
+    <!-- ============ Structured Data: Organization ============ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Claw & Decay",
+      "alternateName": "Claw and Decay",
+      "url": "https://clawanddecay.com/",
+      "logo": "https://clawanddecay.com/favicon.ico",
+      "description": "Alternative streetwear brand for the metal, punk, and outcast scenes. Premium tees, hoodies, and limited drops crafted in small batches.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Milwaukee",
+        "addressRegion": "WI",
+        "addressCountry": "US"
+      },
+      "sameAs": []
+    }
+    </script>
+
+    <!-- ============ Structured Data: Website + SearchAction ============ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Claw & Decay",
+      "url": "https://clawanddecay.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://clawanddecay.com/merch?tag={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   </head>
   <body>
+    <!-- Accessible no-JS fallback -->
+    <noscript>
+      <div style="padding:24px;text-align:center;color:#F5EFE0;background:#07070B;font-family:sans-serif;">
+        <h1>Claw &amp; Decay</h1>
+        <p>This site requires JavaScript. Please enable it to browse our latest drops.</p>
+      </div>
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

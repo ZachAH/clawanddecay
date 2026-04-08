@@ -1,0 +1,16 @@
+{
+  "name": "Claw & Decay",
+  "short_name": "Claw & Decay",
+  "description": "Alternative streetwear & limited drops.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07070B",
+  "theme_color": "#07070B",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

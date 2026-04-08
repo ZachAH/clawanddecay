@@ -67,28 +67,39 @@ function App() {
     <Router>
       <CartProvider>
         <div className="App">
-          <header className="app-header">
+          {/* WCAG: Skip to main content link for keyboard / screen-reader users */}
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
+
+          <header className="app-header" role="banner">
             <div className="desktop-header-content">
               <img
                 src={desktopHeaderImage}
-                alt="Claw and Decay Desktop Banner"
+                alt="Claw and Decay — Alternative streetwear brand banner"
                 className="header-banner-image"
+                width="1200"
+                height="300"
+                fetchpriority="high"
               />
             </div>
             <div className="mobile-header-content">
               <img
                 src={mobileHeaderImage}
-                alt="Claw and Decay Mobile Banner"
+                alt="Claw and Decay — Alternative streetwear brand banner"
                 className="header-banner-mobile-image"
+                width="400"
+                height="100"
+                fetchpriority="high"
               />
             </div>
             <Navbar selectedTag={selectedTag} onSelectTag={setSelectedTag} />
           </header>
 
-          <main className="app-main">
+          <main className="app-main" id="main-content" role="main" tabIndex="-1">
             {/* Show loading spinner when loading is true */}
             {loading && (
-              <div className="loading-overlay">
+              <div className="loading-overlay" role="status" aria-live="polite" aria-label="Loading content">
                 {/* Your cool loading animation here, e.g., the rock hands or just text */}
                 <div className="spinner-container" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}>
                   <div className="rock-hands-fall-wrapper">
@@ -134,15 +145,15 @@ function App() {
             </Routes>
           </main>
 
-          <footer className="app-footer flex flex-col items-center gap-2 p-6 bg-black text-white">
+          <footer className="app-footer flex flex-col items-center gap-2 p-6 bg-black text-white" role="contentinfo" aria-label="Site footer">
             <p>&copy; {new Date().getFullYear()} Claw and Decay. All rights reserved.</p>
 
-            <div className="footer-logos flex flex-wrap justify-center gap-4 mt-2">
-              <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" alt="React" className="footer-logo" />
-              <img src={stripeLogo} alt="Stripe" className="footer-logo" />
-              <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/firebase/firebase-plain.svg" alt="Firebase" className="footer-logo" />
-              <img src="https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg" alt="Netlify" className="footer-logo" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" alt="JSX/JavaScript" className="footer-logo" />
+            <div className="footer-logos flex flex-wrap justify-center gap-4 mt-2" aria-label="Built with">
+              <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" alt="React logo" className="footer-logo" loading="lazy" width="40" height="40" />
+              <img src={stripeLogo} alt="Powered by Stripe" className="footer-logo" loading="lazy" width="40" height="40" />
+              <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/firebase/firebase-plain.svg" alt="Firebase logo" className="footer-logo" loading="lazy" width="40" height="40" />
+              <img src="https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg" alt="Netlify logo" className="footer-logo" loading="lazy" width="40" height="40" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" alt="JavaScript logo" className="footer-logo" loading="lazy" width="40" height="40" />
             </div>
           </footer>
           <Chatbot />

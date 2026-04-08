@@ -70,11 +70,31 @@ function FaqPage() {
   return (
     <div className="glow-card">
       <Helmet>
-        <title>FAQ — Claw & Decay</title>
+        <title>FAQ — Claw &amp; Decay</title>
         <meta
           name="description"
           content="Frequently asked questions about Claw & Decay: shipping, care, returns, drops, and collaborations."
         />
+        <link rel="canonical" href="https://clawanddecay.com/faq-page" />
+        <meta property="og:title" content="FAQ — Claw & Decay" />
+        <meta property="og:description" content="Shipping, care, returns, drops, collaborations — all answered." />
+        <meta property="og:url" content="https://clawanddecay.com/faq-page" />
+        <meta property="og:type" content="website" />
+        {/* JSON-LD: FAQPage structured data for rich results */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map((f) => ({
+              "@type": "Question",
+              "name": f.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": f.answer.replace(/\s+/g, ' ').trim()
+              }
+            }))
+          })}
+        </script>
       </Helmet>
 
       <h1 className="faq-title">FAQS</h1>
