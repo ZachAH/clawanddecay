@@ -6,6 +6,16 @@
     <meta name="theme-color" content="#07070B" />
     <meta name="color-scheme" content="dark" />
 
+    <!-- ============ Google Analytics (gtag.js) ============ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4GN0H7BM2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      // send_page_view: false — we manually track pageviews on SPA route changes
+      gtag('config', 'G-S4GN0H7BM2', { send_page_view: false });
+    </script>
+
     <!-- ============ Primary SEO ============ -->
     <title>Claw & Decay — Alternative Streetwear & Limited Drops</title>
     <meta

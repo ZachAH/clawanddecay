@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ProductGridPage from './pages/ProductGridPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -15,6 +15,24 @@ import CartPage from './pages/CartPage';
 import stripeLogo from './assets/stripe.png'
 import Chatbot from './components/chatbot'
 
+
+// Google Analytics route-change tracker.
+// Fires a `page_view` event on every SPA navigation so GA4 sees every route.
+function RouteChangeTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname + location.search,
+        page_location: window.location.href,
+        page_title: document.title,
+      });
+    }
+  }, [location]);
+
+  return null;
+}
 
 // Rock hands loader component
 function RockHandsLoader() {
@@ -65,6 +83,7 @@ function App() {
 
   return (
     <Router>
+      <RouteChangeTracker />
       <CartProvider>
         <div className="App">
           {/* WCAG: Skip to main content link for keyboard / screen-reader users */}
