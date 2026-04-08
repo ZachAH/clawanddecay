@@ -460,7 +460,11 @@ p { line-height: 1.75; }
   left: 20%;
 }
 
-@media (max-width: 462px) {
+.navbar-link {
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
   .navbar-list {
     flex-direction: column;
     gap: 0.5rem;
@@ -475,33 +479,52 @@ p { line-height: 1.75; }
 
 .navbar-dropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: 100%;
   left: 50%;
   transform: translate(-50%, -8px);
+  margin-top: 10px;
   background: rgba(12,12,18,0.96);
   border: 1px solid rgba(212,175,55,0.35);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-deep), 0 0 0 1px rgba(212,175,55,0.12);
   min-width: 180px;
   z-index: 1100;
-  display: none;
+  display: flex;
   flex-direction: column;
   padding: 8px;
   white-space: nowrap;
   user-select: none;
   opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
   transition:
     opacity 0.35s var(--ease-out),
-    transform 0.35s var(--ease-out);
+    transform 0.35s var(--ease-out),
+    visibility 0s linear 0.35s;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
 
-.navbar-item.dropdown:hover .navbar-dropdown {
-  display: flex;
+/* Invisible bridge over the gap so the cursor can travel from the
+   trigger button to the menu without firing mouseleave. */
+.navbar-dropdown::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14px;
+  height: 14px;
+}
+
+.navbar-dropdown.open {
   opacity: 1;
   transform: translate(-50%, 0);
   pointer-events: auto;
+  visibility: visible;
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out),
+    visibility 0s linear 0s;
 }
 
 .navbar-dropdown-link {

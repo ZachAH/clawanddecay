@@ -11,6 +11,20 @@ function Navbar({ selectedTag, onSelectTag }) {
 
   const [merchOpen, setMerchOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const closeTimerRef = useRef(null);
+
+  const openMerch = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setMerchOpen(true);
+  };
+
+  const scheduleCloseMerch = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => setMerchOpen(false), 250);
+  };
 
   const merchTags = [
     "All",
@@ -45,6 +59,7 @@ function Navbar({ selectedTag, onSelectTag }) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     };
   }, []);
 
@@ -57,8 +72,8 @@ function Navbar({ selectedTag, onSelectTag }) {
         <li
           className="navbar-item dropdown"
           ref={dropdownRef}
-          onMouseEnter={() => setMerchOpen(true)}
-          onMouseLeave={() => setMerchOpen(false)}
+          onMouseEnter={openMerch}
+          onMouseLeave={scheduleCloseMerch}
         >
           <button
             type="button"
@@ -83,7 +98,7 @@ function Navbar({ selectedTag, onSelectTag }) {
           </button>
           <div
             id="merch-dropdown"
-            className="navbar-dropdown"
+            className={`navbar-dropdown ${merchOpen ? 'open' : ''}`}
             role="menu"
             aria-label="Merch categories"
           >
