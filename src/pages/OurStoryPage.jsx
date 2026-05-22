@@ -69,13 +69,42 @@ function OurStoryPage() {
           <title>Our Story — Claw &amp; Decay</title>
           <meta
             name="description"
-            content="Discover the origin, mission, and culture behind Claw & Decay. Alternative streetwear crafted in small batches for the bold and the outcast."
+            content="The story behind Claw & Decay — a Midwest death metal and alternative clothing brand from Milwaukee, WI. Human-made art by real artists, no AI, built for the bold and the outcast."
           />
           <link rel="canonical" href="https://clawanddecay.com/our-story" />
           <meta property="og:title" content="Our Story — Claw & Decay" />
           <meta property="og:description" content="The origin, mission, and culture behind Claw & Decay." />
           <meta property="og:url" content="https://clawanddecay.com/our-story" />
           <meta property="og:type" content="article" />
+          <meta property="og:image" content="https://clawanddecay.com/og-image.jpg" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Our Story — Claw & Decay" />
+          <meta name="twitter:image" content="https://clawanddecay.com/og-image.jpg" />
+          <meta property="article:published_time" content="2025-01-01T00:00:00Z" />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://clawanddecay.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Our Story", "item": "https://clawanddecay.com/our-story" }
+              ]
+            })}
+          </script>
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "AboutPage",
+              "name": "Our Story — Claw & Decay",
+              "url": "https://clawanddecay.com/our-story",
+              "description": "Discover the origin, mission, and culture behind Claw & Decay. Alternative streetwear crafted in small batches for the bold and the outcast.",
+              "publisher": {
+                "@type": "Organization",
+                "name": "Claw & Decay",
+                "url": "https://clawanddecay.com/"
+              }
+            })}
+          </script>
         </Helmet>
 
         <h2 className="our-story-clean-wrapper">Our Story</h2>

@@ -4,6 +4,29 @@ Disallow: /cart
 Disallow: /success
 Disallow: /cancel
 Disallow: /.netlify/
+Disallow: /api/
 
 # Sitemap
 Sitemap: https://clawanddecay.com/sitemap.xml
+
+# LLMs / AI crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /cart
+Disallow: /success
+Disallow: /cancel
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# llms.txt — machine-readable site summary for AI tools
+# https://clawanddecay.com/llms.txt

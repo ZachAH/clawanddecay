@@ -4,6 +4,11 @@ import { Helmet } from 'react-helmet';
 
 const faqs = [
   {
+    question: 'Is any of the artwork AI-generated?',
+    answer: `No — not a single design on any Claw & Decay product is AI-generated. Every piece of artwork is made by a real human being: either the founder or a freelance artist we've hired and paid directly.
+             We work with artists who are part of the scene — people who understand the culture, the music, and the aesthetic from the inside. In a community built on authenticity and real human expression, AI art has no place here. When you buy from us, you're supporting actual artists.`,
+  },
+  {
     question: 'How do I care for my Claw & Decay apparel?',
     answer: `Turn garments inside out before washing. Machine wash cold with like colors. 
              Use mild detergent. Do not bleach. Tumble dry low or hang to dry for best longevity. 
@@ -73,13 +78,28 @@ function FaqPage() {
         <title>FAQ — Claw &amp; Decay</title>
         <meta
           name="description"
-          content="Frequently asked questions about Claw & Decay: shipping, care, returns, drops, and collaborations."
+          content="Frequently asked questions about Claw & Decay: AI art policy, shipping, care, returns, sizing, drops, and collaborations. All artwork is human-made — no AI."
         />
         <link rel="canonical" href="https://clawanddecay.com/faq-page" />
         <meta property="og:title" content="FAQ — Claw & Decay" />
         <meta property="og:description" content="Shipping, care, returns, drops, collaborations — all answered." />
         <meta property="og:url" content="https://clawanddecay.com/faq-page" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://clawanddecay.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="FAQ — Claw & Decay" />
+        <meta name="twitter:image" content="https://clawanddecay.com/og-image.jpg" />
+        {/* JSON-LD: BreadcrumbList */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://clawanddecay.com/" },
+              { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://clawanddecay.com/faq-page" }
+            ]
+          })}
+        </script>
         {/* JSON-LD: FAQPage structured data for rich results */}
         <script type="application/ld+json">
           {JSON.stringify({

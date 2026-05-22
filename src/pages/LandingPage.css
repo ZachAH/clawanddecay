@@ -10,6 +10,7 @@
 /* ---------- HERO ---------- */
 .hero {
   position: relative;
+  min-height: 60vh;
   padding: clamp(120px, 18vw, 220px) 24px;
   color: var(--color-light-text, #F5EFE0);
   text-align: center;
@@ -233,6 +234,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: none;
   letter-spacing: 0.05em;
 }
 
@@ -271,6 +273,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: none;
   margin-bottom: 14px;
   letter-spacing: 0.06em;
   position: relative;

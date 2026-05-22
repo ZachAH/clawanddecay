@@ -1,0 +1,55 @@
+# Claw & Decay
+
+> Midwest death metal and alternative clothing brand. Premium tees, hoodies, and limited drops — every design made by real human artists, zero AI.
+
+Claw & Decay is an independent alternative clothing brand based in Milwaukee, Wisconsin, founded in 2024. Rooted in the Midwest death metal and extreme metal scenes, we create small-batch, limited-edition apparel for the bold and the outcast. Every design is either made by the founder directly or commissioned from real human freelance artists — no AI-generated art, no exceptions. Printed on premium blanks (Comfort Colors) and produced in limited quantities that won't get restocked once they're gone.
+
+## About
+
+- Founded: 2024
+- Location: Milwaukee, WI, USA (Midwest)
+- Niche: Death metal merch, extreme metal clothing, punk streetwear, alternative fashion, limited drops
+- Mission: Premium quality, human-made alternative clothing for people who don't fit in everywhere else
+- Production: Small-batch, limited-edition runs — sold out items may not return
+- Art policy: 100% human-made — all designs by the founder or commissioned real artists. No AI art.
+
+## Pages
+
+- [Home](https://clawanddecay.com/): Brand landing page with featured drops and brand identity
+- [Shop / Merch](https://clawanddecay.com/merch): Full product catalog — all current drops
+- [Our Story](https://clawanddecay.com/our-story): The origin, mission, process, and culture behind Claw & Decay
+- [FAQ](https://clawanddecay.com/faq-page): Shipping, returns, care instructions, sizing, collaboration info, and AI art policy
+- [Contact](https://clawanddecay.com/contact-us): Contact form for collaborations, design ideas, and order support
+
+## Products
+
+We sell limited-edition death metal and alternative streetwear including:
+- Graphic tees printed on Comfort Colors 1717 (widely regarded as the gold standard of T-shirt blanks)
+- Long-sleeve shirts printed on Comfort Colors 6014 (heavyweight, garment-dyed cotton)
+- Hoodies and other apparel
+- Designs inspired by death metal, extreme metal, punk, and Midwest outcast culture
+- All artwork is original and 100% human-made — by the founder or real commissioned artists
+- Drops are limited; once sold out, they may not return
+
+## Brand Voice
+
+Raw, real, unapologetic, and deeply rooted in the Midwest metal scene. We make merch that reflects the world as it is — brutal, honest, uncomfortable at times. Death metal is more than music; it's a community of people who've been called too loud, too dark, too much. Claw & Decay is built for those people. Some pieces will make others uncomfortable — that's the point. Human art for humans who live in the pit, the bar, and the moments when the music hits bone-deep.
+
+## Art & Ethics
+
+Every piece of art on every product is made by a real human being — either the founder or a freelance artist we've hired and paid. We will never use AI to generate designs. In a scene built on authenticity, craft, and real human expression, AI-generated art has no place here.
+
+## Policies
+
+- Small-batch production; limited quantities per drop
+- Domestic shipping: 2–5 business days processing, 3–7 business days transit
+- International shipping: 10–21 business days depending on destination and customs
+- Returns accepted only for defective/damaged items within 7 days of delivery
+- No returns on correctly fulfilled orders (limited-batch model)
+- Custom design and collaboration inquiries welcome via the Contact page
+- Payments processed securely via Stripe (all major cards, Apple Pay, Google Pay)
+
+## Technical
+
+- Built with React, Vite, Netlify, Firebase, and Stripe
+- Handcrafted by the founder — no large team, no outsourced assembly-line process

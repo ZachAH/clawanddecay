@@ -17,44 +17,44 @@
     </script>
 
     <!-- ============ Primary SEO ============ -->
-    <title>Claw & Decay — Alternative Streetwear & Limited Drops</title>
+    <title>Claw & Decay — Midwest Death Metal Merch & Alternative Clothing</title>
     <meta
       name="description"
-      content="Claw & Decay is an alternative streetwear brand for the metal, punk, and outcast scenes. Premium tees, hoodies, and limited drops crafted in small batches with local artists from Milwaukee, WI."
+      content="Claw & Decay is a Midwest death metal and alternative clothing brand from Milwaukee, WI. Human-made designs — no AI art. Premium tees, hoodies, and limited drops crafted in small batches with real artists."
     />
     <meta
       name="keywords"
-      content="claw and decay, alternative clothing, metal merch, punk streetwear, band tees, hoodies, premium tees, limited drops, alternative fashion, milwaukee streetwear"
+      content="claw and decay, death metal merch, death metal clothing, death metal shirts, midwest metal merch, alternative clothing, metal merch, punk streetwear, extreme metal clothing, limited drops, milwaukee streetwear, human made art, no ai art, comfort colors tees"
     />
     <meta name="author" content="Claw & Decay" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
     <link rel="canonical" href="https://clawanddecay.com/" />
 
-    <!-- Google site verification (existing) -->
+    <!-- Google site verification -->
     <meta name="google-site-verification" content="LL69-P15dzMxcRSYudYNAF-aoH1sAAlnzJ_suONbM7w" />
 
     <!-- ============ Open Graph (Facebook, Discord, iMessage) ============ -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Claw & Decay" />
-    <meta property="og:title" content="Claw & Decay — Alternative Streetwear & Limited Drops" />
+    <meta property="og:title" content="Claw & Decay — Midwest Death Metal Merch & Alternative Clothing" />
     <meta
       property="og:description"
-      content="Premium alternative streetwear for the bold and the outcast. Limited drops, small-batch quality, designs you won't find anywhere else."
+      content="Midwest death metal and alternative clothing from Milwaukee, WI. Human-made designs, no AI art. Limited drops, small-batch quality — for the bold and the outcast."
     />
     <meta property="og:url" content="https://clawanddecay.com/" />
     <meta property="og:image" content="https://clawanddecay.com/og-image.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content="800" />
+    <meta property="og:image:height" content="800" />
     <meta property="og:image:alt" content="Claw & Decay — Alternative Streetwear" />
     <meta property="og:locale" content="en_US" />
 
     <!-- ============ Twitter / X ============ -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Claw & Decay — Alternative Streetwear & Limited Drops" />
+    <meta name="twitter:title" content="Claw & Decay — Midwest Death Metal Merch & Alternative Clothing" />
     <meta
       name="twitter:description"
-      content="Premium alternative streetwear for the bold and the outcast. Limited drops, small-batch quality."
+      content="Midwest death metal and alternative clothing from Milwaukee, WI. Human-made art, no AI. Limited drops, small-batch quality."
     />
     <meta name="twitter:image" content="https://clawanddecay.com/og-image.jpg" />
     <meta name="twitter:image:alt" content="Claw & Decay — Alternative Streetwear" />
@@ -68,6 +68,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
     <!-- Preload critical font -->
     <link
@@ -78,38 +79,86 @@
       crossorigin
     />
 
-    <!-- ============ Structured Data: Organization ============ -->
+    <!-- ============ Structured Data: ClothingStore (replaces bare Organization) ============ -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
+      "@type": ["Organization", "Store"],
       "name": "Claw & Decay",
       "alternateName": "Claw and Decay",
       "url": "https://clawanddecay.com/",
-      "logo": "https://clawanddecay.com/favicon.ico",
-      "description": "Alternative streetwear brand for the metal, punk, and outcast scenes. Premium tees, hoodies, and limited drops crafted in small batches.",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://clawanddecay.com/favicon.ico",
+        "width": 512,
+        "height": 512
+      },
+      "image": "https://clawanddecay.com/og-image.jpg",
+      "description": "Midwest death metal and alternative clothing brand from Milwaukee, WI. Human-made designs by real artists — no AI art. Premium tees, hoodies, and limited drops crafted in small batches.",
+      "foundingDate": "2024",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Milwaukee",
         "addressRegion": "WI",
         "addressCountry": "US"
       },
+      "priceRange": "$$",
+      "currenciesAccepted": "USD",
+      "paymentAccepted": "Credit Card, Debit Card, Apple Pay, Google Pay",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Alternative Streetwear",
+        "itemListElement": [
+          {
+            "@type": "OfferCatalog",
+            "name": "Graphic Tees"
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Long Sleeves"
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Hoodies"
+          }
+        ]
+      },
       "sameAs": []
     }
     </script>
 
-    <!-- ============ Structured Data: Website + SearchAction ============ -->
+    <!-- ============ Structured Data: WebSite + SearchAction ============ -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Claw & Decay",
       "url": "https://clawanddecay.com/",
+      "description": "Alternative streetwear for the metal, punk, and outcast scenes.",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://clawanddecay.com/merch?tag={search_term_string}",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://clawanddecay.com/merch?tag={search_term_string}"
+        },
         "query-input": "required name=search_term_string"
       }
+    }
+    </script>
+
+    <!-- ============ Structured Data: BreadcrumbList (home) ============ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://clawanddecay.com/"
+        }
+      ]
     }
     </script>
   </head>
@@ -118,7 +167,14 @@
     <noscript>
       <div style="padding:24px;text-align:center;color:#F5EFE0;background:#07070B;font-family:sans-serif;">
         <h1>Claw &amp; Decay</h1>
-        <p>This site requires JavaScript. Please enable it to browse our latest drops.</p>
+        <p>Alternative streetwear for the metal, punk, and outcast scenes.</p>
+        <p>Enable JavaScript to browse our latest drops.</p>
+        <nav>
+          <a href="/merch" style="color:#F5EFE0;margin:0 8px;">Shop</a>
+          <a href="/our-story" style="color:#F5EFE0;margin:0 8px;">Our Story</a>
+          <a href="/faq-page" style="color:#F5EFE0;margin:0 8px;">FAQ</a>
+          <a href="/contact-us" style="color:#F5EFE0;margin:0 8px;">Contact</a>
+        </nav>
       </div>
     </noscript>
 

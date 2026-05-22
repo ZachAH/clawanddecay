@@ -47,12 +47,40 @@ function ContactPage() {
         <title>Contact Us — Claw &amp; Decay</title>
         <meta
           name="description"
-          content="Get in touch with Claw & Decay for collaborations, custom designs, order help, or just to say what's up. Alternative streetwear made with care."
+          content="Get in touch with Claw & Decay — Midwest death metal and alternative clothing from Milwaukee, WI. Reach out about artist collaborations, custom designs, or order support."
         />
         <link rel="canonical" href="https://clawanddecay.com/contact-us" />
         <meta property="og:title" content="Contact — Claw & Decay" />
         <meta property="og:description" content="Reach out about collaborations, custom designs, or order support." />
         <meta property="og:url" content="https://clawanddecay.com/contact-us" />
+        <meta property="og:image" content="https://clawanddecay.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Contact — Claw & Decay" />
+        <meta name="twitter:image" content="https://clawanddecay.com/og-image.jpg" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://clawanddecay.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Contact", "item": "https://clawanddecay.com/contact-us" }
+            ]
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Contact Claw & Decay",
+            "url": "https://clawanddecay.com/contact-us",
+            "description": "Get in touch with Claw & Decay for collaborations, custom designs, order help, or just to say what's up.",
+            "publisher": {
+              "@type": "Organization",
+              "name": "Claw & Decay",
+              "url": "https://clawanddecay.com/"
+            }
+          })}
+        </script>
       </Helmet>
 
       <h1 id="contact-heading">Contact Us</h1>

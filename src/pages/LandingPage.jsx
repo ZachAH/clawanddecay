@@ -79,16 +79,29 @@ function LandingPage({ selectedTag = 'All' }) {
   return (
     <div className="landing-page">
       <Helmet>
-        <title>Claw &amp; Decay — Alternative Streetwear &amp; Limited Drops</title>
+        <title>Claw &amp; Decay — Midwest Death Metal Merch &amp; Alternative Clothing</title>
         <meta
           name="description"
-          content="Claw & Decay is an alternative streetwear brand for the metal, punk, and outcast scenes. Premium tees, hoodies, and limited drops crafted in small batches with local artists from Milwaukee, WI."
+          content="Claw & Decay is a Midwest death metal and alternative clothing brand from Milwaukee, WI. Human-made designs — no AI art. Premium tees, hoodies, and limited drops crafted in small batches with real artists."
         />
         <link rel="canonical" href="https://clawanddecay.com/" />
-        <meta property="og:title" content="Claw & Decay — Alternative Streetwear & Limited Drops" />
-        <meta property="og:description" content="Premium alternative streetwear for the bold and the outcast. Limited drops, small-batch quality." />
+        <meta property="og:title" content="Claw & Decay — Midwest Death Metal Merch & Alternative Clothing" />
+        <meta property="og:description" content="Midwest death metal and alternative clothing from Milwaukee, WI. Human-made art, no AI. Limited drops, small-batch quality." />
         <meta property="og:url" content="https://clawanddecay.com/" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://clawanddecay.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Claw & Decay — Alternative Streetwear & Limited Drops" />
+        <meta name="twitter:image" content="https://clawanddecay.com/og-image.jpg" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://clawanddecay.com/" }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <section className="hero" ref={heroRef} aria-label="Featured collection hero">
