@@ -13,7 +13,6 @@ import Navbar from './components/navbar';
 import { CartProvider } from './context/CartContext';
 import CartPage from './pages/CartPage';
 import stripeLogo from './assets/stripe.png'
-import Chatbot from './components/chatbot'
 
 
 // Google Analytics route-change tracker.
@@ -175,7 +174,6 @@ function App() {
               <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg" alt="JavaScript logo" className="footer-logo" loading="lazy" width="40" height="40" />
             </div>
           </footer>
-          <Chatbot />
         </div>
       </CartProvider>
     </Router>
